@@ -1,3 +1,4 @@
+import Navigation from "@/components/navigation";
 import React from "react";
 
 interface Props {
@@ -5,7 +6,12 @@ interface Props {
 }
 
 const MainLayout: React.FC<Props> = ({ children }) => {
-  return <main className="container mx-auto">{children}</main>;
+  return (
+    <>
+      <Navigation />
+      <main className="w-full h-screen flex flex-row relative">{children}</main>
+    </>
+  );
 };
 
 export default MainLayout;
