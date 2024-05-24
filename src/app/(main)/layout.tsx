@@ -9,7 +9,9 @@ const MainLayout: React.FC<Props> = ({ children }) => {
   return (
     <>
       <Navigation />
-      <main className="w-full h-screen flex flex-row relative">{children}</main>
+      <main className="w-full min-h-screen flex flex-row relative">
+        {children}
+      </main>
     </>
   );
 };
