@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Trash2 } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -58,9 +59,10 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const selectedRows = table.getSelectedRowModel().rows ?? [];
+
   return (
     <div>
-      {" "}
       <div className="flex items-center py-4">
         <Input
           placeholder={`Filter by ${searchCol as string}...`}
@@ -77,6 +79,15 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
       </div>
+      {selectedRows.length > 0 && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="ml-auto font-normal text-xs"
+        >
+          <Trash2 className="size-4 mr-2" /> Delete ({selectedRows.length})
+        </Button>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>

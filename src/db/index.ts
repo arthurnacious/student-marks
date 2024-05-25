@@ -11,4 +11,4 @@ export const dbCredentials = {
 
 const poolConnection = mysql.createPool(dbCredentials);
 
-const db = drizzle(poolConnection);
+export const db = drizzle(poolConnection);

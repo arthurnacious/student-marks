@@ -14,6 +14,7 @@ import mysql from "mysql2/promise";
 import { RoleName } from "@/types/roles";
 import { AttendanceName } from "@/types/attendance";
 import { dbCredentials } from ".";
+import { createInsertSchema } from "drizzle-zod";
 
 const poolConnection = mysql.createPool(dbCredentials);
 
@@ -95,7 +96,7 @@ export const academies = mysqlTable(
     id: varchar("id", { length: 255 })
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    name: varchar("name", { length: 255 }),
+    name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt")
@@ -116,7 +117,7 @@ export const courses = mysqlTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     academyId: varchar("academyId", { length: 255 }).notNull(),
-    name: varchar("name", { length: 255 }),
+    name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     description: varchar("description", { length: 255 }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -243,3 +244,5 @@ export const marks = mysqlTable("marks", {
     .references(() => users.id, { onDelete: "cascade" }),
   amount: int("amount").notNull(),
 });
+
+export const insertAcademySchema = createInsertSchema(academies);

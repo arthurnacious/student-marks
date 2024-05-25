@@ -16,8 +16,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 export type Academies = {
   id: string;
   name: string;
-  courses: number;
-  assignees: number;
+  slug: string;
+  _count: {
+    courses: number;
+    asignees: number;
+  };
 };
 
 export const columns: ColumnDef<Academies>[] = [
@@ -59,16 +62,23 @@ export const columns: ColumnDef<Academies>[] = [
   },
   {
     accessorKey: "courses",
-    header: "Curses",
+    cell: ({ row }) => {
+      const academy = row.original;
+      return academy._count.courses;
+    },
   },
   {
     accessorKey: "assignees",
-    header: "Staff Assigned",
+    cell: ({ row }) => {
+      const academy = row.original;
+      return academy._count.asignees;
+    },
   },
   {
     id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const academy = row.original;
 
       return (
         <DropdownMenu>
@@ -81,13 +91,13 @@ export const columns: ColumnDef<Academies>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(academy.id)}
             >
-              Copy payment ID
+              Copy academy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View academy details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
