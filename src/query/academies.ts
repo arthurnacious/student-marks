@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
+import Error from "next/error";
 
 type ResponseType = InferResponseType<typeof client.api.academies.$post>;
 type RequestType = InferRequestType<typeof client.api.academies.$post>["json"];
@@ -27,6 +28,10 @@ export const useCreateAcademy = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (values) => {
       const response = await client.api.academies.$post({ json: values });
+      console.log({ response });
+      if (response.status === 422) {
+        throw new Error({ title: "name is already taken", statusCode: 422 });
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -34,6 +39,7 @@ export const useCreateAcademy = () => {
       queryClient.invalidateQueries({ queryKey: ["academies"] });
     },
     onError: (error) => {
+      console.log({ error });
       toast.error("failed to insert academy");
     },
   });

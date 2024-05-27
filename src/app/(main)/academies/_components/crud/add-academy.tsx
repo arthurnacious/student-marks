@@ -11,7 +11,7 @@ import { PlusCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -23,8 +23,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useCreateAcademy } from "@/query/academies";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { client } from "@/lib/hono";
+import Error from "next/error";
+import { InferRequestType } from "hono";
 
 interface Props {}
+
+type RequestType = InferRequestType<typeof client.api.academies.$post>["json"];
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,7 +43,8 @@ type formValues = z.input<typeof formSchema>;
 
 const AddAcademyModal: React.FC<Props> = ({}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate, isPending } = useCreateAcademy();
+  const queryClient = useQueryClient();
+  // const { mutate, isPending, isError, error, } = useCreateAcademy();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
@@ -45,14 +53,36 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
     },
   });
 
+  const mutation = useMutation<unknown, Error, RequestType>({
+    mutationFn: async (values) => {
+      const response = await client.api.academies.$post({ json: values });
+      console.log({ response });
+      if (response.status === 422) {
+        throw new Error({ title: "name is already taken", statusCode: 422 });
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      onOpenChange(false);
+      toast.success("Academy inserted successfully");
+      queryClient.invalidateQueries({ queryKey: ["academies"] });
+    },
+    onError: (error: any) => {
+      console.log({ error });
+      if (error.props.statusCode === 422) {
+        form.setError("name", { message: "The selected name already exist" });
+        return;
+      }
+      toast.error("failed to insert academy");
+    },
+  });
+
   function onSubmit(values: formValues) {
-    mutate(values);
-    onOpenChange(false);
+    mutation.mutate(values);
   }
 
   function onOpenChange(b: boolean) {
     form.reset();
-
     setIsOpen(b);
   }
 
@@ -86,7 +116,7 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
                   </FormItem>
                 )}
               />
-              <Button isLoading={isPending}>Create</Button>
+              <Button isLoading={mutation.isPending}>Create</Button>
             </form>
           </Form>
         </div>

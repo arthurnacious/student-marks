@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 export type Academies = {
   id: string;
@@ -91,13 +92,17 @@ export const columns: ColumnDef<Academies>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(academy.id)}
+              onClick={() => navigator.clipboard.writeText(academy.slug)}
             >
-              Copy academy ID
+              Copy academy link
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View academy details</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`academies/${academy.slug}`}>Edit Academy</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Button variant="ghost">Delete Academy</Button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

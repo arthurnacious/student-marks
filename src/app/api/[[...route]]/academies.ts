@@ -9,6 +9,7 @@ import {
 import { zValidator } from "@hono/zod-validator";
 import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
+import Error from "next/error";
 import slugify from "slugify";
 
 const app = new Hono()
@@ -42,26 +43,43 @@ const app = new Hono()
       let counter = 1;
       let isSlugAvailable = false;
 
-      while (!isSlugAvailable) {
-        const [result] = await db
-          .select({ name: academies.name })
-          .from(academies)
-          .where(eq(academies.slug, slug));
+      // while (!isSlugAvailable) {
+      //   const [result] = await db
+      //     .select({ name: academies.name })
+      //     .from(academies)
+      //     .where(eq(academies.slug, slug));
 
-        if (result) {
-          // Slug already exists, increment the counter and create a new slug
-          slug = `${slugify(values.name)}-${counter}`;
-          counter++;
-        } else {
-          // Slug is available
-          isSlugAvailable = true;
-        }
+      //   if (result) {
+      //     // Slug already exists, increment the counter and create a new slug
+      //     slug = `${slugify(values.name)}-${counter}`;
+      //     counter++;
+      //   } else {
+      //     // Slug is available
+      //     isSlugAvailable = true;
+      //   }
+      // }
+
+      const [existingName] = await db
+        .select()
+        .from(academies)
+        .where(eq(academies.name, values.name));
+
+      if (existingName) {
+        return ctx.json({ name: "name already taken" }, 422);
       }
 
-      const data = await db.insert(academies).values({ slug, ...values });
-      return ctx.json({ data });
+      try {
+        const data = await db.insert(academies).values({ slug, ...values });
+        console.log({ data });
+        return ctx.json({ data });
+      } catch (error: any) {
+        console.log({ error: error });
+        // if (error.code === "DUP") {
+        //   throw new Error({ title: "Duplicate name", statusCode: 422 });
+        // }
+      }
     }
   )
-  .get("/:id", (ctx) => ctx.json(`get ${c.req.param("id")}`));
+  .get("/:id", (ctx) => ctx.json(`get ${ctx.req.param("id")}`));
 
 export default app;

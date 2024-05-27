@@ -117,7 +117,7 @@ export const courses = mysqlTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     academyId: varchar("academyId", { length: 255 }).notNull(),
-    name: varchar("name", { length: 255 }).notNull(),
+    name: varchar("name", { length: 255 }).unique().notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     description: varchar("description", { length: 255 }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
