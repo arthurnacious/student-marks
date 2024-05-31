@@ -7,6 +7,7 @@ import AddAcademModal from "./crud/add-academy";
 import { client } from "@/lib/hono";
 import { useGetAcademies } from "@/query/academies";
 import { Loader2 } from "lucide-react";
+import TableSkeleton from "@/components/skeleton/table";
 interface Props {
   initialData: any;
 }
@@ -21,7 +22,7 @@ const AcademiesTable: React.FC<Props> = ({ initialData }) => {
           <AddAcademModal />
         </CardHeader>
         {isLoading ? (
-          <Loader2 className="sizze-5 animate-spin" />
+          <TableSkeleton cols={4} />
         ) : data && data?.length > 0 ? (
           <DataTable columns={columns} data={data} searchCol="name" />
         ) : (
