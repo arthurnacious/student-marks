@@ -96,8 +96,6 @@ const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
       );
     }
 
-    console.log({ value });
-
     return (
       <div ref={containerRef} className="relative w-full">
         <div

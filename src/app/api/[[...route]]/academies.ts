@@ -5,12 +5,18 @@ import {
   academyHeadsToAcademies,
   courses,
   insertAcademySchema,
-  lecturerToAcademy,
+  lecturersToAcademies,
 } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
+import { z } from "zod";
+
+const updateAcademyShcema = insertAcademySchema.extend({
+  heads: z.array(z.string()),
+  lecturers: z.array(z.string()),
+});
 
 const app = new Hono()
   .get("/", async (ctx) => {
@@ -21,14 +27,14 @@ const app = new Hono()
         slug: academies.slug,
         _count: {
           courses: sql<number>`count(${courses.academyId})`,
-          asignees: sql<number>`count(${lecturerToAcademy.academyId})`,
+          asignees: sql<number>`count(${lecturersToAcademies.academyId})`,
         },
       })
       .from(academies)
       .leftJoin(courses, eq(academies.id, courses.academyId))
       .leftJoin(
-        lecturerToAcademy,
-        eq(academies.id, lecturerToAcademy.academyId)
+        lecturersToAcademies,
+        eq(academies.id, lecturersToAcademies.academyId)
       )
       .groupBy(academies.id)
       .orderBy(academies.name);
@@ -84,16 +90,20 @@ const app = new Hono()
     const data = await db.query.academies.findFirst({
       where: eq(academies.slug, slug),
       with: {
-        courses: true,
+        heads: true,
+        lecturers: true,
       },
     });
     return ctx.json({ data });
   })
   .patch(
     "/:slug",
-    zValidator("json", insertAcademySchema.pick({ name: true })),
+    zValidator(
+      "json",
+      updateAcademyShcema.pick({ name: true, heads: true, lecturers: true })
+    ),
     async (ctx) => {
-      const values = ctx.req.valid("json");
+      const { heads, lecturers, ...values } = ctx.req.valid("json");
 
       const slug = ctx.req.param("slug");
       const newSlug = slugify(values.name);
@@ -108,10 +118,39 @@ const app = new Hono()
       }
 
       try {
-        const data = await db
+        const academy = await db.query.academies.findFirst({
+          where: eq(academies.slug, slug),
+        });
+
+        if (!academy) {
+          return ctx.json({ error: "Not Found" }, 404);
+        }
+
+        const academyId = academy.id;
+
+        const [data] = await db
           .update(academies)
-          .set({ slug: newSlug, ...values })
-          .where(eq(academies.slug, slug));
+          .set({ ...values, slug: newSlug })
+          .where(eq(academies.id, academyId));
+
+        //update academy heads and lecurers
+        await db
+          .delete(academyHeadsToAcademies)
+          .where(eq(academyHeadsToAcademies.academyId, academyId));
+        heads.forEach(async (academyHeadId) => {
+          await db
+            .insert(academyHeadsToAcademies)
+            .values({ academyHeadId, academyId });
+        });
+        await db
+          .delete(lecturersToAcademies)
+          .where(eq(academyHeadsToAcademies.academyId, academyId));
+        lecturers.forEach(async (lecturerId) => {
+          await db
+            .insert(lecturersToAcademies)
+            .values({ lecturerId, academyId });
+        });
+
         return ctx.json({ data });
       } catch (error: any) {
         console.log({ error: error });

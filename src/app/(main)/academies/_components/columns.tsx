@@ -98,7 +98,12 @@ export const columns: ColumnDef<Academies>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`academies/${academy.slug}/edit`}>Edit Academy</Link>
+              <Link
+                href={`academies/${academy.slug}/edit`}
+                className="cursor-pointer"
+              >
+                Edit Academy
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Button variant="ghost">Delete Academy</Button>

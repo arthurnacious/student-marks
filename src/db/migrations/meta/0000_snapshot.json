@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "6c0d345b-b052-4a83-b0d8-e6b5cb323177",
+  "id": "e06723be-9602-419c-be9f-e687d00a8291",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "academies": {
@@ -18,7 +18,7 @@
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "slug": {
@@ -75,6 +75,13 @@
     "academyHeadsToAcademies": {
       "name": "academyHeadsToAcademies",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "academyId": {
           "name": "academyId",
           "type": "varchar(255)",
@@ -119,7 +126,14 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "academyHeadsToAcademies_id": {
+          "name": "academyHeadsToAcademies_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "accounts": {
@@ -432,14 +446,14 @@
           "name": "academyId",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "name": {
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "slug": {
@@ -482,7 +496,21 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "courses_academyId_academies_id_fk": {
+          "name": "courses_academyId_academies_id_fk",
+          "tableFrom": "courses",
+          "tableTo": "academies",
+          "columnsFrom": [
+            "academyId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "courses_id": {
           "name": "courses_id",
@@ -492,6 +520,12 @@
         }
       },
       "uniqueConstraints": {
+        "courses_name_unique": {
+          "name": "courses_name_unique",
+          "columns": [
+            "name"
+          ]
+        },
         "courses_slug_unique": {
           "name": "courses_slug_unique",
           "columns": [
@@ -503,6 +537,13 @@
     "coursesToAcademies": {
       "name": "coursesToAcademies",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "courseId": {
           "name": "courseId",
           "type": "varchar(255)",
@@ -547,7 +588,14 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "coursesToAcademies_id": {
+          "name": "coursesToAcademies_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "fields": {
@@ -564,7 +612,7 @@
           "name": "courseId",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "name": {
@@ -587,7 +635,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -601,9 +649,16 @@
       },
       "uniqueConstraints": {}
     },
-    "lecturerToAcademy": {
-      "name": "lecturerToAcademy",
+    "lecturersToAcademies": {
+      "name": "lecturersToAcademies",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "academyId": {
           "name": "academyId",
           "type": "varchar(255)",
@@ -621,9 +676,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "lecturerToAcademy_academyId_academies_id_fk": {
-          "name": "lecturerToAcademy_academyId_academies_id_fk",
-          "tableFrom": "lecturerToAcademy",
+        "lecturersToAcademies_academyId_academies_id_fk": {
+          "name": "lecturersToAcademies_academyId_academies_id_fk",
+          "tableFrom": "lecturersToAcademies",
           "tableTo": "academies",
           "columnsFrom": [
             "academyId"
@@ -634,9 +689,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "lecturerToAcademy_lecturerId_users_id_fk": {
-          "name": "lecturerToAcademy_lecturerId_users_id_fk",
-          "tableFrom": "lecturerToAcademy",
+        "lecturersToAcademies_lecturerId_users_id_fk": {
+          "name": "lecturersToAcademies_lecturerId_users_id_fk",
+          "tableFrom": "lecturersToAcademies",
           "tableTo": "users",
           "columnsFrom": [
             "lecturerId"
@@ -648,7 +703,14 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "lecturersToAcademies_id": {
+          "name": "lecturersToAcademies_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "marks": {
@@ -827,6 +889,13 @@
     "studentToClasses": {
       "name": "studentToClasses",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "studentId": {
           "name": "studentId",
           "type": "varchar(255)",
@@ -871,7 +940,14 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "studentToClasses_id": {
+          "name": "studentToClasses_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "users": {
@@ -888,7 +964,7 @@
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "email": {

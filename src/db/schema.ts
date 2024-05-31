@@ -147,6 +147,9 @@ export const fields = mysqlTable("fields", {
 });
 
 export const coursesToAcademies = mysqlTable("coursesToAcademies", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   courseId: varchar("courseId", { length: 255 })
     .notNull()
     .references(() => courses.id, { onDelete: "cascade" }),
@@ -183,6 +186,9 @@ export const classes = mysqlTable(
 );
 
 export const studentsToClasses = mysqlTable("studentToClasses", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   studentId: varchar("studentId", { length: 255 })
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -192,6 +198,9 @@ export const studentsToClasses = mysqlTable("studentToClasses", {
 });
 
 export const academyHeadsToAcademies = mysqlTable("academyHeadsToAcademies", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   academyId: varchar("academyId", { length: 255 })
     .notNull()
     .references(() => academies.id, { onDelete: "cascade" }),
@@ -200,7 +209,10 @@ export const academyHeadsToAcademies = mysqlTable("academyHeadsToAcademies", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const lecturerToAcademy = mysqlTable("lecturerToAcademy", {
+export const lecturersToAcademies = mysqlTable("lecturersToAcademies", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   academyId: varchar("academyId", { length: 255 })
     .notNull()
     .references(() => academies.id, { onDelete: "cascade" }),
@@ -251,7 +263,7 @@ export const marks = mysqlTable("marks", {
 
 export const academiesRelations = relations(academies, ({ many }) => ({
   courses: many(courses),
-  lecturers: many(lecturerToAcademy),
+  lecturers: many(lecturersToAcademies),
   heads: many(academyHeadsToAcademies),
 }));
 
@@ -263,10 +275,10 @@ export const coursesRelations = relations(courses, ({ one }) => ({
 }));
 
 export const lecturerToAcademiesRelations = relations(
-  lecturerToAcademy,
+  lecturersToAcademies,
   ({ one }) => ({
     academy: one(academies, {
-      fields: [lecturerToAcademy.academyId],
+      fields: [lecturersToAcademies.academyId],
       references: [academies.id],
     }),
   })

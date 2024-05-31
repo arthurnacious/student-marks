@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/hono";
 import { useForm } from "react-hook-form";
 import React from "react";
@@ -20,29 +19,28 @@ import MultiSelect from "@/components/ui/multi-select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetUsers } from "@/query/users";
 import { RoleName } from "@/types/roles";
-import { useGetCourses } from "@/query/courses";
 import { toast } from "sonner";
 import Error from "next/error";
-import { academies, users } from "@/db/schema";
-import { InferSelectModel } from "drizzle-orm";
-import type { academyWithCount } from "@/types/fetch";
+import type { academyWithRelations } from "@/types/fetch";
+import { notFound, useRouter } from "next/navigation";
 
-type RequestType = InferRequestType<typeof client.api.academies.$post>["json"];
-type userType = InferSelectModel<typeof users>;
-type academy = InferSelectModel<typeof academies>;
+type RequestType = {
+  name: string;
+  heads: string[];
+  lecturers: string[];
+};
 
-interface academiesType extends academyWithCount {}
+interface academiesType extends academyWithRelations {}
 
 interface Props {
-  academy: academiesType;
+  academy: academiesType | undefined;
 }
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  courses: z.array(z.string()),
-  academyHeads: z.array(z.string()),
+  heads: z.array(z.string()),
   lecturers: z.array(z.string()),
 });
 
@@ -50,19 +48,23 @@ type formValues = z.input<typeof formSchema>;
 
 const EditAcademyForm: React.FC<Props> = ({ academy }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: academy.name,
-      academyHeads: academy.academyHeads ?? [],
-      lecturers: academy.lecturers ?? [],
+      name: academy?.name ?? "",
+      heads: academy?.heads?.map(({ academyHeadId }) => academyHeadId) ?? [],
+      lecturers: academy?.lecturers?.map(({ lecturerId }) => lecturerId) ?? [],
     },
   });
 
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
-      const response = await client.api.academies.$post({ json: values });
+      const response = await client.api.academies[":slug"].$patch({
+        json: values,
+        param: { slug: academy?.slug ?? "--" },
+      });
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
       }
@@ -70,8 +72,10 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
     },
     onSuccess: () => {
       onOpenChange(false);
-      toast.success("Academy inserted successfully");
+      toast.success("Academy updated successfully");
       queryClient.invalidateQueries({ queryKey: ["academies"] });
+      queryClient.invalidateQueries({ queryKey: ["academies", academy?.slug] });
+      router.push("/academies");
     },
     onError: (error: any) => {
       if (error.props.statusCode === 422) {
@@ -82,8 +86,8 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
     },
   });
 
-  const lecturers = useGetUsers(RoleName.LECTURER);
   const academyHeads = useGetUsers(RoleName.ACADEMYHEAD);
+  const lecturers = useGetUsers(RoleName.LECTURER);
 
   function onSubmit(values: formValues) {
     mutation.mutate(values);
@@ -91,6 +95,10 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
 
   function onOpenChange(b: boolean) {
     form.reset();
+  }
+
+  if (!academy) {
+    return notFound();
   }
 
   return (
@@ -113,7 +121,7 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
 
           <FormField
             control={form.control}
-            name="academyHeads"
+            name="heads"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Academy Heads</FormLabel>

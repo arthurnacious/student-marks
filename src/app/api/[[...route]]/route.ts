@@ -15,5 +15,7 @@ const route = new Hono()
 
 export const GET = handle(route);
 export const POST = handle(route);
+export const PATCH = handle(route);
+export const DELETE = handle(route);
 
 export type AppType = typeof route;

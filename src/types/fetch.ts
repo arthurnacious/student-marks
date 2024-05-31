@@ -1,8 +1,9 @@
-export interface academyWithCount {
+export interface academyWithRelations {
   id: string;
   name: string;
+  createdAt: string;
+  updatedAt: string | null;
   slug: string;
-  courses: string[] | null;
-  lecturers: string[] | null;
-  academyHeads: string[] | null;
+  lecturers: { academyId: string; lecturerId: string }[];
+  heads: { academyId: string; academyHeadId: string }[];
 }
