@@ -11,7 +11,7 @@ import { PlusCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Form,
   FormControl,
@@ -22,15 +22,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useCreateAcademy } from "@/query/academies";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import Error from "next/error";
-import { InferRequestType } from "hono";
+import { InferRequestType, InferResponseType } from "hono";
 
 interface Props {}
 
+type ResponseType = InferResponseType<typeof client.api.academies.$post>;
 type RequestType = InferRequestType<typeof client.api.academies.$post>["json"];
 
 const formSchema = z.object({
@@ -56,7 +56,7 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
       const response = await client.api.academies.$post({ json: values });
-      console.log({ response });
+
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
       }
@@ -68,7 +68,6 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
       queryClient.invalidateQueries({ queryKey: ["academies"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       if (error.props.statusCode === 422) {
         form.setError("name", { message: "The selected name already exist" });
         return;

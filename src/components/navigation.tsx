@@ -1,6 +1,6 @@
 "use client";
 import { motion, useAnimationControls, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NavigationLink from "./navigation-link";
 import { HiChartBar } from "react-icons/hi";
 import { FaLayerGroup } from "react-icons/fa";
@@ -13,15 +13,15 @@ const containerVariants = {
     width: "5rem",
     transition: {
       type: "spring",
-      damping: 15,
+      damping: 8,
       duration: 0.5,
     },
   },
   open: {
-    width: "16rem",
+    width: "12rem",
     transition: {
       type: "spring",
-      damping: 15,
+      damping: 8,
       duration: 0.5,
     },
   },
@@ -30,24 +30,51 @@ const containerVariants = {
 const svgVariants = {
   close: {
     rotate: 360,
+    transition: {
+      type: "spring",
+      damping: 7,
+      duration: 0.5,
+    },
   },
   open: {
     rotate: 180,
+    transition: {
+      type: "spring",
+      damping: 7,
+      duration: 0.5,
+    },
   },
 };
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const containerControls = useAnimationControls();
   const svgControls = useAnimationControls();
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (navRef.current && !navRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
   useEffect(() => {
     const start = isOpen ? "open" : "close";
 
+    if (isOpen) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
     containerControls.start(start);
     svgControls.start(start);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -62,11 +89,12 @@ function Navigation() {
       variants={containerVariants}
       animate={containerControls}
       initial="close"
+      ref={navRef}
       className="bg-neutral-900 flex flex-col z-10 gap-20 p-5 fixed top-0 left-0 h-full min-h-screen shadow shadow-neutral-600"
     >
       <div className="flex flex-row w-full justify-between place-items-center">
         {/* logo */}
-        <div className="w-10 h-10 relative flex justify-center items-center border border-orange-500 rounded-full">
+        <div className="size-10 relative flex justify-center items-center border border-orange-500 rounded-full">
           Creare
         </div>
         <button

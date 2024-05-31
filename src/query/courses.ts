@@ -2,13 +2,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 
-export const useGetAcademies = () => {
+export const useGetCourses = () => {
   const query = useQuery({
-    queryKey: ["academies"],
+    queryKey: ["courses"],
     queryFn: async () => {
-      const response = await client.api.academies.$get();
+      const response = await client.api.courses.$get();
       if (!response.ok) {
-        throw new Error("Failed to fetch academies");
+        throw new Error("Failed to fetch courses");
       }
       const { data } = await response.json();
       return data;

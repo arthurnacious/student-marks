@@ -1,14 +1,19 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-
-export const dbCredentials = {
-  host: process.env.DB_HOST as string,
-  user: process.env.DB_USER as string,
-  database: process.env.DB_NAME as string,
-  password: process.env.DB_PASS as string,
-  pool: process.env.DB_PORT as string,
-};
+import * as schema from "./schema";
+import { dbCredentials } from "./credentials";
 
 const poolConnection = mysql.createPool(dbCredentials);
 
-export const db = drizzle(poolConnection);
+export const db = drizzle(poolConnection, {
+  logger: true,
+  mode: "default",
+  schema: { ...schema },
+});
+
+// const connection = await mysql.createConnection(dbCredentials);
+
+// export const db = drizzle(connection, {
+//   mode: "default",
+//   schema: { ...schema },
+// });

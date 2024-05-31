@@ -2,14 +2,14 @@
 import { db } from "@/db";
 import {
   academies,
+  academyHeadsToAcademies,
   courses,
   insertAcademySchema,
   lecturerToAcademy,
 } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
-import Error from "next/error";
 import slugify from "slugify";
 
 const app = new Hono()
@@ -70,16 +70,53 @@ const app = new Hono()
 
       try {
         const data = await db.insert(academies).values({ slug, ...values });
-        console.log({ data });
+
         return ctx.json({ data });
       } catch (error: any) {
-        console.log({ error: error });
         // if (error.code === "DUP") {
         //   throw new Error({ title: "Duplicate name", statusCode: 422 });
         // }
       }
     }
   )
-  .get("/:id", (ctx) => ctx.json(`get ${ctx.req.param("id")}`));
+  .get("/:slug", async (ctx) => {
+    const slug = ctx.req.param("slug");
+    const data = await db.query.academies.findFirst({
+      where: eq(academies.slug, slug),
+      with: {
+        courses: true,
+      },
+    });
+    return ctx.json({ data });
+  })
+  .patch(
+    "/:slug",
+    zValidator("json", insertAcademySchema.pick({ name: true })),
+    async (ctx) => {
+      const values = ctx.req.valid("json");
+
+      const slug = ctx.req.param("slug");
+      const newSlug = slugify(values.name);
+
+      const [existingName] = await db
+        .select()
+        .from(academies)
+        .where(and(eq(academies.name, values.name), ne(academies.slug, slug)));
+
+      if (existingName) {
+        return ctx.json({ name: "name already taken" }, 422);
+      }
+
+      try {
+        const data = await db
+          .update(academies)
+          .set({ slug: newSlug, ...values })
+          .where(eq(academies.slug, slug));
+        return ctx.json({ data });
+      } catch (error: any) {
+        console.log({ error: error });
+      }
+    }
+  );
 
 export default app;

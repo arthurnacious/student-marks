@@ -13,8 +13,9 @@ import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { RoleName } from "@/types/roles";
 import { AttendanceName } from "@/types/attendance";
-import { dbCredentials } from ".";
 import { createInsertSchema } from "drizzle-zod";
+import { dbCredentials } from "./credentials";
+import { relations } from "drizzle-orm";
 
 const poolConnection = mysql.createPool(dbCredentials);
 
@@ -26,7 +27,7 @@ export const users = mysqlTable("users", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
@@ -116,7 +117,10 @@ export const courses = mysqlTable(
     id: varchar("id", { length: 255 })
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    academyId: varchar("academyId", { length: 255 }).notNull(),
+    academyId: varchar("academyId", { length: 255 }).references(
+      () => academies.id,
+      { onDelete: "set null" }
+    ),
     name: varchar("name", { length: 255 }).unique().notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     description: varchar("description", { length: 255 }),
@@ -136,9 +140,9 @@ export const fields = mysqlTable("fields", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  courseId: varchar("courseId", { length: 255 })
-    .notNull()
-    .references(() => courses.id, { onDelete: "cascade" }),
+  courseId: varchar("courseId", { length: 255 }).references(() => courses.id, {
+    onDelete: "set null",
+  }),
   name: varchar("name", { length: 255 }).notNull(),
 });
 
@@ -244,5 +248,38 @@ export const marks = mysqlTable("marks", {
     .references(() => users.id, { onDelete: "cascade" }),
   amount: int("amount").notNull(),
 });
+
+export const academiesRelations = relations(academies, ({ many }) => ({
+  courses: many(courses),
+  lecturers: many(lecturerToAcademy),
+  heads: many(academyHeadsToAcademies),
+}));
+
+export const coursesRelations = relations(courses, ({ one }) => ({
+  academy: one(academies, {
+    fields: [courses.academyId],
+    references: [academies.id],
+  }),
+}));
+
+export const lecturerToAcademiesRelations = relations(
+  lecturerToAcademy,
+  ({ one }) => ({
+    academy: one(academies, {
+      fields: [lecturerToAcademy.academyId],
+      references: [academies.id],
+    }),
+  })
+);
+
+export const academyHeadsToAcademiesRelations = relations(
+  academyHeadsToAcademies,
+  ({ one }) => ({
+    academy: one(academies, {
+      fields: [academyHeadsToAcademies.academyId],
+      references: [academies.id],
+    }),
+  })
+);
 
 export const insertAcademySchema = createInsertSchema(academies);

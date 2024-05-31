@@ -1,4 +1,4 @@
-import { dbCredentials } from "@/db";
+import { dbCredentials } from "@/db/credentials";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({

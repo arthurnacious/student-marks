@@ -29,6 +29,20 @@
       "when": 1716797570425,
       "tag": "0003_nebulous_raza",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1716816639004,
+      "tag": "0004_fat_jackal",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1716894782044,
+      "tag": "0005_colossal_famine",
+      "breakpoints": true
     }
   ]
 }

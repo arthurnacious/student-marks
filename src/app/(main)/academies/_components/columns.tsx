@@ -94,11 +94,11 @@ export const columns: ColumnDef<Academies>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(academy.slug)}
             >
-              Copy academy link
+              Copy academy slug
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`academies/${academy.slug}`}>Edit Academy</Link>
+              <Link href={`academies/${academy.slug}/edit`}>Edit Academy</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Button variant="ghost">Delete Academy</Button>
