@@ -74,7 +74,9 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
       onOpenChange(false);
       toast.success("Academy updated successfully");
       queryClient.invalidateQueries({ queryKey: ["academies"] });
-      queryClient.invalidateQueries({ queryKey: ["academies", academy?.slug] });
+      queryClient.invalidateQueries({
+        queryKey: ["academies", "academy?.slug"],
+      });
       router.push("/academies");
     },
     onError: (error: any) => {

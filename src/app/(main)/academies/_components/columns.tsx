@@ -20,13 +20,13 @@ export type Academies = {
   slug: string;
   _count: {
     courses: number;
-    asignees: number;
+    lecturers: number;
   };
 };
 
 export const columns: ColumnDef<Academies>[] = [
   {
-    id: "select",
+    id: "Select",
     header: ({ table }) => (
       <Checkbox
         checked={
@@ -62,17 +62,19 @@ export const columns: ColumnDef<Academies>[] = [
     },
   },
   {
-    accessorKey: "courses",
+    // accessorKey: "_count.courses",
+    header: "Courses",
     cell: ({ row }) => {
       const academy = row.original;
       return academy._count.courses;
     },
   },
   {
-    accessorKey: "assignees",
+    // accessorKey: "_count.lecturers",
+    header: "Lecturers",
     cell: ({ row }) => {
       const academy = row.original;
-      return academy._count.asignees;
+      return academy._count.lecturers;
     },
   },
   {

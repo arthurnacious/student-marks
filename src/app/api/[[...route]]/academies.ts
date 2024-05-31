@@ -27,7 +27,7 @@ const app = new Hono()
         slug: academies.slug,
         _count: {
           courses: sql<number>`count(${courses.academyId})`,
-          asignees: sql<number>`count(${lecturersToAcademies.academyId})`,
+          lecturers: sql<number>`count(${lecturersToAcademies.academyId})`,
         },
       })
       .from(academies)
@@ -137,14 +137,17 @@ const app = new Hono()
         await db
           .delete(academyHeadsToAcademies)
           .where(eq(academyHeadsToAcademies.academyId, academyId));
+
         heads.forEach(async (academyHeadId) => {
           await db
             .insert(academyHeadsToAcademies)
             .values({ academyHeadId, academyId });
         });
+
         await db
           .delete(lecturersToAcademies)
-          .where(eq(academyHeadsToAcademies.academyId, academyId));
+          .where(eq(lecturersToAcademies.academyId, academyId));
+
         lecturers.forEach(async (lecturerId) => {
           await db
             .insert(lecturersToAcademies)
