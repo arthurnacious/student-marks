@@ -8,7 +8,7 @@ import {
   lecturersToAcademies,
 } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq, ne, sql } from "drizzle-orm";
+import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
 import { z } from "zod";
@@ -158,6 +158,26 @@ const app = new Hono()
       } catch (error: any) {
         console.log({ error: error });
       }
+    }
+  )
+  .post(
+    "/bulk-delete",
+    zValidator(
+      "json",
+      z.object({
+        ids: z.array(z.string()),
+      })
+    ),
+    async (ctx) => {
+      const values = ctx.req.valid("json");
+
+      try {
+        const data = await db
+          .delete(academies)
+          .where(inArray(academies.id, values.ids));
+
+        return ctx.json({ data: values.ids });
+      } catch (error: any) {}
     }
   );
 

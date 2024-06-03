@@ -4,6 +4,7 @@ import React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
+  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -29,12 +30,18 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchCol: keyof TData;
+  onDelete: (rows: Row<TData>[]) => void;
+  disabled?: boolean;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchCol,
+  onDelete,
+  isLoading = false,
+  disabled = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -78,16 +85,21 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        {selectedRows.length > 0 && (
+          <Button
+            isLoading={isLoading}
+            size="sm"
+            variant="outline"
+            className="ml-auto font-normal text-xs"
+            onClick={() => {
+              onDelete(selectedRows);
+              table.resetRowSelection();
+            }}
+          >
+            <Trash2 className="size-4 mr-2" /> Delete ({selectedRows.length})
+          </Button>
+        )}
       </div>
-      {selectedRows.length > 0 && (
-        <Button
-          size="sm"
-          variant="outline"
-          className="ml-auto font-normal text-xs"
-        >
-          <Trash2 className="size-4 mr-2" /> Delete ({selectedRows.length})
-        </Button>
-      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
