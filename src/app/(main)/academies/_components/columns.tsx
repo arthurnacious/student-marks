@@ -93,10 +93,13 @@ export const columns: ColumnDef<Academies>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(academy.slug)}
-            >
-              Copy academy slug
+            <DropdownMenuItem asChild>
+              <Link
+                href={`academies/${academy.slug}`}
+                className="cursor-pointer"
+              >
+                View Academy
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -106,9 +109,6 @@ export const columns: ColumnDef<Academies>[] = [
               >
                 Edit Academy
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Button variant="ghost">Delete Academy</Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
