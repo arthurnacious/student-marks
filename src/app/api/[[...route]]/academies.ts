@@ -45,7 +45,7 @@ const app = new Hono()
     zValidator("json", insertAcademySchema.pick({ name: true })),
     async (ctx) => {
       const values = ctx.req.valid("json");
-      let slug = slugify(values.name);
+      let slug = slugify(values.name.toLowerCase());
       let counter = 1;
       let isSlugAvailable = false;
 
@@ -57,7 +57,7 @@ const app = new Hono()
 
       //   if (result) {
       //     // Slug already exists, increment the counter and create a new slug
-      //     slug = `${slugify(values.name)}-${counter}`;
+      //     slug = `${slugify(values.name.toLowerCase())}-${counter}`;
       //     counter++;
       //   } else {
       //     // Slug is available
@@ -106,7 +106,7 @@ const app = new Hono()
       const { heads, lecturers, ...values } = ctx.req.valid("json");
 
       const slug = ctx.req.param("slug");
-      const newSlug = slugify(values.name);
+      const newSlug = slugify(values.name.toLowerCase());
 
       const [existingName] = await db
         .select()
