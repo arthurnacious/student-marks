@@ -77,7 +77,7 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
       queryClient.invalidateQueries({
         queryKey: ["academies", "academy?.slug"],
       });
-      router.push("/academies");
+      router.back();
     },
     onError: (error: any) => {
       if (error.props.statusCode === 422) {
