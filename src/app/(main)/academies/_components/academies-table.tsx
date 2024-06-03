@@ -17,31 +17,27 @@ const AcademiesTable: React.FC<Props> = ({ initialData }) => {
   const deleteAcademies = useBulkDeleteAcademies();
 
   return (
-    <Card>
-      <CardContent>
-        <CardHeader>
-          <AddAcademModal />
-        </CardHeader>
-        {isLoading ? (
-          <TableSkeleton cols={4} />
-        ) : data && data?.length > 0 ? (
-          <DataTable
-            columns={columns}
-            onDelete={(rows) => {
-              const ids = rows.map((row) => row.original.id);
-              deleteAcademies.mutate({ ids });
-            }}
-            isLoading={deleteAcademies.isPending}
-            data={data}
-            searchCol="name"
-          />
-        ) : (
-          <div className="flex items-center justify-center">
-            <h3 className="text-2xl ">There are no academies on the system.</h3>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <div>
+      <AddAcademModal />
+      {isLoading ? (
+        <TableSkeleton cols={4} />
+      ) : data && data?.length > 0 ? (
+        <DataTable
+          columns={columns}
+          onDelete={(rows) => {
+            const ids = rows.map((row) => row.original.id);
+            deleteAcademies.mutate({ ids });
+          }}
+          isLoading={deleteAcademies.isPending}
+          data={data}
+          searchCol="name"
+        />
+      ) : (
+        <div className="flex items-center justify-center">
+          <h3 className="text-2xl ">There are no academies on the system.</h3>
+        </div>
+      )}
+    </div>
   );
 };
 
