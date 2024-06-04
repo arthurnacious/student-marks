@@ -17,10 +17,14 @@ interface Props {
   };
   courses: {
     id: string;
-    academyId: string;
+    name: string;
     createdAt: string;
     updatedAt: string | null;
   }[];
+}
+
+function getStatus(): React.ReactNode {
+  return <span className="bg-green-600/20 rounded-lg px-2">Active</span>;
 }
 
 const CoursesTable: FC<Props> = ({ academy, courses }) => {
@@ -34,31 +38,25 @@ const CoursesTable: FC<Props> = ({ academy, courses }) => {
           <TableHead>Name</TableHead>
           <TableHead>Status</TableHead>
           <TableHead className="text-right">Registered...</TableHead>
-          <TableHead className="text-right">Active Till</TableHead>
         </TableRow>
       </TableHeader>
-      {/* <TableBody>
-        {courses.map((pivot) => (
-          <TableRow key={pivot.id}>
-            <TableCell>{pivot.lecturer.name}</TableCell>
-            <TableCell>{getStatus(pivot.lecturer.createdAt)}</TableCell>
+      <TableBody>
+        {courses.map((course) => (
+          <TableRow key={course.id}>
+            <TableCell>{course.name}</TableCell>
+            <TableCell>{getStatus()}</TableCell>
             <TableCell className="text-right">
               {formatDistance(
-                subDays(new Date(pivot.lecturer.createdAt), 3),
-                new Date(pivot.lecturer.createdAt),
+                subDays(new Date(course.createdAt), 3),
+                new Date(course.createdAt),
                 {
                   addSuffix: true,
                 }
               )}
             </TableCell>
-            <TableCell className="text-right">
-              {pivot.lecturer.activeTill
-                ? format(new Date(pivot.lecturer.activeTill), "d-MMMM-Y")
-                : "Indefinately"}
-            </TableCell>
           </TableRow>
         ))}
-      </TableBody> */}
+      </TableBody>
     </Table>
   );
 };
