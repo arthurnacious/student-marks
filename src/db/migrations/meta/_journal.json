@@ -8,6 +8,13 @@
       "when": 1717159534413,
       "tag": "0000_heavy_shooting_star",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1717502444940,
+      "tag": "0001_sparkling_paper_doll",
+      "breakpoints": true
     }
   ]
 }

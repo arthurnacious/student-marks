@@ -16,6 +16,7 @@ import { AttendanceName } from "@/types/attendance";
 import { createInsertSchema } from "drizzle-zod";
 import { dbCredentials } from "./credentials";
 import { relations } from "drizzle-orm";
+import { StatusName } from "@/types/course";
 
 const poolConnection = mysql.createPool(dbCredentials);
 
@@ -111,6 +112,7 @@ export const academies = mysqlTable(
   }
 );
 
+const courseStatusType: string[] = Object.values(StatusName);
 export const courses = mysqlTable(
   "courses",
   {
@@ -124,6 +126,10 @@ export const courses = mysqlTable(
     name: varchar("name", { length: 255 }).unique().notNull(),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     description: varchar("description", { length: 255 }),
+    status: mysqlEnum(
+      "status",
+      courseStatusType as [string, ...string[]]
+    ).default(StatusName.ACTIVE),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt")
       .defaultNow()
@@ -276,10 +282,26 @@ export const academiesRelations = relations(academies, ({ many }) => ({
   heads: many(academyHeadsToAcademies),
 }));
 
-export const coursesRelations = relations(courses, ({ one }) => ({
+export const coursesRelations = relations(courses, ({ one, many }) => ({
   academy: one(academies, {
     fields: [courses.academyId],
     references: [academies.id],
+  }),
+  fields: many(fields),
+  classes: many(classes),
+}));
+
+export const classesRelations = relations(classes, ({ one }) => ({
+  course: one(courses, {
+    fields: [classes.courseId],
+    references: [courses.id],
+  }),
+}));
+
+export const fieldsRelations = relations(fields, ({ one }) => ({
+  course: one(courses, {
+    fields: [fields.courseId],
+    references: [courses.id],
   }),
 }));
 
@@ -315,3 +337,4 @@ export const academyHeadsToAcademiesRelations = relations(
 );
 
 export const insertAcademySchema = createInsertSchema(academies);
+export const insertCourseSchema = createInsertSchema(academies);

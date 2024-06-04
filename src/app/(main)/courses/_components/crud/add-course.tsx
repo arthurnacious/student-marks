@@ -30,32 +30,35 @@ import { InferRequestType, InferResponseType } from "hono";
 
 interface Props {}
 
-type ResponseType = InferResponseType<typeof client.api.academies.$post>;
-type RequestType = InferRequestType<typeof client.api.academies.$post>["json"];
+type ResponseType = InferResponseType<typeof client.api.courses.$post>;
+type RequestType = InferRequestType<typeof client.api.courses.$post>["json"];
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
+  fields: z.array(z.string().nonempty("Field is required")),
 });
 
 type formValues = z.input<typeof formSchema>;
 
-const AddAcademyModal: React.FC<Props> = ({}) => {
+const AddCourseModal: React.FC<Props> = ({}) => {
+  const [fieldCount, setFieldCount] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  // const { mutate, isPending, isError, error, } = useCreateAcademy();
+  // const { mutate, isPending, isError, error, } = useCreateCourse();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      fields: [""],
     },
   });
 
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
-      const response = await client.api.academies.$post({ json: values });
+      const response = await client.api.courses.$post({ json: values });
 
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
@@ -64,15 +67,15 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
     },
     onSuccess: () => {
       onOpenChange(false);
-      toast.success("Academy inserted successfully");
-      queryClient.invalidateQueries({ queryKey: ["academies"] });
+      toast.success("Course added successfully");
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error: any) => {
       if (error.props.statusCode === 422) {
         form.setError("name", { message: "The selected name already exist" });
         return;
       }
-      toast.error("failed to insert academy");
+      toast.error("failed to add course");
     },
   });
 
@@ -83,22 +86,23 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
   function onOpenChange(b: boolean) {
     form.reset();
     setIsOpen(b);
+    setFieldCount(1);
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={(b) => onOpenChange(b)}>
       <DialogTrigger asChild>
         <Button onClick={() => setIsOpen(!isOpen)}>
-          <PlusCircle className="mr-2" /> Add Academy
+          <PlusCircle className="mr-2" /> Add Course
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add an academy</DialogTitle>
+          <DialogTitle>Add a Course</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="name"
@@ -106,15 +110,53 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
                   <FormItem>
                     <FormLabel>Course</FormLabel>
                     <FormControl>
-                      <Input placeholder="Marketing" {...field} />
+                      <Input placeholder="Math 1" {...field} />
                     </FormControl>
                     <FormDescription>
-                      This wil be the name of the academy
+                      This wil be the name of the course
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <h4 className="text-2xl mt-5 mb-3">Fields</h4>
+
+              <Input
+                placeholder="1"
+                type="number"
+                value={fieldCount}
+                min={1}
+                max={5}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value > 0 && value <= 5) {
+                    setFieldCount(value);
+                  } else {
+                    form.setError("fields", {
+                      message:
+                        "Fields has to be more than 0 but not more than 5",
+                    });
+                  }
+                }}
+              />
+              <div className="flex flex-wrap gap-x-3 my-4">
+                {[...Array(fieldCount).keys()].map((_, idx) => (
+                  <FormField
+                    key={idx}
+                    control={form.control}
+                    name={`fields.${idx}`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Filed Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Theory" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
               <Button isLoading={mutation.isPending}>Create</Button>
             </form>
           </Form>
@@ -124,4 +166,4 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
   );
 };
 
-export default AddAcademyModal;
+export default AddCourseModal;
