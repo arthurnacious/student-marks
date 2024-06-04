@@ -21,6 +21,7 @@ import { notFound } from "next/navigation";
 import { courses } from "@/db/schema";
 import LecturersTable from "./_components/lecturers-table";
 import CoursesTable from "./_components/courses-table";
+import HeadsTable from "./_components/heads-table";
 
 interface Props {
   params: { slug: string };
@@ -132,6 +133,7 @@ const ViewAcademy: React.FC<Props> = async ({ params: { slug } }) => {
               <h2 className="text-2xl py-5 uppercase text-center">
                 Academy Heads
               </h2>
+              <HeadsTable heads={academyHeads} academy={academy} />
             </Card>
           </TabsContent>
 
@@ -155,78 +157,3 @@ const ViewAcademy: React.FC<Props> = async ({ params: { slug } }) => {
 };
 
 export default ViewAcademy;
-
-//  <div className="border rounded-lg w-full mb-10">
-//           <div className="relative w-full overflow-auto p-5">
-//             <h2 className="text-2xl mb-2 uppercase text-center">
-//               Academy Heads
-//             </h2>
-//             <div className="flex flex-wrap justify-center gap-5">
-//               {lecturers.map((user) => (
-//                 <Card key={user.image} className="w-96">
-//                   <CardHeader>
-//                     <CardTitle>{user.name}</CardTitle>
-//                     <CardDescription>{user.image}</CardDescription>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <p>Born: {user.birthDate}</p>
-//                     <p>Classes presented: {user.classes}</p>
-//                   </CardContent>
-//                 </Card>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-//         <div className="border rounded-lg w-full mb-10">
-//           <div className="relative w-full overflow-auto p-5">
-//             <h2 className="text-2xl mb-2 uppercase text-center">Lecturers</h2>
-//             <div className="flex flex-wrap justify-center gap-5">
-//               {lecturers.map((user) => (
-//                 <Card key={user.image} className="w-96">
-//                   <CardHeader>
-//                     <CardTitle>{user.name}</CardTitle>
-//                     <CardDescription>{user.image}</CardDescription>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <p>Born: {user.birthDate}</p>
-//                     <p>Classes presented: {user.classes}</p>
-//                   </CardContent>
-//                 </Card>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="border rounded-lg w-full">
-//           <div className="relative w-full overflow-auto p-5">
-//             <h2 className="text-2xl mb-2 uppercase ">Courses</h2>
-
-//             <Table>
-//               <TableCaption>A list of your recent invoices.</TableCaption>
-//               <TableHeader>
-//                 <TableRow>
-//                   <TableHead className="max-w-sm truncate">Name</TableHead>
-//                   <TableHead>Status</TableHead>
-//                   <TableHead className="text-right">Classes Ran</TableHead>
-//                 </TableRow>
-//               </TableHeader>
-//               <TableBody>
-//                 {invoices.map((course) => (
-//                   <TableRow key={course.name}>
-//                     <TableCell className="font-medium">{course.name}</TableCell>
-//                     <TableCell>{course.status}</TableCell>
-//                     <TableCell className="text-right">
-//                       {course.classes}
-//                     </TableCell>
-//                   </TableRow>
-//                 ))}
-//               </TableBody>
-//               <TableFooter>
-//                 <TableRow>
-//                   <TableCell colSpan={2}>Total</TableCell>
-//                   <TableCell className="text-right">{99} times</TableCell>
-//                 </TableRow>
-//               </TableFooter>
-//             </Table>
-//           </div>
-//         </div>

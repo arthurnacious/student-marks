@@ -262,8 +262,12 @@ export const marks = mysqlTable("marks", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  academiesLecturing: many(academyHeadsToAcademies),
-  academiesLeading: many(lecturersToAcademies),
+  academiesLecturing: many(academyHeadsToAcademies, {
+    relationName: "academiesLecturing",
+  }),
+  academiesLeading: many(lecturersToAcademies, {
+    relationName: "academiesLeading",
+  }),
 }));
 
 export const academiesRelations = relations(academies, ({ many }) => ({
@@ -289,6 +293,7 @@ export const lecturerToAcademiesRelations = relations(
     lecturer: one(users, {
       fields: [lecturersToAcademies.lecturerId],
       references: [users.id],
+      relationName: "academiesLeading",
     }),
   })
 );
@@ -299,6 +304,12 @@ export const academyHeadsToAcademiesRelations = relations(
     academy: one(academies, {
       fields: [academyHeadsToAcademies.academyId],
       references: [academies.id],
+      relationName: "academiesLecturing",
+    }),
+    head: one(users, {
+      fields: [academyHeadsToAcademies.academyHeadId],
+      references: [users.id],
+      relationName: "academiesLeading",
     }),
   })
 );

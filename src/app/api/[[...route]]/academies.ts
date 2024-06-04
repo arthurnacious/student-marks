@@ -189,8 +189,12 @@ const app = new Hono()
   })
   .get("/:id/academy-heads", async (ctx) => {
     const academyId = ctx.req.param("id");
+
     const data = await db.query.academyHeadsToAcademies.findMany({
-      where: eq(academyHeadsToAcademies.academyId, academyId),
+      where: eq(lecturersToAcademies.academyId, academyId),
+      with: {
+        head: true,
+      },
     });
     return ctx.json({ data });
   })

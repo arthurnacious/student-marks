@@ -3,7 +3,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -15,17 +14,17 @@ interface Props {
   academy: {
     name: string;
   };
-  lecturers: {
+  heads: {
     id: string;
     academyId: string;
-    lecturerId: string;
-    lecturer: {
+    academyHeadId: string;
+    head: {
       id: string;
-      role: string;
-      image: string | null;
       name: string;
       email: string;
       emailVerified: string | null;
+      image: string | null;
+      role: string;
       activeTill: string | null;
       createdAt: string;
       updatedAt: string | null;
@@ -43,37 +42,36 @@ function getStatus(createdAt?: string): React.ReactNode {
   );
 }
 
-const LecturersTable: FC<Props> = ({ academy, lecturers }) => {
+const HeadsTable: FC<Props> = ({ academy, heads }) => {
   return (
     <Table>
       <TableCaption className="my-5">
-        A list of {academy.name} lecturers.
+        A list of {academy.name} heads.
       </TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Status</TableHead>
           <TableHead className="text-right">Registered...</TableHead>
-          <TableHead className="text-right">Active Till</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {lecturers.map((pivot) => (
+        {heads.map((pivot) => (
           <TableRow key={pivot.id}>
-            <TableCell>{pivot.lecturer.name}</TableCell>
-            <TableCell>{getStatus(pivot.lecturer.createdAt)}</TableCell>
+            <TableCell>{pivot.head.name}</TableCell>
+            <TableCell>{getStatus(pivot.head.createdAt)}</TableCell>
             <TableCell className="text-right">
               {formatDistance(
-                subDays(new Date(pivot.lecturer.createdAt), 3),
-                new Date(pivot.lecturer.createdAt),
+                subDays(new Date(pivot.head.createdAt), 3),
+                new Date(pivot.head.createdAt),
                 {
                   addSuffix: true,
                 }
               )}
             </TableCell>
             <TableCell className="text-right">
-              {pivot.lecturer.activeTill
-                ? format(new Date(pivot.lecturer.activeTill), "d-MMMM-y")
+              {pivot.head.activeTill
+                ? format(new Date(pivot.head.activeTill), "d-MMMM-y")
                 : "Indefinately"}
             </TableCell>
           </TableRow>
@@ -83,4 +81,4 @@ const LecturersTable: FC<Props> = ({ academy, lecturers }) => {
   );
 };
 
-export default LecturersTable;
+export default HeadsTable;
