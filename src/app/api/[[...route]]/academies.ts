@@ -179,6 +179,31 @@ const app = new Hono()
         return ctx.json({ data: values.ids });
       } catch (error: any) {}
     }
-  );
+  )
+  .get("/:id/courses", async (ctx) => {
+    const academyId = ctx.req.param("id");
+    const data = await db.query.courses.findMany({
+      where: eq(courses.academyId, academyId),
+    });
+    return ctx.json({ data });
+  })
+  .get("/:id/academy-heads", async (ctx) => {
+    const academyId = ctx.req.param("id");
+    const data = await db.query.academyHeadsToAcademies.findMany({
+      where: eq(academyHeadsToAcademies.academyId, academyId),
+    });
+    return ctx.json({ data });
+  })
+  .get("/:id/lecturers", async (ctx) => {
+    const academyId = ctx.req.param("id");
+    const data = await db.query.lecturersToAcademies.findMany({
+      where: eq(lecturersToAcademies.academyId, academyId),
+      with: {
+        lecturer: true,
+      },
+    });
+
+    return ctx.json({ data });
+  });
 
 export default app;
