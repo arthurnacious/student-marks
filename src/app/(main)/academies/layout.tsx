@@ -6,7 +6,7 @@ interface Props {
   modal: React.ReactNode;
 }
 
-const MainLayout: React.FC<Props> = ({ children, modal }) => {
+const AcademiesLayout: React.FC<Props> = ({ children, modal }) => {
   return (
     <>
       {modal}
@@ -15,4 +15,4 @@ const MainLayout: React.FC<Props> = ({ children, modal }) => {
   );
 };
 
-export default MainLayout;
+export default AcademiesLayout;

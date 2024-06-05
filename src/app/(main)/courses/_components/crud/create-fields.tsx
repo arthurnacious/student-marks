@@ -166,6 +166,7 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
         <Button
           isLoading={mutation.isPending}
           className="border border-green-400/20 mt-4"
+          disabled={disabled}
         >
           Add field
         </Button>
