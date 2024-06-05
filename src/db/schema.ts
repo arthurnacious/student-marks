@@ -150,6 +150,8 @@ export const fields = mysqlTable("fields", {
     onDelete: "set null",
   }),
   name: varchar("name", { length: 255 }).notNull(),
+  total: int("total").notNull(),
+  passRate: int("passRate").notNull(),
 });
 
 export const coursesToAcademies = mysqlTable("coursesToAcademies", {
@@ -338,3 +340,4 @@ export const academyHeadsToAcademiesRelations = relations(
 
 export const insertAcademySchema = createInsertSchema(academies);
 export const insertCourseSchema = createInsertSchema(academies);
+export const insertFieldSchema = createInsertSchema(fields);

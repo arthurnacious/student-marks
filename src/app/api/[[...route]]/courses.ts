@@ -2,14 +2,16 @@
 import { db } from "@/db";
 import { classes, courses, fields, insertCourseSchema } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
-import { count, eq, inArray, sql } from "drizzle-orm";
+import { and, count, eq, inArray, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
 import { z } from "zod";
 
-const createAcademySchema = insertCourseSchema.extend({
+const createCourseSchema = insertCourseSchema.extend({
   fields: z.array(z.string()),
 });
+
+const updateCourseSchema = insertCourseSchema;
 
 const app = new Hono()
   .get("/", async (ctx) => {
@@ -33,7 +35,7 @@ const app = new Hono()
   })
   .post(
     "/",
-    zValidator("json", createAcademySchema.pick({ name: true, fields: true })),
+    zValidator("json", createCourseSchema.pick({ name: true, fields: true })),
     async (ctx) => {
       const values = ctx.req.valid("json");
       let slug = slugify(values.name.toLowerCase());
@@ -89,7 +91,61 @@ const app = new Hono()
       }
     }
   )
-  .get("/:id", (c) => c.json(`get ${c.req.param("id")}`))
+  .get("/:slug", async (ctx) => {
+    const slug = ctx.req.param("slug");
+    const data = await db.query.courses.findFirst({
+      where: eq(courses.slug, slug),
+      with: {
+        fields: true,
+      },
+      extras: {
+        classCount: sql<number>`(
+          select count(*)
+          from ${classes}
+          where classes.courseId = courses.id
+        )`.as("classCount"),
+      },
+    });
+    return ctx.json({ data });
+  })
+  .patch(
+    "/:slug",
+    zValidator("json", updateCourseSchema.pick({ name: true })),
+    async (ctx) => {
+      const values = ctx.req.valid("json");
+
+      const slug = ctx.req.param("slug");
+      const newSlug = slugify(values.name.toLowerCase());
+
+      const course = await db.query.courses.findFirst({
+        where: eq(courses.slug, slug),
+      });
+
+      if (!course) {
+        return ctx.json({ error: "Not Found" }, 404);
+      }
+
+      const [existingName] = await db
+        .select()
+        .from(courses)
+        .where(and(eq(courses.name, values.name), ne(courses.slug, slug)));
+
+      if (existingName) {
+        return ctx.json({ name: "name already taken" }, 422);
+      }
+
+      try {
+        const [data] = await db
+          .update(courses)
+          .set({ ...values, slug: newSlug })
+          .where(eq(courses.id, course.id));
+
+        return ctx.json({ data });
+      } catch (error: any) {
+        console.log({ error: error });
+      }
+    }
+  )
   .post(
     "/bulk-delete",
     zValidator(

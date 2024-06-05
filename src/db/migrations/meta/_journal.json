@@ -15,6 +15,20 @@
       "when": 1717502444940,
       "tag": "0001_sparkling_paper_doll",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1717577858107,
+      "tag": "0002_late_shen",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1717579504959,
+      "tag": "0003_wealthy_jackpot",
+      "breakpoints": true
     }
   ]
 }

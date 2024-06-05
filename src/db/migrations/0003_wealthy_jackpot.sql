@@ -1,0 +1,1 @@
+ALTER TABLE `fields` ADD `total` int NOT NULL;
