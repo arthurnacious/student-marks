@@ -17,7 +17,9 @@ const PageContainerWrapper: React.FC<Props> = ({
   return (
     <div className={cn("flex flex-col p-10 ml-20 w-full gap-5", className)}>
       {!!title && (
-        <h1 className="text-4xl text-neutral-200 uppercase">{title}</h1>
+        <h1 className="text-4xl text-neutral-200 uppercase font-SpaceGrotesk">
+          {title}
+        </h1>
       )}
       {!!trail && trail}
       {children}

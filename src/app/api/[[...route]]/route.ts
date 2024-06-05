@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import academies from "./academies";
 import courses from "./courses";
 import fields from "./fields";
+import classes from "./classes";
 import users from "./users";
 import { handle } from "hono/vercel";
 
@@ -13,6 +14,7 @@ const route = new Hono()
   .route("/academies", academies)
   .route("/courses", courses)
   .route("/fields", fields)
+  .route("/classes", classes)
   .route("/users", users);
 
 export const GET = handle(route);
