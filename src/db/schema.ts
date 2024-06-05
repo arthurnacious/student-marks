@@ -154,6 +154,18 @@ export const fields = mysqlTable("fields", {
   passRate: int("passRate").notNull(),
 });
 
+export const usersToField = mysqlTable("usersToField", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  fieldId: varchar("fieldId", { length: 255 }).references(() => fields.id, {
+    onDelete: "cascade",
+  }),
+  userId: varchar("userId", { length: 255 }).references(() => users.id, {
+    onDelete: "cascade",
+  }),
+});
+
 export const coursesToAcademies = mysqlTable("coursesToAcademies", {
   id: varchar("id", { length: 255 })
     .primaryKey()
@@ -269,12 +281,42 @@ export const marks = mysqlTable("marks", {
   amount: int("amount").notNull(),
 });
 
+//relationships
 export const usersRelations = relations(users, ({ many }) => ({
   academiesLecturing: many(academyHeadsToAcademies, {
     relationName: "academiesLecturing",
   }),
   academiesLeading: many(lecturersToAcademies, {
     relationName: "academiesLeading",
+  }),
+  classes: many(studentsToClasses, {
+    relationName: "attendedClasses",
+  }),
+  mark: many(marks, {
+    relationName: "usersMark",
+  }),
+}));
+
+export const studentsToClassesRelations = relations(
+  studentsToClasses,
+  ({ one }) => ({
+    classes: one(users, {
+      fields: [studentsToClasses.studentId],
+      references: [users.id],
+      relationName: "attendedClasses",
+    }),
+  })
+);
+
+export const marksRelations = relations(marks, ({ one }) => ({
+  field: one(fields, {
+    fields: [marks.fieldId],
+    references: [fields.id],
+  }),
+  student: one(users, {
+    fields: [marks.fieldId],
+    references: [users.id],
+    relationName: "usersMark",
   }),
 }));
 
