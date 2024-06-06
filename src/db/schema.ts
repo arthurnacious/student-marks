@@ -165,18 +165,6 @@ export const usersToField = mysqlTable("usersToField", {
   }),
 });
 
-export const coursesToAcademies = mysqlTable("coursesToAcademies", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  courseId: varchar("courseId", { length: 255 })
-    .notNull()
-    .references(() => courses.id, { onDelete: "cascade" }),
-  academyId: varchar("academyId", { length: 255 })
-    .notNull()
-    .references(() => academies.id, { onDelete: "cascade" }),
-});
-
 export const classes = mysqlTable(
   "classes",
   {
@@ -295,7 +283,7 @@ export const usersRelations = relations(users, ({ many }) => ({
     relationName: "usersMark",
   }),
   presentedClasses: many(classes, {
-    relationName: "presentedClasses",
+    relationName: "usersPresentedClasses",
   }),
 }));
 
@@ -340,7 +328,7 @@ export const coursesRelations = relations(courses, ({ one, many }) => ({
   }),
   fields: many(fields),
   classes: many(classes, {
-    relationName: "PresentedClasses",
+    relationName: "courseClasses",
   }),
 }));
 
@@ -348,10 +336,12 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
   course: one(courses, {
     fields: [classes.courseId],
     references: [courses.id],
+    relationName: "courseClasses",
   }),
   lecturer: one(users, {
     fields: [classes.creatorId],
     references: [users.id],
+    relationName: "usersPresentedClasses",
   }),
   heads: many(studentsToClasses),
 }));

@@ -1,1 +1,0 @@
-ALTER TABLE `fields` ADD `passRate` int NOT NULL;

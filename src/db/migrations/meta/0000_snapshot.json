@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "e06723be-9602-419c-be9f-e687d00a8291",
+  "id": "52f6db96-1e53-4978-8bcf-3512179718e2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "academies": {
@@ -470,6 +470,14 @@
           "notNull": false,
           "autoincrement": false
         },
+        "status": {
+          "name": "status",
+          "type": "enum('Active','Paused')",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Active'"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -534,70 +542,6 @@
         }
       }
     },
-    "coursesToAcademies": {
-      "name": "coursesToAcademies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "courseId": {
-          "name": "courseId",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "academyId": {
-          "name": "academyId",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "coursesToAcademies_courseId_courses_id_fk": {
-          "name": "coursesToAcademies_courseId_courses_id_fk",
-          "tableFrom": "coursesToAcademies",
-          "tableTo": "courses",
-          "columnsFrom": [
-            "courseId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "coursesToAcademies_academyId_academies_id_fk": {
-          "name": "coursesToAcademies_academyId_academies_id_fk",
-          "tableFrom": "coursesToAcademies",
-          "tableTo": "academies",
-          "columnsFrom": [
-            "academyId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "coursesToAcademies_id": {
-          "name": "coursesToAcademies_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
     "fields": {
       "name": "fields",
       "columns": {
@@ -618,6 +562,13 @@
         "name": {
           "name": "name",
           "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "total": {
+          "name": "total",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -1038,6 +989,70 @@
           ]
         }
       }
+    },
+    "usersToField": {
+      "name": "usersToField",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "fieldId": {
+          "name": "fieldId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "usersToField_fieldId_fields_id_fk": {
+          "name": "usersToField_fieldId_fields_id_fk",
+          "tableFrom": "usersToField",
+          "tableTo": "fields",
+          "columnsFrom": [
+            "fieldId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "usersToField_userId_users_id_fk": {
+          "name": "usersToField_userId_users_id_fk",
+          "tableFrom": "usersToField",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "usersToField_id": {
+          "name": "usersToField_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "verificationTokens": {
       "name": "verificationTokens",

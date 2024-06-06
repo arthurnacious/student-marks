@@ -1,1 +1,0 @@
-ALTER TABLE `courses` ADD `status` enum('Active','Paused') DEFAULT 'Active';
