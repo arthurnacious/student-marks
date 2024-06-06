@@ -48,3 +48,21 @@ export const useBulkDeleteAcademies = () => {
 
   return mutation;
 };
+
+export const useGetAcademiesCouses = (academyId?: string) => {
+  const query = useQuery({
+    queryKey: ["academies", academyId, "courses"],
+    queryFn: async () => {
+      const response = await client.api.academies[":id"].courses.$get({
+        param: { id: academyId },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch academies courses");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+    enabled: !!academyId,
+  });
+  return query;
+};

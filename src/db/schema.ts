@@ -177,7 +177,6 @@ export const classes = mysqlTable(
     creatorId: varchar("creatorId", { length: 255 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    name: varchar("name", { length: 255 }),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     notes: varchar("notes", { length: 255 }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -388,3 +387,4 @@ export const academyHeadsToAcademiesRelations = relations(
 export const insertAcademySchema = createInsertSchema(academies);
 export const insertCourseSchema = createInsertSchema(academies);
 export const insertFieldSchema = createInsertSchema(fields);
+export const insertClassesSchema = createInsertSchema(classes);
