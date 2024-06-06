@@ -29,7 +29,7 @@ const Page: React.FC<Props> = async () => {
             <h2 className="text-5xl border-b border-slate-500 pb-1 my-2 capitalize">
               {academy.name}
             </h2>
-            {academy.courses.map((course, idx2) => {
+            {academy.courses?.map((course, idx2) => {
               const total = calculateTotal(course.fields);
 
               return (

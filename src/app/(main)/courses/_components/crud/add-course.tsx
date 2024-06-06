@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,11 +22,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
+import Link from "next/link";
+import { useGetAcademies } from "@/query/academies";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {}
 
@@ -34,10 +44,17 @@ type ResponseType = InferResponseType<typeof client.api.courses.$post>;
 type RequestType = InferRequestType<typeof client.api.courses.$post>["json"];
 
 const formSchema = z.object({
+  academy: z.string().min(2, {
+    message: "Academy is required.",
+  }),
   name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  fields: z.array(z.string().nonempty("Field is required")),
+  fields: z.array(
+    z.string().min(1, {
+      message: "Filed is required",
+    })
+  ),
 });
 
 type formValues = z.input<typeof formSchema>;
@@ -46,15 +63,17 @@ const AddCourseModal: React.FC<Props> = ({}) => {
   const [fieldCount, setFieldCount] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  // const { mutate, isPending, isError, error, } = useCreateCourse();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      academy: "",
       name: "",
       fields: [""],
     },
   });
+
+  const { data, isLoading } = useGetAcademies();
 
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
@@ -103,6 +122,44 @@ const AddCourseModal: React.FC<Props> = ({}) => {
         <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="academy"
+                render={({ field }) => (
+                  <FormItem className="my-5">
+                    <FormLabel>Academy</FormLabel>
+                    {isLoading ? (
+                      <Skeleton className="h-10 w-full flex items-center justify-center text-black">
+                        <Loader2 className="size-4 mr-2 animate-spin " />
+                        <span>Loading academies</span>
+                      </Skeleton>
+                    ) : (
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select an academy" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {data?.map((academy) => (
+                            <SelectItem key={academy.id} value={academy.id}>
+                              {academy.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <FormDescription>
+                      You can manage academies addresses in your{" "}
+                      <Link href="/academies">academy settings</Link>.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"

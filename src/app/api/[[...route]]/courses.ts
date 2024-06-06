@@ -9,6 +9,7 @@ import { z } from "zod";
 
 const createCourseSchema = insertCourseSchema.extend({
   fields: z.array(z.string()),
+  academy: z.string(),
 });
 
 const updateCourseSchema = insertCourseSchema;
@@ -35,7 +36,10 @@ const app = new Hono()
   })
   .post(
     "/",
-    zValidator("json", createCourseSchema.pick({ name: true, fields: true })),
+    zValidator(
+      "json",
+      createCourseSchema.pick({ name: true, fields: true, academy: true })
+    ),
     async (ctx) => {
       const values = ctx.req.valid("json");
       let slug = slugify(values.name.toLowerCase());
@@ -70,7 +74,9 @@ const app = new Hono()
       try {
         const { fields: fieldsArray, ...rest } = values;
 
-        await db.insert(courses).values({ slug, ...rest });
+        await db
+          .insert(courses)
+          .values({ ...rest, slug, academyId: values.academy });
         const [courseData] = await db
           .select({ id: courses.id })
           .from(courses)
@@ -78,8 +84,11 @@ const app = new Hono()
 
         // Insert the fields data concurrently
         const fieldsData = await Promise.all(
-          fieldsArray.map((name) =>
-            db.insert(fields).values({ name, courseId: courseData.id })
+          fieldsArray.map(
+            async (name) =>
+              await db
+                .insert(fields)
+                .values({ name, total: 100, courseId: courseData.id })
           )
         );
 

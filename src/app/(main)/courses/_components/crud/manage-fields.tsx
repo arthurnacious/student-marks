@@ -74,7 +74,7 @@ const ManageFields: React.FC<Props> = ({ course, disabled = false }) => {
               {course.fields.map(({ id, name, total }) => (
                 <TableRow key={id}>
                   <TableCell className="font-medium">{name}</TableCell>
-                  <TableCell className="font-medium">{total} %</TableCell>
+                  <TableCell className="font-medium">{total}</TableCell>
                   <TableCell>
                     <Button
                       variant="destructive"
