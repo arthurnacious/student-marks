@@ -8,7 +8,16 @@ import slugify from "slugify";
 import { z } from "zod";
 
 const createCourseSchema = insertCourseSchema.extend({
-  fields: z.array(z.string()),
+  fields: z.array(
+    z.object({
+      name: z.string().min(1, {
+        message: "Field name is required",
+      }),
+      total: z.number().min(1, {
+        message: "Total is required",
+      }),
+    })
+  ),
   academy: z.string(),
 });
 
@@ -84,12 +93,13 @@ const app = new Hono()
 
         // Insert the fields data concurrently
         const fieldsData = await Promise.all(
-          fieldsArray.map(
-            async (name) =>
+          fieldsArray.map(async ({ name, total }) => {
+            if (name !== "") {
               await db
                 .insert(fields)
-                .values({ name, total: 100, courseId: courseData.id })
-          )
+                .values({ name, total, courseId: courseData.id });
+            }
+          })
         );
 
         return ctx.json({ courseData, fieldsData });

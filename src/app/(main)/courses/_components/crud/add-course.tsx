@@ -51,8 +51,13 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   fields: z.array(
-    z.string().min(1, {
-      message: "Filed is required",
+    z.object({
+      name: z.string().min(1, {
+        message: "Field name is required",
+      }),
+      total: z.number().min(1, {
+        message: "Total is required",
+      }),
     })
   ),
 });
@@ -69,7 +74,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
     defaultValues: {
       academy: "",
       name: "",
-      fields: [""],
+      fields: [{ total: 0, name: "" }],
     },
   });
 
@@ -196,23 +201,51 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                   }
                 }}
               />
-              <div className="flex flex-wrap gap-x-3 my-4">
-                {[...Array(fieldCount).keys()].map((_, idx) => (
-                  <FormField
-                    key={idx}
-                    control={form.control}
-                    name={`fields.${idx}`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Filed Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Theory" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
+              <div className="gap-x-3 my-4">
+                {[...Array(fieldCount).keys()].map((_, idx) => {
+                  const number = idx + 1;
+                  return (
+                    <React.Fragment key={idx}>
+                      <p className="text-xl mt-4">Field {number}</p>
+                      <div className="flex flex-wrap gap-x-1">
+                        <FormField
+                          control={form.control}
+                          name={`fields.${idx}.name`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Field {number} Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Theory" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          key={idx}
+                          control={form.control}
+                          name={`fields.${idx}.total`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Field {number} Total</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="Total"
+                                  value={parseFloat(field.value)}
+                                  onChange={(e) =>
+                                    field.onChange(parseFloat(e.target.value))
+                                  }
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
               </div>
               <Button isLoading={mutation.isPending}>Create</Button>
             </form>

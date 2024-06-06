@@ -12,7 +12,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { client } from "@/lib/hono";
 import { courseWithRelations } from "@/types/fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -64,9 +64,6 @@ const ManageFields: React.FC<Props> = ({ course, disabled = false }) => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Total</TableHead>
-                <TableHead className="flex items-center gap-1">
-                  Pass Rate <Check className="text-green-600/30 size-4" />
-                </TableHead>
                 <TableHead>Delete</TableHead>
               </TableRow>
             </TableHeader>

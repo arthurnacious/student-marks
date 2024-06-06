@@ -49,6 +49,8 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const moreThan5Fields = course.fields.length > 5;
+
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -95,7 +97,7 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
     form.reset();
   }
 
-  return (
+  return !moreThan5Fields ? (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
@@ -105,7 +107,11 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
             <FormItem>
               <FormLabel>Field Name</FormLabel>
               <FormControl>
-                <Input placeholder="Theory" {...field} disabled={disabled} />
+                <Input
+                  placeholder="Theory"
+                  {...field}
+                  disabled={disabled || moreThan5Fields}
+                />
               </FormControl>
               <FormDescription className="text-nowrap">
                 E.g Theory
@@ -126,7 +132,7 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
                     type="number"
                     placeholder="50"
                     {...field}
-                    disabled={disabled}
+                    disabled={disabled || moreThan5Fields}
                   />
                 </FormControl>
                 <FormDescription className="text-nowrap">
@@ -140,12 +146,14 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
         <Button
           isLoading={mutation.isPending}
           className="border border-green-400/20 mt-4"
-          disabled={disabled}
+          disabled={disabled || moreThan5Fields}
         >
           Add field
         </Button>
       </form>
     </Form>
+  ) : (
+    <h5 className="text-red-500 text-2xl mt-10">Fileds limit reached.</h5>
   );
 };
 
