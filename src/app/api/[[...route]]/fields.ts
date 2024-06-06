@@ -8,12 +8,9 @@ import { Hono } from "hono";
 const app = new Hono()
   .post(
     "/:courseId",
-    zValidator(
-      "json",
-      insertFieldSchema.pick({ name: true, total: true, passRate: true })
-    ),
+    zValidator("json", insertFieldSchema.pick({ name: true, total: true })),
     async (ctx) => {
-      const { name, total, passRate } = ctx.req.valid("json");
+      const { name, total } = ctx.req.valid("json");
       const courseId = ctx.req.param("courseId");
 
       const [existingName] = await db
@@ -26,9 +23,7 @@ const app = new Hono()
       }
 
       try {
-        const data = await db
-          .insert(fields)
-          .values({ name, courseId, total, passRate });
+        const data = await db.insert(fields).values({ name, courseId, total });
 
         return ctx.json({ data });
       } catch (error: any) {

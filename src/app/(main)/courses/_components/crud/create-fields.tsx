@@ -25,7 +25,6 @@ import { Trash2 } from "lucide-react";
 type RequestType = {
   name: string;
   total: number;
-  passRate: number;
 };
 
 interface courseType extends courseWithRelations {}
@@ -40,10 +39,7 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   total: z.number().min(1, {
-    message: "Pass rate is required.",
-  }),
-  passRate: z.number().min(1, {
-    message: "Pass rate is required.",
+    message: "Total is required.",
   }),
 });
 
@@ -58,7 +54,6 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
     defaultValues: {
       name: "",
       total: 100,
-      passRate: 50,
     },
   });
 
@@ -135,28 +130,7 @@ const CreateFieldsForm: React.FC<Props> = ({ course, disabled = false }) => {
                   />
                 </FormControl>
                 <FormDescription className="text-nowrap">
-                  % of total mark
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="passRate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pass Rate</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="50"
-                    {...field}
-                    disabled={disabled}
-                  />
-                </FormControl>
-                <FormDescription className="text-nowrap">
-                  % of passrate
+                  Total Mark(percentage will be Calculated)
                 </FormDescription>
                 <FormMessage />
               </FormItem>

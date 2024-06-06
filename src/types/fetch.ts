@@ -22,7 +22,6 @@ export interface courseWithRelations {
     id: string;
     name: string;
     total: number;
-    passRate: number;
     courseId: string | null;
   }[];
 }

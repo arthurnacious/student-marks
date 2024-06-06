@@ -151,7 +151,6 @@ export const fields = mysqlTable("fields", {
   }),
   name: varchar("name", { length: 255 }).notNull(),
   total: int("total").notNull(),
-  passRate: int("passRate").notNull(),
 });
 
 export const usersToField = mysqlTable("usersToField", {
@@ -295,15 +294,23 @@ export const usersRelations = relations(users, ({ many }) => ({
   mark: many(marks, {
     relationName: "usersMark",
   }),
+  presentedClasses: many(classes, {
+    relationName: "presentedClasses",
+  }),
 }));
 
 export const studentsToClassesRelations = relations(
   studentsToClasses,
-  ({ one }) => ({
-    classes: one(users, {
+  ({ one, many }) => ({
+    student: one(users, {
       fields: [studentsToClasses.studentId],
       references: [users.id],
       relationName: "attendedClasses",
+    }),
+    class: one(classes, {
+      fields: [studentsToClasses.classId],
+      references: [classes.id],
+      relationName: "class",
     }),
   })
 );
@@ -332,21 +339,29 @@ export const coursesRelations = relations(courses, ({ one, many }) => ({
     references: [academies.id],
   }),
   fields: many(fields),
-  classes: many(classes),
+  classes: many(classes, {
+    relationName: "PresentedClasses",
+  }),
 }));
 
-export const classesRelations = relations(classes, ({ one }) => ({
+export const classesRelations = relations(classes, ({ one, many }) => ({
   course: one(courses, {
     fields: [classes.courseId],
     references: [courses.id],
   }),
+  lecturer: one(users, {
+    fields: [classes.creatorId],
+    references: [users.id],
+  }),
+  heads: many(studentsToClasses),
 }));
 
-export const fieldsRelations = relations(fields, ({ one }) => ({
+export const fieldsRelations = relations(fields, ({ one, many }) => ({
   course: one(courses, {
     fields: [fields.courseId],
     references: [courses.id],
   }),
+  marks: many(marks),
 }));
 
 export const lecturerToAcademiesRelations = relations(

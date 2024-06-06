@@ -71,11 +71,10 @@ const ManageFields: React.FC<Props> = ({ course, disabled = false }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {course.fields.map(({ id, name, passRate, total }) => (
+              {course.fields.map(({ id, name, total }) => (
                 <TableRow key={id}>
                   <TableCell className="font-medium">{name}</TableCell>
                   <TableCell className="font-medium">{total} %</TableCell>
-                  <TableCell className="font-medium">{passRate} %</TableCell>
                   <TableCell>
                     <Button
                       variant="destructive"

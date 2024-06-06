@@ -1,29 +1,51 @@
 // users.ts
 import { db } from "@/db";
-import { fields, marks } from "@/db/schema";
+import { classes, fields, marks, studentsToClasses } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 
 const app = new Hono().get("/:userId", async (ctx) => {
   const userId = ctx.req.param("userId");
-  const data = await db.query.marks.findMany({
-    where: eq(marks.studentId, userId),
-    columns: {
-      id: true,
-      amount: true,
-    },
+  const data = await db.query.studentsToClasses.findMany({
+    where: eq(studentsToClasses.studentId, userId),
     with: {
-      field: {
+      class: {
         with: {
+          lecturer: {
+            columns: {
+              name: true,
+            },
+          },
           course: {
-            columns: { name: true },
+            columns: {
+              name: true,
+            },
+            with: {
+              academy: {
+                columns: {
+                  name: true,
+                },
+              },
+              fields: {
+                columns: {
+                  name: true,
+                  total: true,
+                },
+                with: {
+                  marks: {
+                    where: eq(marks.studentId, userId),
+                  },
+                },
+                orderBy: [fields.name],
+              },
+            },
           },
         },
       },
     },
   });
 
-  return ctx.json({ data });
+  return ctx.json(data);
 });
 
 export default app;
