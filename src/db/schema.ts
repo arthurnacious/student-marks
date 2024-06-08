@@ -17,6 +17,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { dbCredentials } from "./credentials";
 import { relations } from "drizzle-orm";
 import { StatusName } from "@/types/course";
+import { paymentTypeName } from "@/types/payment";
 
 const poolConnection = mysql.createPool(dbCredentials);
 
@@ -36,7 +37,7 @@ export const users = mysqlTable("users", {
   }),
   image: varchar("image", { length: 255 }),
   role: mysqlEnum("role", roles as [string, ...string[]])
-    .default("Student")
+    .default(RoleName.STUDENT)
     .notNull(),
   activeTill: timestamp("activeTill"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -130,6 +131,7 @@ export const courses = mysqlTable(
       "status",
       courseStatusType as [string, ...string[]]
     ).default(StatusName.ACTIVE),
+    price: int("price").notNull().default(0),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt")
       .defaultNow()
@@ -179,6 +181,7 @@ export const classes = mysqlTable(
       .references(() => users.id, { onDelete: "cascade" }),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
     notes: varchar("notes", { length: 255 }),
+    price: int("price").notNull().default(0), //make a carbon copy from course as course price can always be changed
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt")
       .defaultNow()
@@ -201,6 +204,30 @@ export const studentsToClasses = mysqlTable("studentToClasses", {
   classId: varchar("classId", { length: 255 })
     .notNull()
     .references(() => classes.id, { onDelete: "cascade" }),
+  paymentId: varchar("classId", { length: 255 })
+    .notNull()
+    .references(() => payments.id, { onDelete: "cascade" }),
+});
+
+const paymentType: string[] = Object.values(paymentTypeName);
+export const payments = mysqlTable("payments", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("userId", { length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  classId: varchar("classId", { length: 255 })
+    .notNull()
+    .references(() => classes.id, { onDelete: "cascade" }),
+  amount: int("amount").notNull(),
+  type: mysqlEnum("type", paymentType as [string, ...string[]])
+    .default(paymentTypeName.CASH)
+    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const academyHeadsToAcademies = mysqlTable("academyHeadsToAcademies", {
