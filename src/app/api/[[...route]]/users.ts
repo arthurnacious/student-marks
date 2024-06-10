@@ -1,18 +1,31 @@
 // users.ts
 import { db } from "@/db";
-import { academies, users } from "@/db/schema";
-import { and, eq, gt, isNotNull, ne, or, sql } from "drizzle-orm";
+import {
+  academyHeadsToAcademies,
+  insertUserSchema,
+  lecturersToAcademies,
+  users,
+} from "@/db/schema";
+import { zValidator } from "@hono/zod-validator";
+import { and, eq, gt, inArray, isNotNull, or } from "drizzle-orm";
 import { Hono } from "hono";
+import { act } from "react";
+import { z } from "zod";
+
+const createUserShcema = insertUserSchema.extend({
+  activeTill: z.any().optional(),
+});
 
 const app = new Hono()
   .get("/:role?", async (ctx) => {
     const role = ctx.req.param("role");
-    const where = role
-      ? and(
-          eq(users.role, role),
-          or(gt(users.activeTill, new Date()), isNotNull(users.activeTill))
-        )
-      : undefined;
+    const where =
+      role && role !== "undefined"
+        ? and(
+            eq(users.role, role),
+            or(gt(users.activeTill, new Date()), isNotNull(users.activeTill))
+          )
+        : undefined;
 
     const data = await db.query.users.findMany({
       where,
@@ -20,6 +33,49 @@ const app = new Hono()
 
     return ctx.json({ data });
   })
+  .post(
+    "/",
+    zValidator(
+      "json",
+      createUserShcema.pick({
+        name: true,
+        email: true,
+        activeTill: true,
+        role: true,
+      })
+    ),
+    async (ctx) => {
+      const values = ctx.req.valid("json");
+      try {
+        const data = await db
+          .insert(users)
+          .values({
+            ...values,
+            activeTill: values.activeTill ? new Date(values.activeTill) : null,
+          });
+
+        return ctx.json({ data });
+      } catch (error: any) {}
+    }
+  )
+  .post(
+    "/bulk-delete",
+    zValidator(
+      "json",
+      z.object({
+        ids: z.array(z.string()),
+      })
+    ),
+    async (ctx) => {
+      const { ids: userIds } = ctx.req.valid("json");
+
+      try {
+        const data = await db.delete(users).where(inArray(users.id, userIds));
+
+        return ctx.json({ data: userIds });
+      } catch (error: any) {}
+    }
+  )
   .get("/:id", (c) => c.json(`get ${c.req.param("id")}`))
   .get("/:id/academies", async (ctx) => {
     const userId = ctx.req.param("id");

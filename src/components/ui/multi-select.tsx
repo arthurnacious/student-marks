@@ -99,7 +99,7 @@ const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
     return (
       <div ref={containerRef} className="relative w-full">
         <div
-          className="flex items-center justify-between border border-gray-300 rounded-md p-2 cursor-text"
+          className="flex items-center justify-between border border-gray-300 rounded-md p-2 cursor-text truncate"
           onClick={toggleDropdown}
         >
           <div className="flex gap-2">

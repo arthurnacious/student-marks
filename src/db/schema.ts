@@ -6,6 +6,7 @@ import {
   varchar,
   mysqlEnum,
   index,
+  boolean,
 } from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
@@ -30,7 +31,7 @@ export const users = mysqlTable("users", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).unique().notNull(),
+  email: varchar("email", { length: 255 }).unique(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,
@@ -39,6 +40,7 @@ export const users = mysqlTable("users", {
   role: mysqlEnum("role", roles as [string, ...string[]])
     .default(RoleName.STUDENT)
     .notNull(),
+  isGardian: boolean("isGardian").default(false),
   activeTill: timestamp("activeTill"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")
@@ -415,3 +417,4 @@ export const insertAcademySchema = createInsertSchema(academies);
 export const insertCourseSchema = createInsertSchema(academies);
 export const insertFieldSchema = createInsertSchema(fields);
 export const insertClassesSchema = createInsertSchema(classes);
+export const insertUserSchema = createInsertSchema(users);

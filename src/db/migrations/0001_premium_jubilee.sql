@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `isGardian` boolean DEFAULT false;

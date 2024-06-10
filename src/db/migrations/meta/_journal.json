@@ -8,6 +8,13 @@
       "when": 1717890591305,
       "tag": "0000_funny_ben_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1717892861064,
+      "tag": "0001_premium_jubilee",
+      "breakpoints": true
     }
   ]
 }
