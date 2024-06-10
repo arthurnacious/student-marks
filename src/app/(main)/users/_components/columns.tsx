@@ -87,7 +87,7 @@ export const columns: ColumnDef<Users>[] = [
         (user.activeTill && new Date(user.activeTill)) >= new Date() ? (
         <span className="text-green-500">Active</span>
       ) : (
-        <span className="text-red-500">Inactive</span>
+        <span className="text-red-500">Expired</span>
       );
     },
   },

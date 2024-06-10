@@ -33,19 +33,19 @@ export const useBulkDeleteUsers = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.academies["bulk-delete"]["$post"]({
+      const response = await client.api.users["bulk-delete"]["$post"]({
         json,
       });
 
       return response.json();
     },
     onSuccess: () => {
-      toast.success("Academies successfully deleted");
-      queryClient.invalidateQueries({ queryKey: ["academies", null] });
+      toast.success("Users successfully deleted");
+      queryClient.invalidateQueries({ queryKey: ["users", null] });
     },
     onError: (error: any) => {
       console.log({ error });
-      toast.error("failed to delete academies");
+      toast.error("failed to delete users");
     },
   });
 
