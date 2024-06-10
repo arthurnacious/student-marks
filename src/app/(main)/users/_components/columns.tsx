@@ -108,16 +108,18 @@ export const columns: ColumnDef<Users>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`academies/${user.id}`} className="cursor-pointer">
-                View User
+              <Link href={`users/${user.id}`} className="cursor-pointer">
+                View Info
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`users/${user.id}/marks`} className="cursor-pointer">
+                View Marks
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${user.id}/edit`}
-                className="cursor-pointer"
-              >
+              <Link href={`users/${user.id}/edit`} className="cursor-pointer">
                 Edit User
               </Link>
             </DropdownMenuItem>

@@ -9,7 +9,6 @@ import {
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, gt, inArray, isNotNull, or } from "drizzle-orm";
 import { Hono } from "hono";
-import { act } from "react";
 import { z } from "zod";
 
 const createUserShcema = insertUserSchema.extend({
@@ -17,7 +16,23 @@ const createUserShcema = insertUserSchema.extend({
 });
 
 const app = new Hono()
-  .get("/:role?", async (ctx) => {
+  .get("/", async (ctx) => {
+    const role = ctx.req.param("role");
+    const where =
+      role && role !== "undefined"
+        ? and(
+            eq(users.role, role),
+            or(gt(users.activeTill, new Date()), isNotNull(users.activeTill))
+          )
+        : undefined;
+
+    const data = await db.query.users.findMany({
+      where,
+    });
+
+    return ctx.json({ data });
+  })
+  .get("/role/:role?", async (ctx) => {
     const role = ctx.req.param("role");
     const where =
       role && role !== "undefined"
@@ -47,12 +62,10 @@ const app = new Hono()
     async (ctx) => {
       const values = ctx.req.valid("json");
       try {
-        const data = await db
-          .insert(users)
-          .values({
-            ...values,
-            activeTill: values.activeTill ? new Date(values.activeTill) : null,
-          });
+        const data = await db.insert(users).values({
+          ...values,
+          activeTill: values.activeTill ? new Date(values.activeTill) : null,
+        });
 
         return ctx.json({ data });
       } catch (error: any) {}
@@ -76,7 +89,13 @@ const app = new Hono()
       } catch (error: any) {}
     }
   )
-  .get("/:id", (c) => c.json(`get ${c.req.param("id")}`))
+  .get("/:id", async (ctx) => {
+    const userId = ctx.req.param("id");
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+    return ctx.json({ data: user });
+  })
   .get("/:id/academies", async (ctx) => {
     const userId = ctx.req.param("id");
     const userWithAcademies = await db.query.users.findFirst({
