@@ -74,7 +74,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
     defaultValues: {
       academy: "",
       name: "",
-      fields: [{ total: 0, name: "" }],
+      fields: [{ total: 100, name: "" }],
     },
   });
 
@@ -232,7 +232,8 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                                 <Input
                                   type="number"
                                   placeholder="Total"
-                                  value={parseFloat(field.value)}
+                                  defaultValue="100"
+                                  value={String(field.value)}
                                   onChange={(e) =>
                                     field.onChange(parseFloat(e.target.value))
                                   }

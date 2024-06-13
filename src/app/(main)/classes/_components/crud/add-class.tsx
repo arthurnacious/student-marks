@@ -96,7 +96,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
       router.replace(`/classes/${data.data}`);
     },
     onError: (error: any) => {
-      toast.error("failed to add class");
+      toast.error("failed to run class");
     },
   });
 
@@ -116,7 +116,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
     <Dialog open={isOpen} onOpenChange={(b) => onOpenChange(b)}>
       <DialogTrigger asChild>
         <Button onClick={() => setIsOpen(!isOpen)}>
-          <PlusCircle className="mr-2" /> Add Class
+          <PlusCircle className="mr-2" /> Run new class
         </Button>
       </DialogTrigger>
       <DialogContent>

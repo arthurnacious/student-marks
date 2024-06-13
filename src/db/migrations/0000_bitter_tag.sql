@@ -89,6 +89,23 @@ CREATE TABLE `marks` (
 	CONSTRAINT `marks_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
+CREATE TABLE `materials` (
+	`id` varchar(255) NOT NULL,
+	`courseId` varchar(255) NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`price` varchar(255) NOT NULL,
+	`amount` int NOT NULL,
+	CONSTRAINT `materials_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `materialClassStudent` (
+	`id` varchar(255) NOT NULL,
+	`materialId` varchar(255) NOT NULL,
+	`classId` varchar(255) NOT NULL,
+	`studentId` varchar(255) NOT NULL,
+	CONSTRAINT `materialClassStudent_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
 CREATE TABLE `payments` (
 	`id` varchar(255) NOT NULL,
 	`userId` varchar(255) NOT NULL,
@@ -124,22 +141,16 @@ CREATE TABLE `studentToClasses` (
 CREATE TABLE `users` (
 	`id` varchar(255) NOT NULL,
 	`name` varchar(255) NOT NULL,
-	`email` varchar(255) NOT NULL,
+	`email` varchar(255),
 	`emailVerified` timestamp(3),
 	`image` varchar(255),
 	`role` enum('Admin','Academy Head','Lecturer','Finance','Student','Guardian') NOT NULL DEFAULT 'Student',
+	`isGardian` boolean DEFAULT false,
 	`activeTill` timestamp,
 	`createdAt` timestamp NOT NULL DEFAULT (now()),
 	`updatedAt` timestamp DEFAULT (now()),
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),
 	CONSTRAINT `users_email_unique` UNIQUE(`email`)
-);
---> statement-breakpoint
-CREATE TABLE `usersToField` (
-	`id` varchar(255) NOT NULL,
-	`fieldId` varchar(255),
-	`userId` varchar(255),
-	CONSTRAINT `usersToField_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `verificationTokens` (
@@ -162,15 +173,16 @@ ALTER TABLE `lecturersToAcademies` ADD CONSTRAINT `lecturersToAcademies_academyI
 ALTER TABLE `lecturersToAcademies` ADD CONSTRAINT `lecturersToAcademies_lecturerId_users_id_fk` FOREIGN KEY (`lecturerId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `marks` ADD CONSTRAINT `marks_fieldId_fields_id_fk` FOREIGN KEY (`fieldId`) REFERENCES `fields`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `marks` ADD CONSTRAINT `marks_studentId_users_id_fk` FOREIGN KEY (`studentId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `materials` ADD CONSTRAINT `materials_courseId_courses_id_fk` FOREIGN KEY (`courseId`) REFERENCES `courses`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `materialClassStudent` ADD CONSTRAINT `materialClassStudent_materialId_materials_id_fk` FOREIGN KEY (`materialId`) REFERENCES `materials`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `materialClassStudent` ADD CONSTRAINT `materialClassStudent_classId_classes_id_fk` FOREIGN KEY (`classId`) REFERENCES `classes`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `materialClassStudent` ADD CONSTRAINT `materialClassStudent_studentId_users_id_fk` FOREIGN KEY (`studentId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `payments` ADD CONSTRAINT `payments_userId_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `payments` ADD CONSTRAINT `payments_classId_classes_id_fk` FOREIGN KEY (`classId`) REFERENCES `classes`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `periods` ADD CONSTRAINT `periods_classId_classes_id_fk` FOREIGN KEY (`classId`) REFERENCES `classes`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `sessions` ADD CONSTRAINT `sessions_userId_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `studentToClasses` ADD CONSTRAINT `studentToClasses_studentId_users_id_fk` FOREIGN KEY (`studentId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `studentToClasses` ADD CONSTRAINT `studentToClasses_classId_classes_id_fk` FOREIGN KEY (`classId`) REFERENCES `classes`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `studentToClasses` ADD CONSTRAINT `studentToClasses_classId_payments_id_fk` FOREIGN KEY (`classId`) REFERENCES `payments`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `usersToField` ADD CONSTRAINT `usersToField_fieldId_fields_id_fk` FOREIGN KEY (`fieldId`) REFERENCES `fields`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `usersToField` ADD CONSTRAINT `usersToField_userId_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX `slug_idx` ON `academies` (`slug`);--> statement-breakpoint
 CREATE INDEX `slug_idx` ON `classes` (`slug`);--> statement-breakpoint
 CREATE INDEX `slug_idx` ON `courses` (`slug`);

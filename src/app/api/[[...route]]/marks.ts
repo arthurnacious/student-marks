@@ -1,6 +1,12 @@
 // users.ts
 import { db } from "@/db";
-import { classes, fields, marks, studentsToClasses } from "@/db/schema";
+import {
+  classes,
+  fields,
+  marks,
+  payments,
+  studentsToClasses,
+} from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 
@@ -19,6 +25,7 @@ const app = new Hono().get("/:userId", async (ctx) => {
           course: {
             columns: {
               name: true,
+              price: true,
             },
             with: {
               academy: {
@@ -38,6 +45,13 @@ const app = new Hono().get("/:userId", async (ctx) => {
                 },
                 orderBy: [fields.name],
               },
+            },
+          },
+          payments: {
+            where: eq(payments.userId, userId),
+            columns: {
+              amount: true,
+              type: true,
             },
           },
         },

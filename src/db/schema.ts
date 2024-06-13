@@ -146,6 +146,33 @@ export const courses = mysqlTable(
   }
 );
 
+export const materials = mysqlTable("materials", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  courseId: varchar("courseId", { length: 255 })
+    .notNull()
+    .references(() => courses.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  price: varchar("price", { length: 255 }).notNull(),
+  amount: int("amount").notNull(),
+});
+
+export const materialsClassStudent = mysqlTable("materialClassStudent", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  materialId: varchar("materialId", { length: 255 })
+    .notNull()
+    .references(() => materials.id, { onDelete: "cascade" }),
+  classId: varchar("classId", { length: 255 })
+    .notNull()
+    .references(() => classes.id, { onDelete: "cascade" }),
+  studentId: varchar("studentId", { length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
 export const fields = mysqlTable("fields", {
   id: varchar("id", { length: 255 })
     .primaryKey()
@@ -157,17 +184,17 @@ export const fields = mysqlTable("fields", {
   total: int("total").notNull(),
 });
 
-export const usersToField = mysqlTable("usersToField", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  fieldId: varchar("fieldId", { length: 255 }).references(() => fields.id, {
-    onDelete: "cascade",
-  }),
-  userId: varchar("userId", { length: 255 }).references(() => users.id, {
-    onDelete: "cascade",
-  }),
-});
+// export const usersToField = mysqlTable("usersToField", {
+//   id: varchar("id", { length: 255 })
+//     .primaryKey()
+//     .$defaultFn(() => crypto.randomUUID()),
+//   fieldId: varchar("fieldId", { length: 255 }).references(() => fields.id, {
+//     onDelete: "cascade",
+//   }),
+//   userId: varchar("userId", { length: 255 }).references(() => users.id, {
+//     onDelete: "cascade",
+//   }),
+// });
 
 export const classes = mysqlTable(
   "classes",
@@ -206,9 +233,6 @@ export const studentsToClasses = mysqlTable("studentToClasses", {
   classId: varchar("classId", { length: 255 })
     .notNull()
     .references(() => classes.id, { onDelete: "cascade" }),
-  paymentId: varchar("classId", { length: 255 })
-    .notNull()
-    .references(() => payments.id, { onDelete: "cascade" }),
 });
 
 const paymentType: string[] = Object.values(paymentTypeName);
@@ -313,6 +337,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   presentedClasses: many(classes, {
     relationName: "usersPresentedClasses",
   }),
+  materials: many(materialsClassStudent),
+  payments: many(payments),
 }));
 
 export const studentsToClassesRelations = relations(
@@ -358,6 +384,7 @@ export const coursesRelations = relations(courses, ({ one, many }) => ({
   classes: many(classes, {
     relationName: "courseClasses",
   }),
+  materials: many(materials),
 }));
 
 export const classesRelations = relations(classes, ({ one, many }) => ({
@@ -372,6 +399,45 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
     relationName: "usersPresentedClasses",
   }),
   heads: many(studentsToClasses),
+  payments: many(payments),
+  materials: many(materialsClassStudent),
+}));
+
+export const materialRelations = relations(materials, ({ one, many }) => ({
+  class: one(courses, {
+    fields: [materials.courseId],
+    references: [courses.id],
+  }),
+  classes: many(materialsClassStudent),
+}));
+
+export const materialsClassStudentRelations = relations(
+  materialsClassStudent,
+  ({ one }) => ({
+    material: one(materials, {
+      fields: [materialsClassStudent.materialId],
+      references: [materials.id],
+    }),
+    class: one(classes, {
+      fields: [materialsClassStudent.classId],
+      references: [classes.id],
+    }),
+    student: one(users, {
+      fields: [materialsClassStudent.studentId],
+      references: [users.id],
+    }),
+  })
+);
+
+export const paymentRelations = relations(payments, ({ one, many }) => ({
+  class: one(classes, {
+    fields: [payments.classId],
+    references: [classes.id],
+  }),
+  student: one(users, {
+    fields: [payments.userId],
+    references: [users.id],
+  }),
 }));
 
 export const fieldsRelations = relations(fields, ({ one, many }) => ({
