@@ -121,7 +121,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add a Class</DialogTitle>
+          <DialogTitle>Run a class</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>

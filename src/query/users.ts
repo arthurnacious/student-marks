@@ -56,7 +56,7 @@ export const useGetUsers = (role?: RoleName) => {
   const query = useQuery({
     queryKey: ["users", role ?? null],
     queryFn: async () => {
-      const response = await client.api.users[":role?"].$get({
+      const response = await client.api.users.role[":role?"].$get({
         param: { role: role ?? "" },
       });
       if (!response.ok) {

@@ -15,9 +15,12 @@ const EditAcademy: React.FC<Props> = async ({ params: { slug } }) => {
     param: { slug },
   });
   const { data: academy } = await response.json();
+
+  if (!academy) notFound();
+
   return (
     <PageContainerWrapper
-      title="Edit Academy"
+      title={`Edit ${academy.name} Academy`}
       trail={
         <Link
           href="/academies"
