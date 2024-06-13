@@ -34,7 +34,7 @@ const ClassesTable: React.FC<Props> = ({ initialData }) => {
         />
       ) : (
         <div className="flex items-center justify-center">
-          <h3 className="text-2xl ">There are no Classes on the system.</h3>
+          <h3 className="text-2xl ">There are no classes on the system.</h3>
         </div>
       )}
     </div>

@@ -7,11 +7,13 @@ import classes from "./classes";
 import marks from "./marks";
 import users from "./users";
 import { handle } from "hono/vercel";
+import { authMiddleware } from "./middleware";
 
 // export const runtime = "edge";
 
 const route = new Hono()
   .basePath("/api")
+  // .use(authMiddleware)
   .route("/academies", academies)
   .route("/courses", courses)
   .route("/fields", fields)

@@ -71,10 +71,8 @@ const AddClassModal: React.FC<Props> = ({}) => {
     },
   });
 
-  const userId = "39cc2560-ca08-4c75-bf10-093400c2a27d";
-
   const { data: usersAcademies, isLoading: loadingAcademies } =
-    useGetUsersAcademies(userId);
+    useGetUsersAcademies();
 
   const { data: courses, isLoading: loadingCourses } = useGetAcademiesCouses(
     selectedAcademy?.id

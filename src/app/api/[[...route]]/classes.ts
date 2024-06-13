@@ -1,14 +1,19 @@
 // courses.ts
 import { db } from "@/db";
 import { classes, courses, insertClassesSchema, users } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
-import { date } from "drizzle-orm/mysql-core";
 import { Hono } from "hono";
 import slugify from "slugify";
 
 const app = new Hono()
   .get("/", async (ctx) => {
+    const session = await auth();
+    if (!session?.user) {
+      return ctx.json({ error: "Unauthorized" }, 401);
+    }
+
     const data = await db.query.classes.findMany({});
 
     return ctx.json({ data });
@@ -21,11 +26,15 @@ const app = new Hono()
     ),
     async (ctx) => {
       const values = ctx.req.valid("json");
-      const userId = "39cc2560-ca08-4c75-bf10-093400c2a27d";
+      const session = await auth();
+      if (!session?.user) {
+        return ctx.json({ error: "Unauthorized" }, 401);
+      }
 
       const user = await db.query.users.findFirst({
-        where: eq(users.id, userId),
+        where: eq(users.id, session.user.id as string),
         columns: {
+          id: true,
           name: true,
         },
       });
@@ -50,7 +59,9 @@ const app = new Hono()
         let slug = slugify(
           `${course.name}-${user.name}-${date.toISOString()}-${Math.random()}`
         );
-        await db.insert(classes).values({ ...values, slug, creatorId: userId });
+        await db
+          .insert(classes)
+          .values({ ...values, slug, creatorId: user.id });
 
         return ctx.json({ data: slug });
       } catch (error: any) {

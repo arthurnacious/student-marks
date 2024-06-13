@@ -31,7 +31,10 @@ export const users = mysqlTable("users", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).unique(),
+  email: varchar("email", { length: 255 })
+    .notNull()
+    .unique()
+    .$defaultFn(() => `${crypto.randomUUID()}@email.com`), //fallback if there is no email provided
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,

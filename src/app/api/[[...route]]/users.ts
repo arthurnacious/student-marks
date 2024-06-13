@@ -7,7 +7,7 @@ import {
   users,
 } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq, gt, inArray, isNotNull, or } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull, or } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -38,7 +38,7 @@ const app = new Hono()
       role && role !== "undefined"
         ? and(
             eq(users.role, role),
-            or(gt(users.activeTill, new Date()), isNotNull(users.activeTill))
+            or(gt(users.activeTill, new Date()), isNull(users.activeTill))
           )
         : undefined;
 

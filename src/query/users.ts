@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 import { RoleName } from "@/types/roles";
 import { InferRequestType, InferResponseType } from "hono";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 type ResponseType = InferResponseType<
@@ -12,7 +13,9 @@ type RequestType = InferRequestType<
   (typeof client.api.users)["bulk-delete"]["$post"]
 >["json"];
 
-export const useGetUsersAcademies = (userId: string) => {
+export const useGetUsersAcademies = () => {
+  const session = useSession();
+  const userId = session?.data?.user?.id;
   const query = useQuery({
     queryKey: ["user", userId, "academies"],
     queryFn: async () => {
@@ -25,6 +28,7 @@ export const useGetUsersAcademies = (userId: string) => {
       const { data } = await response.json();
       return data;
     },
+    enabled: !!userId,
   });
   return query;
 };
