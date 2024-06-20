@@ -283,8 +283,8 @@ export const lecturersToAcademies = mysqlTable("lecturersToAcademies", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-// cant use session here, its already used, period is the closes word to session I could come up with
-export const periods = mysqlTable("periods", {
+// cant use session here, its already used, classSession is the closes word to session I could come up with
+export const classSessions = mysqlTable("classSessions", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -302,9 +302,9 @@ export const attendance = mysqlTable("attendances", {
   studentId: varchar("studentId", { length: 255 })
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  periodId: varchar("periodId", { length: 255 })
+  classSessionId: varchar("classSessionId", { length: 255 })
     .notNull()
-    .references(() => periods.id, { onDelete: "cascade" }),
+    .references(() => classSessions.id, { onDelete: "cascade" }),
   role: mysqlEnum("name", attendanceType as [string, ...string[]])
     .default("Present")
     .notNull(),
@@ -401,7 +401,7 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
     references: [users.id],
     relationName: "usersPresentedClasses",
   }),
-  heads: many(studentsToClasses),
+  students: many(studentsToClasses),
   payments: many(payments),
   materials: many(materialsClassStudent),
 }));

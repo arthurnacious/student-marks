@@ -225,23 +225,29 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                           key={idx}
                           control={form.control}
                           name={`fields.${idx}.total`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Field {number} Total</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="Total"
-                                  defaultValue="100"
-                                  value={String(field.value)}
-                                  onChange={(e) =>
-                                    field.onChange(parseFloat(e.target.value))
-                                  }
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
+                          render={({ field }) => {
+                            if (field.value === undefined) {
+                              field.onChange(100);
+                            }
+                            return (
+                              <FormItem>
+                                <FormLabel>Field {number} Total</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="Total"
+                                    value={String(field.value ?? 100)}
+                                    onChange={(e) =>
+                                      field.onChange(
+                                        parseFloat(e.target.value ?? "100")
+                                      )
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            );
+                          }}
                         />
                       </div>
                     </React.Fragment>

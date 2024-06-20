@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "e3db7c98-9527-46c8-a844-4a65704f3630",
+  "id": "27fba557-903c-4961-8e1b-09679193b33e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "academies": {
@@ -261,8 +261,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "periodId": {
-          "name": "periodId",
+        "classSessionId": {
+          "name": "classSessionId",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
@@ -292,12 +292,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "attendances_periodId_periods_id_fk": {
-          "name": "attendances_periodId_periods_id_fk",
+        "attendances_classSessionId_classSessions_id_fk": {
+          "name": "attendances_classSessionId_classSessions_id_fk",
           "tableFrom": "attendances",
-          "tableTo": "periods",
+          "tableTo": "classSessions",
           "columnsFrom": [
-            "periodId"
+            "classSessionId"
           ],
           "columnsTo": [
             "id"
@@ -309,6 +309,57 @@
       "compositePrimaryKeys": {
         "attendances_id": {
           "name": "attendances_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "classSessions": {
+      "name": "classSessions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "classId": {
+          "name": "classId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "classSessions_classId_classes_id_fk": {
+          "name": "classSessions_classId_classes_id_fk",
+          "tableFrom": "classSessions",
+          "tableTo": "classes",
+          "columnsFrom": [
+            "classId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "classSessions_id": {
+          "name": "classSessions_id",
           "columns": [
             "id"
           ]
@@ -988,57 +1039,6 @@
       },
       "uniqueConstraints": {}
     },
-    "periods": {
-      "name": "periods",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "classId": {
-          "name": "classId",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "periods_classId_classes_id_fk": {
-          "name": "periods_classId_classes_id_fk",
-          "tableFrom": "periods",
-          "tableTo": "classes",
-          "columnsFrom": [
-            "classId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "periods_id": {
-          "name": "periods_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
     "sessions": {
       "name": "sessions",
       "columns": {
@@ -1175,7 +1175,7 @@
           "name": "email",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "emailVerified": {

@@ -1,9 +1,17 @@
 // courses.ts
 import { db } from "@/db";
-import { classes, courses, insertClassesSchema, users } from "@/db/schema";
+import {
+  classSessions,
+  classes,
+  courses,
+  insertClassesSchema,
+  studentsToClasses,
+  users,
+} from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
+import { formatDate } from "date-fns";
+import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
 
@@ -14,7 +22,45 @@ const app = new Hono()
       return ctx.json({ error: "Unauthorized" }, 401);
     }
 
-    const data = await db.query.classes.findMany({});
+    const data = await db.query.classes.findMany({
+      with: {
+        course: {
+          columns: {
+            name: true,
+          },
+        },
+        lecturer: {
+          columns: {
+            name: true,
+          },
+        },
+      },
+      extras: {
+        students:
+          sql<number>`(select count(*) from ${studentsToClasses} where 'studentsToClasses.classId' = ${classes.id})`.as(
+            "students"
+          ),
+        sessions:
+          sql<number>`(select count(*) from ${classSessions} where 'classSessions.classId' = ${classes.id})`.as(
+            "sessions"
+          ),
+      },
+    });
+
+    return ctx.json({ data });
+  })
+  .get("/:slug", async (ctx) => {
+    const slug = ctx.req.param("slug");
+
+    const data = await db.query.classes.findFirst({
+      where: eq(classes.slug, slug),
+      with: {
+        course: true,
+        lecturer: true,
+        students: true,
+        payments: true,
+      },
+    });
 
     return ctx.json({ data });
   })
@@ -56,19 +102,19 @@ const app = new Hono()
 
       try {
         const date = new Date();
+        const randomNumber = Math.floor(Math.random() * (5000 - 1000)) + 1000;
         let slug = slugify(
-          `${course.name}-${user.name}-${date.toISOString()}-${Math.random()}`
+          `${course.name}-${user.name}-${formatDate(
+            date,
+            "yyyy-MM-dd"
+          )}-${randomNumber}`.toLowerCase()
         );
         await db
           .insert(classes)
           .values({ ...values, slug, creatorId: user.id });
 
         return ctx.json({ data: slug });
-      } catch (error: any) {
-        // if (error.code === "DUP") {
-        //   throw new Error({ title: "Duplicate name", statusCode: 422 });
-        // }
-      }
+      } catch (error: any) {}
     }
   );
 

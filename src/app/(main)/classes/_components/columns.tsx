@@ -16,10 +16,16 @@ import Link from "next/link";
 
 export type Classes = {
   id: string;
-  name: string;
   slug: string;
   students: number;
   sessions: number;
+  price: number;
+  course: {
+    name: string;
+  };
+  lecturer: {
+    name: string;
+  };
 };
 
 export const columns: ColumnDef<Classes>[] = [
@@ -46,40 +52,58 @@ export const columns: ColumnDef<Classes>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "course.name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Course
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
+    accessorKey: "Lecturer",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Lecturer
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const course = row.original;
+      return course.lecturer.name;
+    },
+  },
+  {
     // accessorKey: "students",
     header: "Students",
     cell: ({ row }) => {
-      const course = row.original;
-      return course.students;
+      const roster = row.original;
+      return roster.students;
     },
   },
   {
     // accessorKey: "sessions",
-    header: "Sessions",
+    header: "Periods",
     cell: ({ row }) => {
-      const course = row.original;
-      return course.sessions;
+      const roster = row.original;
+      return roster.sessions;
     },
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const course = row.original;
+      const roster = row.original;
 
       return (
         <DropdownMenu>
@@ -92,14 +116,14 @@ export const columns: ColumnDef<Classes>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`classes/${course.slug}`} className="cursor-pointer">
+              <Link href={`classes/${roster.slug}`} className="cursor-pointer">
                 View Class
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link
-                href={`classes/${course.slug}/edit`}
+                href={`classes/${roster.slug}/edit`}
                 className="cursor-pointer"
               >
                 Edit Course

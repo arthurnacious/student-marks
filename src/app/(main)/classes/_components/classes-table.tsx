@@ -30,7 +30,7 @@ const ClassesTable: React.FC<Props> = ({ initialData }) => {
           }}
           isLoading={deleteClasses.isPending}
           data={data}
-          searchCol="name"
+          searchCol="course.name"
         />
       ) : (
         <div className="flex items-center justify-center">
