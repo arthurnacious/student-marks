@@ -57,7 +57,7 @@ const ManageFields: React.FC<Props> = ({ course, disabled = false }) => {
       <ConfirmationDialog />
       {course.fields.length > 0 ? (
         <>
-          <h3>Manage Existing</h3>
+          <h3>Manage Fields</h3>
 
           <Table>
             <TableHeader>

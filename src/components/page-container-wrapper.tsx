@@ -26,13 +26,15 @@ const PageContainerWrapper: React.FC<Props> = async ({
 
   return (
     <div className={cn("flex flex-col p-10 ml-20 w-full gap-5", className)}>
-      <div className="flex justify-between items-center">
-        {!!title && (
-          <h1 className="text-4xl text-neutral-200 uppercase font-SpaceGrotesk">
-            {title}
-          </h1>
-        )}
-        {!!trail && trail}
+      <div className="flex justify-between items-baseline">
+        <div className="flex flex-col justify-center">
+          {!!title && (
+            <h1 className="text-4xl text-neutral-200 uppercase font-SpaceGrotesk">
+              {title}
+            </h1>
+          )}
+          {!!trail && trail}
+        </div>
         <div className="flex gap-5 items-center">
           <span className="text-xl hidden md:block">{session.user.name}</span>
 
