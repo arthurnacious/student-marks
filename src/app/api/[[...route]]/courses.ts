@@ -227,22 +227,52 @@ const app = new Hono()
     async (ctx) => {
       const slug = ctx.req.param("slug");
       const values = ctx.req.valid("json");
-      const data = await db.query.courses.findFirst({
+      const course = await db.query.courses.findFirst({
         where: eq(courses.slug, slug),
         columns: {
           id: true,
+          name: true,
+        },
+        extras: {
+          classCount: sql<number>`(
+          select count(*)
+          from ${classes}
+          where classes.courseId = courses.id
+        )`.as("classCount"),
         },
       });
-
-      if (!data) {
+      if (!course) {
         return ctx.json({ error: "Course not found" }, 404);
       }
 
-      try {
-        const courseId = data.id;
-        const name = toTitleCase(values.name);
+      const errors = [];
 
-        const response = await db.insert(materials).values({
+      if (course.classCount > 0) {
+        errors.push({ error: "This course has classes" });
+      }
+
+      const name = toTitleCase(values.name);
+      const courseId = course.id;
+
+      const [existingName] = await db
+        .select()
+        .from(fields)
+        .where(and(eq(fields.name, name), eq(fields.courseId, courseId)));
+
+      if (existingName) {
+        errors.push({
+          name: ` ${
+            course.name
+          } can't have two "${name.toLocaleLowerCase()}" fields`,
+        });
+      }
+
+      if (errors.length > 0) {
+        return ctx.json({ errors }, 422);
+      }
+
+      try {
+        const response = await db.insert(fields).values({
           ...values,
           courseId,
           name,
@@ -251,7 +281,6 @@ const app = new Hono()
       } catch (error: any) {
         console.log({ error });
       }
-      return ctx.json({ data });
     }
   )
   .patch(

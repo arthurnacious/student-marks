@@ -37,6 +37,7 @@ import { InferRequestType, InferResponseType } from "hono";
 import Link from "next/link";
 import { useGetAcademies } from "@/query/academies";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorResponseData, ValidationError } from "@/errors/validation";
 
 interface Props {
   courseName: string;
@@ -51,7 +52,9 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "name must be at least 2 characters long",
   }),
-  total: z.number(),
+  total: z.number().min(1, {
+    message: "The total must be at least 1 characters long",
+  }),
 });
 
 type formValues = z.input<typeof formSchema>;
@@ -64,8 +67,7 @@ const AddFieldModal: React.FC<Props> = ({ courseName, courseSlug }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      amount: 0,
-      price: 10,
+      total: 100,
     },
   });
 
@@ -75,6 +77,13 @@ const AddFieldModal: React.FC<Props> = ({ courseName, courseSlug }) => {
         json: values,
         param: { slug: courseSlug },
       });
+
+      if (response.status === 422) {
+        const responseData: ErrorResponseData =
+          (await response.json()) as ErrorResponseData;
+        throw new ValidationError(422, "Validation Error", responseData.errors);
+      }
+
       return response.json();
     },
     onSuccess: () => {
@@ -85,8 +94,19 @@ const AddFieldModal: React.FC<Props> = ({ courseName, courseSlug }) => {
         queryKey: ["courses", courseSlug, "fields"],
       });
     },
-    onError: (error: any) => {
-      toast.error("failed to add course");
+    onError: (error) => {
+      console.log(error);
+      if (error instanceof ValidationError) {
+        error.errors.forEach((err) => {
+          if (err.name) {
+            form.setError("name", { message: err.name });
+          }
+          if (err.error) {
+          }
+        });
+        return;
+      }
+      toast.error("Failed to add field");
     },
   });
 
@@ -120,7 +140,7 @@ const AddFieldModal: React.FC<Props> = ({ courseName, courseSlug }) => {
                   <FormItem>
                     <FormLabel>Field Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Book" {...field} />
+                      <Input placeholder="Theory" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -130,25 +150,28 @@ const AddFieldModal: React.FC<Props> = ({ courseName, courseSlug }) => {
                 <FormField
                   control={form.control}
                   name="total"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Total Mark</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="2"
-                          {...field}
-                          onChange={(event) =>
-                            field.onChange(+event.target.value)
-                          }
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        This is the total mark of the field
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    field.value = field.value === undefined ? 100 : field.value;
+                    return (
+                      <FormItem className="flex-1">
+                        <FormLabel>Total Mark</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="100"
+                            {...field}
+                            onChange={(event) =>
+                              field.onChange(+event.target.value)
+                            }
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          This is the total mark of the field
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
               </div>
               <Button isLoading={mutation.isPending}>Create</Button>
