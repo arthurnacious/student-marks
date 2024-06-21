@@ -48,18 +48,8 @@ const formSchema = z.object({
     message: "Academy is required.",
   }),
   name: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "Name must be at least 2 characters long.",
   }),
-  fields: z.array(
-    z.object({
-      name: z.string().min(1, {
-        message: "Field name is required",
-      }),
-      total: z.number().min(1, {
-        message: "Total is required",
-      }),
-    })
-  ),
 });
 
 type formValues = z.input<typeof formSchema>;
@@ -74,7 +64,6 @@ const AddCourseModal: React.FC<Props> = ({}) => {
     defaultValues: {
       academy: "",
       name: "",
-      fields: [{ total: 100, name: "" }],
     },
   });
 
@@ -131,7 +120,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                 control={form.control}
                 name="academy"
                 render={({ field }) => (
-                  <FormItem className="my-5">
+                  <FormItem>
                     <FormLabel>Academy</FormLabel>
                     {isLoading ? (
                       <Skeleton className="h-10 w-full flex items-center justify-center text-black">
@@ -169,7 +158,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mb-6">
                     <FormLabel>Course</FormLabel>
                     <FormControl>
                       <Input placeholder="Math 1" {...field} />
@@ -181,79 +170,6 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                   </FormItem>
                 )}
               />
-              <h4 className="text-2xl mt-5 mb-3">Fields</h4>
-
-              <Input
-                placeholder="1"
-                type="number"
-                value={fieldCount}
-                min={1}
-                max={5}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (value > 0 && value <= 5) {
-                    setFieldCount(value);
-                  } else {
-                    form.setError("fields", {
-                      message:
-                        "Fields has to be more than 0 but not more than 5",
-                    });
-                  }
-                }}
-              />
-              <div className="gap-x-3 my-4">
-                {[...Array(fieldCount).keys()].map((_, idx) => {
-                  const number = idx + 1;
-                  return (
-                    <React.Fragment key={idx}>
-                      <p className="text-xl mt-4">Field {number}</p>
-                      <div className="flex flex-wrap gap-x-1">
-                        <FormField
-                          control={form.control}
-                          name={`fields.${idx}.name`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Field {number} Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Theory" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          key={idx}
-                          control={form.control}
-                          name={`fields.${idx}.total`}
-                          render={({ field }) => {
-                            if (field.value === undefined) {
-                              field.onChange(100);
-                            }
-                            return (
-                              <FormItem>
-                                <FormLabel>Field {number} Total</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    placeholder="Total"
-                                    value={String(field.value ?? 100)}
-                                    onChange={(e) =>
-                                      field.onChange(
-                                        parseFloat(e.target.value ?? "100")
-                                      )
-                                    }
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            );
-                          }}
-                        />
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
-              </div>
               <Button isLoading={mutation.isPending}>Create</Button>
             </form>
           </Form>

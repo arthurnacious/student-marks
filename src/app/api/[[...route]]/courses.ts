@@ -1,6 +1,7 @@
 // courses.ts
 import { db } from "@/db";
 import {
+  academies,
   classes,
   courses,
   fields,
@@ -17,16 +18,6 @@ import slugify from "slugify";
 import { z } from "zod";
 
 const createCourseSchema = insertCourseSchema.extend({
-  fields: z.array(
-    z.object({
-      name: z.string().min(1, {
-        message: "Field name is required",
-      }),
-      total: z.number().min(1, {
-        message: "Total is required",
-      }),
-    })
-  ),
   academy: z.string(),
 });
 
@@ -44,10 +35,14 @@ const app = new Hono()
         updatedAt: courses.updatedAt,
         slug: courses.slug,
         status: courses.status,
+        academy: {
+          name: academies.name,
+        },
         classes: count(classes.id),
         fields: count(fields.id),
       })
       .from(courses)
+      .leftJoin(academies, eq(courses.academyId, academies.id))
       .leftJoin(classes, eq(courses.id, classes.courseId))
       .leftJoin(fields, eq(courses.id, fields.courseId))
       .groupBy(courses.id);
@@ -56,10 +51,7 @@ const app = new Hono()
   })
   .post(
     "/",
-    zValidator(
-      "json",
-      createCourseSchema.pick({ name: true, fields: true, academy: true })
-    ),
+    zValidator("json", createCourseSchema.pick({ name: true, academy: true })),
     async (ctx) => {
       const values = ctx.req.valid("json");
       let slug = slugify(values.name.toLowerCase());
@@ -93,34 +85,14 @@ const app = new Hono()
       }
 
       try {
-        const { fields: fieldsArray, ...rest } = values;
-        rest.name = toTitleCase(rest.name);
+        values.name = toTitleCase(values.name);
 
-        await db
+        const data = await db
           .insert(courses)
-          .values({ ...rest, slug, academyId: values.academy });
-        const [courseData] = await db
-          .select({ id: courses.id })
-          .from(courses)
-          .where(eq(courses.slug, slug));
+          .values({ ...values, slug, academyId: values.academy });
 
-        // Insert the fields data concurrently
-        const fieldsData = await Promise.all(
-          fieldsArray.map(async ({ name, total }) => {
-            if (name !== "") {
-              await db
-                .insert(fields)
-                .values({ name, total, courseId: courseData.id });
-            }
-          })
-        );
-
-        return ctx.json({ courseData, fieldsData });
-      } catch (error: any) {
-        // if (error.code === "DUP") {
-        //   throw new Error({ title: "Duplicate name", statusCode: 422 });
-        // }
-      }
+        return ctx.json({ data });
+      } catch (error: any) {}
     }
   )
   .get("/:slug", async (ctx) => {
