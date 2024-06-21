@@ -8,6 +8,13 @@ type RequestType = InferRequestType<
   (typeof client.api.courses)["bulk-delete"]["$post"]
 >["json"];
 
+export type field = {
+  id: string;
+  name: string;
+  courseId: string | null;
+  total: number;
+};
+
 export const useGetCourses = () => {
   const query = useQuery({
     queryKey: ["courses"],
@@ -58,6 +65,25 @@ export const useGetCourseMaterials = (slug: string) => {
       }
       const { data } = await response.json();
       return data?.materials;
+    },
+    enabled: !!slug,
+  });
+  return query;
+};
+
+export const useGetCourseFields = (slug: string, initialData?: field[]) => {
+  const query = useQuery({
+    queryKey: ["courses", slug, "fields"],
+    initialData,
+    queryFn: async () => {
+      const response = await client.api.courses[":slug"].fields.$get({
+        param: { slug },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch courses fields");
+      }
+      const { data } = await response.json();
+      return data?.fields;
     },
     enabled: !!slug,
   });

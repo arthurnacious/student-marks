@@ -5,6 +5,7 @@ import {
   courses,
   fields,
   insertCourseSchema,
+  insertFieldSchema,
   insertMaterialSchema,
   materials,
 } from "@/db/schema";
@@ -30,8 +31,8 @@ const createCourseSchema = insertCourseSchema.extend({
 });
 
 const updateCourseSchema = insertCourseSchema;
-
 const createMaterialSchema = insertMaterialSchema;
+const createFieldSchema = insertFieldSchema;
 
 const app = new Hono()
   .get("/", async (ctx) => {
@@ -160,6 +161,28 @@ const app = new Hono()
     });
     return ctx.json({ data });
   })
+  .get("/:slug/fields", async (ctx) => {
+    const slug = ctx.req.param("slug");
+    const data = await db.query.courses.findFirst({
+      where: eq(courses.slug, slug),
+      columns: {
+        name: true,
+        id: true,
+        slug: true,
+      },
+      with: {
+        fields: true,
+      },
+      extras: {
+        classCount: sql<number>`(
+          select count(*)
+          from ${classes}
+          where classes.courseId = courses.id
+        )`.as("classCount"),
+      },
+    });
+    return ctx.json({ data });
+  })
   .post(
     "/:slug/materials",
     zValidator(
@@ -189,6 +212,39 @@ const app = new Hono()
           ...values,
           courseId,
           price,
+          name,
+        });
+        return ctx.json({ data: response });
+      } catch (error: any) {
+        console.log({ error });
+      }
+      return ctx.json({ data });
+    }
+  )
+  .post(
+    "/:slug/fields",
+    zValidator("json", createFieldSchema.pick({ name: true, total: true })),
+    async (ctx) => {
+      const slug = ctx.req.param("slug");
+      const values = ctx.req.valid("json");
+      const data = await db.query.courses.findFirst({
+        where: eq(courses.slug, slug),
+        columns: {
+          id: true,
+        },
+      });
+
+      if (!data) {
+        return ctx.json({ error: "Course not found" }, 404);
+      }
+
+      try {
+        const courseId = data.id;
+        const name = toTitleCase(values.name);
+
+        const response = await db.insert(materials).values({
+          ...values,
+          courseId,
           name,
         });
         return ctx.json({ data: response });

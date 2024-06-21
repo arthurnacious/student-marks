@@ -1,6 +1,6 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { ArrowLeft } from "lucide-react";
-import CourseMaterialsTable from "./_components/course-materials-table";
+import CourseFieldsTable from "./_components/course-fields-table";
 import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -9,8 +9,8 @@ interface Props {
   params: { slug: string };
 }
 
-const CourseMaterials: React.FC<Props> = async ({ params: { slug } }) => {
-  const response = await client.api.courses[":slug"].materials.$get({
+const CourseFields: React.FC<Props> = async ({ params: { slug } }) => {
+  const response = await client.api.courses[":slug"].fields.$get({
     param: { slug },
   });
   const { data: course } = await response.json();
@@ -21,7 +21,7 @@ const CourseMaterials: React.FC<Props> = async ({ params: { slug } }) => {
 
   return (
     <PageContainerWrapper
-      title={`${course.name} Materials`}
+      title={`${course.name} Fields`}
       trail={
         <Link
           href={`/courses`}
@@ -32,10 +32,10 @@ const CourseMaterials: React.FC<Props> = async ({ params: { slug } }) => {
       }
     >
       <div className="w-full h-full border border-neutral-500/50 bg-neutral-800/20 rounded p-8">
-        <CourseMaterialsTable initialData={course.materials} course={course} />
+        <CourseFieldsTable initialData={course.fields} course={course} />
       </div>
     </PageContainerWrapper>
   );
 };
 
-export default CourseMaterials;
+export default CourseFields;
