@@ -117,7 +117,7 @@ export const columns: ColumnDef<Classes>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link href={`classes/${roster.slug}`} className="cursor-pointer">
-                View Class
+                Go to class
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
