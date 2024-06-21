@@ -11,9 +11,10 @@ import {
 import { auth } from "@/lib/auth";
 import { zValidator } from "@hono/zod-validator";
 import { formatDate } from "date-fns";
-import { eq, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
+import { z } from "zod";
 
 const app = new Hono()
   .get("/", async (ctx) => {
@@ -97,7 +98,7 @@ const app = new Hono()
       });
 
       if (!course) {
-        return ctx.json({ error: "course not found" }, 400);
+        return ctx.json({ error: "course not found" }, 404);
       }
 
       try {
@@ -113,7 +114,28 @@ const app = new Hono()
           .insert(classes)
           .values({ ...values, slug, creatorId: user.id });
 
-        return ctx.json({ data: slug });
+        return ctx.json({ slug });
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
+    }
+  )
+  .post(
+    "/bulk-delete",
+    zValidator(
+      "json",
+      z.object({
+        ids: z.array(z.string()),
+      })
+    ),
+    async (ctx) => {
+      const { ids } = ctx.req.valid("json");
+      console.log({ ids });
+      try {
+        const data = await db.delete(classes).where(inArray(classes.id, ids));
+
+        return ctx.json({ data: ids });
       } catch (error: any) {}
     }
   );

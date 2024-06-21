@@ -21,7 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -34,7 +33,6 @@ import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
-import Link from "next/link";
 import { useGetUsersAcademies } from "@/query/users";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAcademiesCouses } from "@/query/academies";
@@ -78,20 +76,25 @@ const AddClassModal: React.FC<Props> = ({}) => {
     selectedAcademy?.id
   );
 
-  const mutation = useMutation<unknown, Error, RequestType>({
-    mutationFn: async (values) => {
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async (values): Promise<ResponseType> => {
       const response = await client.api.classes.$post({ json: values });
 
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
       }
-      return response.json();
+      const data = await response.json();
+      return data;
     },
     onSuccess: (data) => {
-      onOpenChange(false);
-      toast.success("Class added successfully");
-      queryClient.invalidateQueries({ queryKey: ["classes"] });
-      router.replace(`/classes/${data.data}`);
+      if ("slug" in data) {
+        onOpenChange(false);
+        toast.success("Class added successfully");
+        queryClient.invalidateQueries({ queryKey: ["classes"] });
+        return router.replace(`/classes/${data.slug ?? ""}`);
+      }
+
+      throw new Error({ title: "failed to run class", statusCode: 500 });
     },
     onError: (error: any) => {
       toast.error("failed to run class");

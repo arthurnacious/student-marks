@@ -30,7 +30,7 @@ import { Trash2 } from "lucide-react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchCol: keyof TData;
+  searchCol?: keyof TData;
   onDelete: (rows: Row<TData>[]) => void;
   disabled?: boolean;
   isLoading?: boolean;
@@ -78,20 +78,22 @@ export function DataTable<TData, TValue>({
       <div>
         <ConfirmationDialog />
         <div className="flex items-center py-4">
-          <Input
-            placeholder={`Filter by ${searchCol as string}...`}
-            value={
-              (table
-                .getColumn(searchCol as string)
-                ?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table
-                .getColumn(searchCol as string)
-                ?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+          {searchCol && (
+            <Input
+              placeholder={`Filter by ${searchCol as string}...`}
+              value={
+                (table
+                  .getColumn(searchCol as string)
+                  ?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn(searchCol as string)
+                  ?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+          )}
           {selectedRows.length > 0 && (
             <Button
               isLoading={isLoading}
