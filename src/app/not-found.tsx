@@ -1,6 +1,7 @@
 import BackButton from "@/components/back-button";
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import React, { FC } from "react";
 
 interface Props {}
@@ -20,10 +21,13 @@ const NotFound: FC<Props> = ({}) => {
             Oops, the page you&lsquo;re looking for doesn&lsquo;t exist.
           </p>
         </div>
-        <BackButton className="inline-flex h-10 items-center justify-center rounded-md bg-gray-500 px-2 md:px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-500 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300 text-nowrap">
-          <ArrowLeft />
-          Go back home
-        </BackButton>
+        <Link
+          href="/"
+          className="inline-flex h-10 items-center justify-center rounded-md bg-gray-500 px-2 md:px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-500 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300 text-nowrap"
+        >
+          <ArrowLeft className="mr-1" />
+          Go home
+        </Link>
       </div>
     </div>
   );
