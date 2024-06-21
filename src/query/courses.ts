@@ -34,7 +34,7 @@ export const useBulkDeleteCourses = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.academies["bulk-delete"]["$post"]({
+      const response = await client.api.courses["bulk-delete"]["$post"]({
         json,
       });
 

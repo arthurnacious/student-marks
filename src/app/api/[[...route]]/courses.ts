@@ -302,14 +302,12 @@ const app = new Hono()
       })
     ),
     async (ctx) => {
-      const values = ctx.req.valid("json");
-
+      const { ids } = ctx.req.valid("json");
+      console.log({ ids });
       try {
-        const data = await db
-          .delete(courses)
-          .where(inArray(courses.id, values.ids));
+        const data = await db.delete(courses).where(inArray(courses.id, ids));
 
-        return ctx.json({ data: values.ids });
+        return ctx.json({ data: ids });
       } catch (error: any) {}
     }
   );
