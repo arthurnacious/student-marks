@@ -72,8 +72,22 @@ export const columns: ColumnDef<Material>[] = [
     // accessorKey: "classes",
     header: "Amount in Stock",
     cell: ({ row }) => {
-      const material = row.original;
-      return material.amount;
+      const amount = row.original.amount;
+      return (
+        <div
+          className={`p-2 ${
+            amount < 5
+              ? "bg-red-500/30"
+              : amount >= 5 && amount < 10
+              ? "bg-teal-500/30"
+              : amount >= 10 && amount < 20
+              ? "bg-blue-500/30"
+              : "bg-green-500/30"
+          } rounded-md`}
+        >
+          {amount}
+        </div>
+      );
     },
   },
   {
@@ -93,7 +107,10 @@ export const columns: ColumnDef<Material>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`${material.id}/edit`} className="cursor-pointer">
+              <Link
+                href={`materials/${material.id}/edit`}
+                className="cursor-pointer"
+              >
                 Edit Material
               </Link>
             </DropdownMenuItem>

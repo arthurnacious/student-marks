@@ -82,6 +82,7 @@ const AddMaterialModal: React.FC<Props> = ({ courseName, courseSlug }) => {
     onSuccess: () => {
       onOpenChange(false);
       toast.success("Material added successfully");
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
       queryClient.invalidateQueries({
         queryKey: ["courses", courseSlug, "materials"],
       });

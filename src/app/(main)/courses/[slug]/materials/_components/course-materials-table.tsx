@@ -2,9 +2,10 @@
 import React from "react";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
-import { useBulkDeleteCourses, useGetCourseMaterials } from "@/query/courses";
+import { useGetCourseMaterials } from "@/query/courses";
 import TableSkeleton from "@/components/skeleton/table";
 import AddMaterialModal from "./crud/add-material";
+import { useBulkDeleteMaterials } from "@/query/materials";
 interface Props {
   initialData?: any;
   course: { name: string; slug: string; id: string };
@@ -12,7 +13,7 @@ interface Props {
 
 const CourseMaterialsTable: React.FC<Props> = ({ initialData, course }) => {
   const { data, isLoading } = useGetCourseMaterials(course.slug);
-  const deleteCourses = useBulkDeleteCourses();
+  const deleteMaterials = useBulkDeleteMaterials({ courseSlug: course.slug });
 
   return (
     <div>
@@ -24,9 +25,9 @@ const CourseMaterialsTable: React.FC<Props> = ({ initialData, course }) => {
           columns={columns}
           onDelete={(rows) => {
             const ids = rows.map((row) => row.original.id);
-            deleteCourses.mutate({ ids });
+            deleteMaterials.mutate({ ids });
           }}
-          isLoading={deleteCourses.isPending}
+          isLoading={deleteMaterials.isPending}
           data={data}
           searchCol="name"
         />

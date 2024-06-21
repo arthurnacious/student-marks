@@ -8,6 +8,7 @@ import {
   insertMaterialSchema,
   materials,
 } from "@/db/schema";
+import { toTitleCase } from "@/lib/utils";
 import { zValidator } from "@hono/zod-validator";
 import { and, count, eq, inArray, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
@@ -63,6 +64,7 @@ const app = new Hono()
       let slug = slugify(values.name.toLowerCase());
       let counter = 1;
       let isSlugAvailable = false;
+      values.name = toTitleCase(values.name);
 
       const [existingName] = await db
         .select()
@@ -91,6 +93,7 @@ const app = new Hono()
 
       try {
         const { fields: fieldsArray, ...rest } = values;
+        rest.name = toTitleCase(rest.name);
 
         await db
           .insert(courses)
@@ -178,9 +181,16 @@ const app = new Hono()
       }
 
       try {
-        const response = await db
-          .insert(materials)
-          .values({ ...values, courseId: data.id, price: values.price * 100 });
+        const price = values.price * 100;
+        const courseId = data.id;
+        const name = toTitleCase(values.name);
+
+        const response = await db.insert(materials).values({
+          ...values,
+          courseId,
+          price,
+          name,
+        });
         return ctx.json({ data: response });
       } catch (error: any) {
         console.log({ error });

@@ -4,10 +4,11 @@ import academies from "./academies";
 import courses from "./courses";
 import fields from "./fields";
 import classes from "./classes";
+import materials from "./materials";
 import marks from "./marks";
 import users from "./users";
 import { handle } from "hono/vercel";
-import { authMiddleware } from "./middleware";
+// import { authMiddleware } from "./middleware";
 
 // export const runtime = "edge";
 
@@ -19,7 +20,8 @@ const route = new Hono()
   .route("/fields", fields)
   .route("/classes", classes)
   .route("/marks", marks)
-  .route("/users", users);
+  .route("/users", users)
+  .route("/materials", materials);
 
 export const GET = handle(route);
 export const POST = handle(route);
