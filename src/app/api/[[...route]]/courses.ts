@@ -255,7 +255,7 @@ const app = new Hono()
       const courseId = course.id;
 
       const [existingName] = await db
-        .select()
+        .select({ name: fields.name, id: fields.id })
         .from(fields)
         .where(and(eq(fields.name, name), eq(fields.courseId, courseId)));
 
@@ -288,8 +288,8 @@ const app = new Hono()
     zValidator("json", updateCourseSchema.pick({ name: true })),
     async (ctx) => {
       const values = ctx.req.valid("json");
-
       const slug = ctx.req.param("slug");
+
       const newSlug = slugify(values.name.toLowerCase());
 
       const course = await db.query.courses.findFirst({

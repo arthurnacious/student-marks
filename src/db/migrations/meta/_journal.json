@@ -8,6 +8,20 @@
       "when": 1718350546671,
       "tag": "0000_bumpy_jack_power",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1718979846782,
+      "tag": "0001_messy_veda",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1718979957976,
+      "tag": "0002_legal_midnight",
+      "breakpoints": true
     }
   ]
 }

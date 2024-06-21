@@ -180,9 +180,11 @@ export const fields = mysqlTable("fields", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  courseId: varchar("courseId", { length: 255 }).references(() => courses.id, {
-    onDelete: "set null",
-  }),
+  courseId: varchar("courseId", { length: 255 })
+    .references(() => courses.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   total: int("total").notNull(),
 });

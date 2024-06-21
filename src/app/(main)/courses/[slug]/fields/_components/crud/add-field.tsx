@@ -95,7 +95,6 @@ const AddFieldModal: React.FC<Props> = ({ courseName, courseSlug }) => {
       });
     },
     onError: (error) => {
-      console.log(error);
       if (error instanceof ValidationError) {
         error.errors.forEach((err) => {
           if (err.name) {
