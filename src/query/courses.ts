@@ -45,3 +45,21 @@ export const useBulkDeleteCourses = () => {
 
   return mutation;
 };
+
+export const useGetCourseMaterials = (slug: string) => {
+  const query = useQuery({
+    queryKey: ["courses", slug, "materials"],
+    queryFn: async () => {
+      const response = await client.api.courses[":slug"].materials.$get({
+        param: { slug },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch courses");
+      }
+      const { data } = await response.json();
+      return data?.materials;
+    },
+    enabled: !!slug,
+  });
+  return query;
+};

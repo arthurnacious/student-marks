@@ -109,7 +109,7 @@ const AddAcademyModal: React.FC<Props> = ({}) => {
                       <Input placeholder="Marketing" {...field} />
                     </FormControl>
                     <FormDescription>
-                      This wil be the name of the academy
+                      This will be the name of the academy
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

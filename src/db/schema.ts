@@ -157,7 +157,7 @@ export const materials = mysqlTable("materials", {
     .notNull()
     .references(() => courses.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
-  price: varchar("price", { length: 255 }).notNull(),
+  price: int("price").notNull(),
   amount: int("amount").notNull(),
 });
 
@@ -486,4 +486,5 @@ export const insertAcademySchema = createInsertSchema(academies);
 export const insertCourseSchema = createInsertSchema(academies);
 export const insertFieldSchema = createInsertSchema(fields);
 export const insertClassesSchema = createInsertSchema(classes);
+export const insertMaterialSchema = createInsertSchema(materials);
 export const insertUserSchema = createInsertSchema(users);

@@ -13,16 +13,17 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { getPrice } from "@/lib/utils";
 
-export type Courses = {
+export type Material = {
   id: string;
+  courseId: string;
   name: string;
-  slug: string;
-  classes: number;
-  fields: number;
+  price: number;
+  amount: number;
 };
 
-export const columns: ColumnDef<Courses>[] = [
+export const columns: ColumnDef<Material>[] = [
   {
     id: "Select",
     header: ({ table }) => (
@@ -61,25 +62,25 @@ export const columns: ColumnDef<Courses>[] = [
   },
   {
     // accessorKey: "fields",
-    header: "Fields",
+    header: "Price",
     cell: ({ row }) => {
-      const course = row.original;
-      return course.fields;
+      const material = row.original;
+      return getPrice(material.price);
     },
   },
   {
     // accessorKey: "classes",
-    header: "Classes",
+    header: "Amount in Stock",
     cell: ({ row }) => {
-      const course = row.original;
-      return course.classes;
+      const material = row.original;
+      return material.amount;
     },
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const course = row.original;
+      const material = row.original;
 
       return (
         <DropdownMenu>
@@ -92,33 +93,8 @@ export const columns: ColumnDef<Courses>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`courses/${course.slug}`} className="cursor-pointer">
-                View Course
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`courses/${course.slug}/edit`}
-                className="cursor-pointer"
-              >
-                Edit Course
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`courses/${course.slug}/fields`}
-                className="cursor-pointer"
-              >
-                Manage Course Fields
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`courses/${course.slug}/materials`}
-                className="cursor-pointer"
-              >
-                Manage Course Materials
+              <Link href={`${material.id}/edit`} className="cursor-pointer">
+                Edit Material
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -1,6 +1,13 @@
 // courses.ts
 import { db } from "@/db";
-import { classes, courses, fields, insertCourseSchema } from "@/db/schema";
+import {
+  classes,
+  courses,
+  fields,
+  insertCourseSchema,
+  insertMaterialSchema,
+  materials,
+} from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
 import { and, count, eq, inArray, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
@@ -22,6 +29,8 @@ const createCourseSchema = insertCourseSchema.extend({
 });
 
 const updateCourseSchema = insertCourseSchema;
+
+const createMaterialSchema = insertMaterialSchema;
 
 const app = new Hono()
   .get("/", async (ctx) => {
@@ -116,6 +125,12 @@ const app = new Hono()
       where: eq(courses.slug, slug),
       with: {
         fields: true,
+        academy: {
+          columns: {
+            name: true,
+          },
+        },
+        materials: true,
       },
       extras: {
         classCount: sql<number>`(
@@ -127,6 +142,52 @@ const app = new Hono()
     });
     return ctx.json({ data });
   })
+  .get("/:slug/materials", async (ctx) => {
+    const slug = ctx.req.param("slug");
+    const data = await db.query.courses.findFirst({
+      where: eq(courses.slug, slug),
+      columns: {
+        name: true,
+        id: true,
+        slug: true,
+      },
+      with: {
+        materials: true,
+      },
+    });
+    return ctx.json({ data });
+  })
+  .post(
+    "/:slug/materials",
+    zValidator(
+      "json",
+      createMaterialSchema.pick({ name: true, price: true, amount: true })
+    ),
+    async (ctx) => {
+      const slug = ctx.req.param("slug");
+      const values = ctx.req.valid("json");
+      const data = await db.query.courses.findFirst({
+        where: eq(courses.slug, slug),
+        columns: {
+          id: true,
+        },
+      });
+
+      if (!data) {
+        return ctx.json({ error: "Course not found" }, 404);
+      }
+
+      try {
+        const response = await db
+          .insert(materials)
+          .values({ ...values, courseId: data.id, price: values.price * 100 });
+        return ctx.json({ data: response });
+      } catch (error: any) {
+        console.log({ error });
+      }
+      return ctx.json({ data });
+    }
+  )
   .patch(
     "/:slug",
     zValidator("json", updateCourseSchema.pick({ name: true })),
