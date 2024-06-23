@@ -129,13 +129,13 @@ const AddStudentsModal: React.FC<Props> = ({ theClass }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Run a class</DialogTitle>
+          <DialogTitle>Enroll a student</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormItem>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel>Search</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="John Doe"

@@ -1,9 +1,11 @@
 // courses.ts
 import { db } from "@/db";
 import {
+  attendances,
   classSessions,
   classes,
   courses,
+  insertAttendanceSchema,
   insertClassesSchema,
   insertStudentsToClasses,
   studentsToClasses,
@@ -64,11 +66,16 @@ const app = new Hono()
             student: true,
           },
         },
+        sessions: {
+          with: {
+            attendances: true,
+          },
+        },
         payments: true,
       },
     });
 
-    return ctx.json({ data });
+    return ctx.json({ data: data });
   })
   .post(
     "/",
@@ -172,6 +179,58 @@ const app = new Hono()
         .values({ studentId, classId });
 
       return ctx.json({ data });
+    }
+  )
+  .post(
+    "/:classId/attendance",
+    zValidator(
+      "json",
+      insertAttendanceSchema.pick({
+        role: true,
+        studentId: true,
+        classSessionId: true,
+      })
+    ),
+    async (ctx) => {
+      const { studentId, role, classSessionId } = ctx.req.valid("json");
+      const classId = ctx.req.param("classId");
+      // const session = await auth();
+      // if (!session?.user) {
+      //   return ctx.json({ error: "Unauthorized" }, 401);
+      // }
+
+      try {
+        const exisitngAttenance = await db.query.attendances.findFirst({
+          where: and(
+            eq(attendances.studentId, studentId),
+            eq(attendances.classSessionId, classSessionId)
+          ),
+          columns: {
+            id: true,
+          },
+        });
+
+        if (exisitngAttenance) {
+          const [data] = await db
+            .update(attendances)
+            .set({ role })
+            .where(
+              and(
+                eq(attendances.studentId, studentId),
+                eq(attendances.classSessionId, classSessionId)
+              )
+            );
+          return ctx.json({ data });
+        } else {
+          const data = await db
+            .insert(attendances)
+            .values({ studentId, role, classSessionId });
+          return ctx.json({ data });
+        }
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .post(

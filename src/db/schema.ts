@@ -297,7 +297,7 @@ export const classSessions = mysqlTable("classSessions", {
 });
 
 const attendanceType: string[] = Object.values(AttendanceName);
-export const attendance = mysqlTable("attendances", {
+export const attendances = mysqlTable("attendances", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -344,6 +344,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   }),
   materials: many(materialsClassStudent),
   payments: many(payments),
+  attendance: many(attendances),
 }));
 
 export const studentsToClassesRelations = relations(
@@ -403,9 +404,32 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
     references: [users.id],
     relationName: "usersPresentedClasses",
   }),
-  students: many(studentsToClasses),
   payments: many(payments),
+  sessions: many(classSessions),
+  students: many(studentsToClasses),
   materials: many(materialsClassStudent),
+}));
+
+export const classSessionsRelations = relations(
+  classSessions,
+  ({ many, one }) => ({
+    class: one(classes, {
+      fields: [classSessions.classId],
+      references: [classes.id],
+    }),
+    attendances: many(attendances),
+  })
+);
+
+export const attendanceRelations = relations(attendances, ({ one }) => ({
+  student: one(users, {
+    fields: [attendances.studentId],
+    references: [users.id],
+  }),
+  session: one(classSessions, {
+    fields: [attendances.classSessionId],
+    references: [classSessions.id],
+  }),
 }));
 
 export const materialRelations = relations(materials, ({ one, many }) => ({
@@ -491,3 +515,5 @@ export const insertClassesSchema = createInsertSchema(classes);
 export const insertMaterialSchema = createInsertSchema(materials);
 export const insertUserSchema = createInsertSchema(users);
 export const insertStudentsToClasses = createInsertSchema(studentsToClasses);
+export const insertClassSessionSchema = createInsertSchema(classSessions);
+export const insertAttendanceSchema = createInsertSchema(attendances);

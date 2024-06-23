@@ -6,6 +6,9 @@ import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";
 import StudentsTab from "./_components/tabs/students";
 import { PiCalendar, PiCheck, PiMoney, PiStudent } from "react-icons/pi";
+import AttendanceTab from "./_components/tabs/attendance";
+import MarksTab from "./_components/tabs/marks";
+import PaymentsTab from "./_components/tabs/payments";
 
 interface Props {
   params: { slug: string };
@@ -16,9 +19,6 @@ const PresentClass: FC<Props> = async ({ params: { slug } }) => {
     param: { slug },
   });
   const { data: theClass } = await response.json();
-
-  console.log({ theClass });
-
   if (!theClass) return notFound();
 
   return (
@@ -47,10 +47,14 @@ const PresentClass: FC<Props> = async ({ params: { slug } }) => {
             <StudentsTab theClass={theClass} />
           </TabsContent>
           <TabsContent value="attendance">
-            Attednance Table goes here
+            <AttendanceTab theClass={theClass} />
           </TabsContent>
-          <TabsContent value="marks">Marks Table goes here</TabsContent>
-          <TabsContent value="payments">FInanes Table goes here.</TabsContent>
+          <TabsContent value="marks">
+            <MarksTab theClass={theClass} />
+          </TabsContent>
+          <TabsContent value="payments">
+            <PaymentsTab theClass={theClass} />
+          </TabsContent>
         </Tabs>
       </div>
     </PageContainerWrapper>
