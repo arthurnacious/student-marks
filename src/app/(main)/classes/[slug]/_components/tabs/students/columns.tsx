@@ -18,11 +18,6 @@ export type Students = {
   id: string;
   studentId: string;
   classId: string;
-  class: {
-    id: string;
-    name: string;
-    slug: string;
-  };
   student: {
     name: string;
     email: string;

@@ -18,6 +18,7 @@ interface Props {
     students: {
       id: string;
       studentId: string;
+      role: string;
     }[];
   };
 }

@@ -40,19 +40,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useGetClasseBySlug } from "@/query/classes";
+import { TheClass } from "./index";
 
 interface Props {
-  theClass: {
-    id: string;
-    slug: string;
-    price: number;
-    notes: string | null;
-    students: {
-      id: string;
-      studentId: string;
-    }[];
-  };
+  theClass: TheClass;
 }
+
 const postType = client.api.classes[":id"].students.$post;
 type ResponseType = InferResponseType<typeof postType>;
 type RequestType = InferRequestType<typeof postType>["json"];
@@ -184,8 +177,9 @@ const AddStudentsModal: React.FC<Props> = ({ theClass }) => {
                         <SelectContent>
                           {students?.map((student) => {
                             const isDisabled =
-                              classData &&
-                              classData.students.some(
+                              classData?.data &&
+                              classData.data?.students?.length > 0 &&
+                              classData.data?.students.some(
                                 (s) => s.studentId === student.id
                               );
                             return (
