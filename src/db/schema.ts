@@ -490,3 +490,4 @@ export const insertFieldSchema = createInsertSchema(fields);
 export const insertClassesSchema = createInsertSchema(classes);
 export const insertMaterialSchema = createInsertSchema(materials);
 export const insertUserSchema = createInsertSchema(users);
+export const insertStudentsToClasses = createInsertSchema(studentsToClasses);

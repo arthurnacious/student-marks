@@ -6,8 +6,9 @@ import {
   lecturersToAcademies,
   users,
 } from "@/db/schema";
+import { RoleName } from "@/types/roles";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq, gt, inArray, isNull, or } from "drizzle-orm";
+import { and, eq, gt, inArray, isNotNull, isNull, like, or } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -120,6 +121,21 @@ const app = new Hono()
     );
 
     return ctx.json({ data: academies });
+  })
+
+  .get("/search/:keyword", async (ctx) => {
+    const keyword = ctx.req.param("keyword");
+    const results = await db.query.users.findMany({
+      where: and(
+        like(users.name, `%${keyword}%`),
+        eq(users.role, RoleName.STUDENT),
+        or(gt(users.activeTill, new Date()), isNull(users.activeTill))
+      ),
+      columns: { id: true, name: true },
+      orderBy: users.name,
+    });
+
+    return ctx.json({ data: results ?? [] });
   });
 
 export default app;

@@ -23,6 +23,24 @@ export const useGetClasses = () => {
   return query;
 };
 
+export const useGetClasseBySlug = (slug: string, initialData?: any) => {
+  const query = useQuery({
+    queryKey: ["classes", slug],
+    queryFn: async () => {
+      const response = await client.api.classes[":slug"].$get({
+        param: { slug },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch classe");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+    initialData,
+  });
+  return query;
+};
+
 export const useBulkDeleteClasses = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({

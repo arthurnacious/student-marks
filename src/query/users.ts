@@ -72,3 +72,22 @@ export const useGetUsers = (role?: RoleName) => {
   });
   return query;
 };
+
+export const useSearchUsers = (keyword?: string) => {
+  const query = useQuery({
+    queryKey: ["users", "search", keyword ?? undefined],
+    queryFn: async () => {
+      console.log({ keyword });
+      const response = await client.api.users.search[":keyword"].$get({
+        param: { keyword: keyword ?? "" },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+    enabled: Boolean(keyword) && keyword.length >= 2,
+  });
+  return query;
+};

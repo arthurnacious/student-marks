@@ -5,13 +5,14 @@ import {
   classes,
   courses,
   insertClassesSchema,
+  insertStudentsToClasses,
   studentsToClasses,
   users,
 } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { zValidator } from "@hono/zod-validator";
 import { formatDate } from "date-fns";
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
 import { z } from "zod";
@@ -58,7 +59,11 @@ const app = new Hono()
       with: {
         course: true,
         lecturer: true,
-        students: true,
+        students: {
+          with: {
+            student: true,
+          },
+        },
         payments: true,
       },
     });
@@ -137,6 +142,34 @@ const app = new Hono()
 
         return ctx.json({ data: ids });
       } catch (error: any) {}
+    }
+  )
+  .post(
+    "/:id/students",
+    zValidator("json", insertStudentsToClasses.pick({ studentId: true })),
+    async (ctx) => {
+      const classId = ctx.req.param("id");
+      const { studentId } = ctx.req.valid("json");
+
+      const existingStudent = await db.query.studentsToClasses.findFirst({
+        where: and(
+          eq(studentsToClasses.classId, classId),
+          eq(studentsToClasses.studentId, studentId)
+        ),
+        columns: {
+          id: true,
+        },
+      });
+
+      if (existingStudent) {
+        return ctx.json({ error: "Student already enrolled for class" }, 422);
+      }
+
+      const data = await db
+        .insert(studentsToClasses)
+        .values({ studentId, classId });
+
+      return ctx.json({ data });
     }
   );
 
