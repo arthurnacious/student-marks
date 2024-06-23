@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchCol?: keyof TData;
+  deleteWording?: string;
   onDelete: (rows: Row<TData>[]) => void;
   disabled?: boolean;
   isLoading?: boolean;
@@ -40,6 +41,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchCol,
+  deleteWording,
   onDelete,
   isLoading = false,
   disabled = false,
@@ -109,7 +111,8 @@ export function DataTable<TData, TValue>({
                 }
               }}
             >
-              <Trash2 className="size-4 mr-2" /> Delete ({selectedRows.length})
+              <Trash2 className="size-4 mr-2" /> {deleteWording ?? "Delete"} (
+              {selectedRows.length})
             </Button>
           )}
         </div>

@@ -1,5 +1,8 @@
 "use client";
-import { useGetClasseBySlug } from "@/query/classes";
+import {
+  useBulkDeleteSTudentsFromClass,
+  useGetClasseBySlug,
+} from "@/query/classes";
 import AddStudentsModal from "./add-students";
 import React, { FC } from "react";
 import { DataTable } from "@/components/data-table";
@@ -21,7 +24,7 @@ interface Props {
 
 const StudentsTab: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
-  console.log({ data });
+  const removeStudents = useBulkDeleteSTudentsFromClass(theClass.id);
   return (
     <>
       <div>
@@ -31,13 +34,13 @@ const StudentsTab: FC<Props> = ({ theClass }) => {
         <TableSkeleton cols={4} />
       ) : data && data.students?.length > 0 ? (
         <DataTable
+          deleteWording="Remove Student"
           columns={columns}
           onDelete={(rows) => {
             const ids = rows.map((row) => row.original.id);
-            deleteClasses.mutate({ ids });
+            removeStudents.mutate({ ids });
           }}
-          // isLoading={deleteClasses.isPending || isLoading}
-          isLoading={isLoading}
+          isLoading={removeStudents.isPending || isLoading}
           data={data.students}
         />
       ) : (

@@ -136,12 +136,14 @@ const app = new Hono()
     ),
     async (ctx) => {
       const { ids } = ctx.req.valid("json");
-      console.log({ ids });
       try {
         const data = await db.delete(classes).where(inArray(classes.id, ids));
 
         return ctx.json({ data: ids });
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .post(
@@ -170,6 +172,30 @@ const app = new Hono()
         .values({ studentId, classId });
 
       return ctx.json({ data });
+    }
+  )
+  .post(
+    "/:id/students/bulk-delete",
+    zValidator(
+      "json",
+      z.object({
+        ids: z.array(z.string()),
+      })
+    ),
+    async (ctx) => {
+      const classId = ctx.req.param("id");
+      const { ids } = ctx.req.valid("json");
+
+      try {
+        const data = await db
+          .delete(studentsToClasses)
+          .where(inArray(studentsToClasses.id, ids));
+
+        return ctx.json({ data: ids });
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   );
 

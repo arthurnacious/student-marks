@@ -41,6 +41,33 @@ export const useGetClasseBySlug = (slug: string, initialData?: any) => {
   return query;
 };
 
+export const useBulkDeleteSTudentsFromClass = (classId: string) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation<unknown, Error, RequestType>({
+    mutationFn: async (json) => {
+      const response = await client.api.classes[":id"].students[
+        "bulk-delete"
+      ].$post({
+        param: { id: classId },
+        json,
+      });
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success("students successfully deleted");
+      queryClient.invalidateQueries({ queryKey: ["classes", classId] });
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+    },
+    onError: (error: any) => {
+      console.log({ error });
+      toast.error("failed to delete students from class");
+    },
+  });
+
+  return mutation;
+};
+
 export const useBulkDeleteClasses = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({
