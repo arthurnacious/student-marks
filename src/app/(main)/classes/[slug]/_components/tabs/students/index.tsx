@@ -9,6 +9,19 @@ import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import TableSkeleton from "@/components/skeleton/table";
 
+export type Attendance = {
+  id: string;
+  studentId: string;
+  classSessionId: string;
+  role: string;
+};
+
+export type Session = {
+  id: string;
+  name: string;
+  classId: string;
+  attendances: Attendance[];
+};
 export interface TheClass {
   id: string;
   slug: string;
@@ -67,17 +80,7 @@ export interface TheClass {
       updatedAt: string | null;
     };
   }[];
-  sessions: {
-    id: string;
-    name: string;
-    classId: string;
-    attendances: {
-      id: string;
-      studentId: string;
-      classSessionId: string;
-      role: string;
-    }[];
-  }[];
+  sessions: Session[];
 }
 
 interface Props {

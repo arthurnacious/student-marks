@@ -57,7 +57,6 @@ const formSchema = z.object({
 type formValues = z.input<typeof formSchema>;
 
 const AddStudentsModal: React.FC<Props> = ({ theClass }) => {
-  // console.log({ students: theClass.students });
   const [keyword, setKeyword] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
