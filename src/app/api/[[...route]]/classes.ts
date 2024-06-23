@@ -8,6 +8,7 @@ import {
   insertAttendanceSchema,
   insertClassesSchema,
   insertStudentsToClasses,
+  sessions,
   studentsToClasses,
   users,
 } from "@/db/schema";
@@ -70,6 +71,7 @@ const app = new Hono()
           with: {
             attendances: true,
           },
+          orderBy: classSessions.createdAt,
         },
         payments: true,
       },

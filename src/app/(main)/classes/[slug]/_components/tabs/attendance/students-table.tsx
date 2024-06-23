@@ -78,7 +78,10 @@ const StudentsTable: FC<Props> = ({ theClass }) => {
             <TableRow>
               <TableHead>Name</TableHead>
               {data?.data?.sessions.map(({ id, name }) => (
-                <TableHead key={`header-${id}`} className="w-[100px]">
+                <TableHead
+                  key={`header-${id}`}
+                  className="w-[100px] text-nowrap"
+                >
                   {name}
                 </TableHead>
               ))}

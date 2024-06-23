@@ -294,6 +294,10 @@ export const classSessions = mysqlTable("classSessions", {
     .notNull()
     .references(() => classes.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 const attendanceType: string[] = Object.values(AttendanceName);
