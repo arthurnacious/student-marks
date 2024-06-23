@@ -11,13 +11,13 @@ import TableSkeleton from "@/components/skeleton/table";
 
 export interface TheClass {
   id: string;
-  createdAt: string;
-  updatedAt: string | null;
   slug: string;
   price: number;
   courseId: string;
   creatorId: string;
   notes: string | null;
+  createdAt: string;
+  updatedAt: string | null;
   course: {
     id: string;
     name: string;
@@ -43,13 +43,12 @@ export interface TheClass {
   };
   payments: {
     id: string;
-    studentId: string;
+    userId: string;
+    classId: string;
+    amount: number;
+    type: string;
     createdAt: string;
     updatedAt: string | null;
-    userId: string;
-    type: string;
-    amount: number;
-    classId: string;
   }[];
   students: {
     id: string;
@@ -86,7 +85,7 @@ interface Props {
 }
 
 const StudentsTab: FC<Props> = ({ theClass }) => {
-  const { data, isLoading } = useGetClasseBySlug(theClass.slug);
+  const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
   const removeStudents = useBulkDeleteSTudentsFromClass(theClass.id);
   return (
     <>
