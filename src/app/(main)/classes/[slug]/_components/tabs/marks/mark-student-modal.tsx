@@ -120,38 +120,47 @@ const MarkStudentModal: FC<Props> = ({
                 Marks out of field total.
               </p>
               <div className="flex flex-wrap gap-2">
-                {fields.map(({ name, id, total }) => (
-                  <FormField
-                    key={id}
-                    control={form.control}
-                    name={`marks.${id}`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {name}
-                          <small className="italic ml-1">
-                            (out of :{total})
-                          </small>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="100"
-                            {...field}
-                            onChange={(event) =>
-                              field.onChange(+event.target.value)
-                            }
-                            className="max-w-xs"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
+                {fields.map(({ name, id, total, marks }) => {
+                  const mark = marks.find(
+                    (mark) =>
+                      mark.fieldId === id && mark.studentId === studentId
+                  );
+                  const value = mark?.amount ?? 0;
+                  return (
+                    <FormField
+                      key={id}
+                      control={form.control}
+                      name={`marks.${id}`}
+                      render={({ field }) => {
+                        field.value = !field.value ? value : field.value;
+                        return (
+                          <FormItem>
+                            <FormLabel>
+                              {name}
+                              <small className="italic ml-1">
+                                (out of :{total})
+                              </small>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="100"
+                                {...field}
+                                onChange={(event) =>
+                                  field.onChange(+event.target.value)
+                                }
+                                className="max-w-xs"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  );
+                })}
               </div>
-              {/* <Button isLoading={mutation.isPending}>Create</Button> */}
-              <Button>Create</Button>
+              <Button isLoading={mutation.isPending}>Mark Student</Button>
             </form>
           </Form>
         </div>
