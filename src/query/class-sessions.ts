@@ -4,9 +4,9 @@ import { client } from "@/lib/hono";
 import { toast } from "sonner";
 import { InferRequestType } from "hono";
 
-type RequestType = InferRequestType<
-  (typeof client.api.classes)["bulk-delete"]["$post"]
->["json"];
+const deleteSessionsUrl =
+  client.api["class-sessions"][":id"].sessions["bulk-delete"].$post;
+type RequestType = InferRequestType<typeof deleteSessionsUrl>["json"];
 type AttendanceRequestType = {
   studentId: string;
   role: string;
@@ -35,9 +35,7 @@ export const useBulkDeleteSessionsFromClass = (classId: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.classes[":id"].students[
-        "bulk-delete"
-      ].$post({
+      const response = await deleteSessionsUrl({
         param: { id: classId },
         json,
       });
@@ -51,7 +49,7 @@ export const useBulkDeleteSessionsFromClass = (classId: string) => {
     },
     onError: (error: any) => {
       console.log({ error });
-      toast.error("failed to delete students from class");
+      toast.error("failed to sessions");
     },
   });
 

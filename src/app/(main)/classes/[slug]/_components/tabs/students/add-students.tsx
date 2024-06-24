@@ -46,7 +46,7 @@ interface Props {
   theClass: TheClass;
 }
 
-const postType = client.api.classes[":id"].students.$post;
+const postType = client.api["class-students"][":id"].students.add.$post;
 type ResponseType = InferResponseType<typeof postType>;
 type RequestType = InferRequestType<typeof postType>["json"];
 
@@ -79,7 +79,7 @@ const AddStudentsModal: React.FC<Props> = ({ theClass }) => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (values): Promise<ResponseType> => {
-      const response = await client.api.classes[":id"].students.$post({
+      const response = await postType({
         param: { id: theClass.id },
         json: values,
       });

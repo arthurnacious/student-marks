@@ -4,9 +4,10 @@ import { client } from "@/lib/hono";
 import { toast } from "sonner";
 import { InferRequestType, InferResponseType } from "hono";
 
-type RequestType = InferRequestType<
-  (typeof client.api.classes)["bulk-delete"]["$post"]
->["json"];
+const removeStudentsFromClassUrl =
+  client.api["class-students"][":id"].students["bulk-delete"].$post;
+type ResponseType = InferResponseType<typeof removeStudentsFromClassUrl>;
+type RequestType = InferRequestType<typeof removeStudentsFromClassUrl>["json"];
 
 type ClassBySlugReturnType = InferResponseType<
   (typeof client.api.classes)[":slug"]["$get"]
@@ -47,13 +48,11 @@ export const useGetClasseBySlug = (
   return query;
 };
 
-export const useBulkDeleteSTudentsFromClass = (classId: string) => {
+export const useBulkDeleteStudentsFromClass = (classId: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.classes[":id"].students[
-        "bulk-delete"
-      ].$post({
+      const response = await removeStudentsFromClassUrl({
         param: { id: classId },
         json,
       });

@@ -1,6 +1,6 @@
 "use client";
 import {
-  useBulkDeleteSTudentsFromClass,
+  useBulkDeleteStudentsFromClass,
   useGetClasseBySlug,
 } from "@/query/classes";
 import AddStudentsModal from "./add-students";
@@ -21,6 +21,8 @@ export type Session = {
   name: string;
   classId: string;
   attendances: Attendance[];
+  createdAt: string;
+  updatedAt: string | null;
 };
 export interface TheClass {
   id: string;
@@ -89,7 +91,7 @@ interface Props {
 
 const StudentsTab: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
-  const removeStudents = useBulkDeleteSTudentsFromClass(theClass.id);
+  const removeStudents = useBulkDeleteStudentsFromClass(theClass.id);
   return (
     <>
       <div>

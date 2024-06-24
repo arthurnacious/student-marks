@@ -6,6 +6,7 @@ import {
   lecturersToAcademies,
   users,
 } from "@/db/schema";
+import { toTitleCase } from "@/lib/utils";
 import { RoleName } from "@/types/roles";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, gt, inArray, isNotNull, isNull, like, or } from "drizzle-orm";
@@ -62,6 +63,7 @@ const app = new Hono()
     ),
     async (ctx) => {
       const values = ctx.req.valid("json");
+      values.name = toTitleCase(values.name);
       try {
         const data = await db.insert(users).values({
           ...values,
@@ -122,7 +124,6 @@ const app = new Hono()
 
     return ctx.json({ data: academies });
   })
-
   .get("/search/:keyword", async (ctx) => {
     const keyword = ctx.req.param("keyword");
     const results = await db.query.users.findMany({
