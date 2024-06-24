@@ -24,6 +24,23 @@ export type Session = {
   createdAt: string;
   updatedAt: string | null;
 };
+
+export type Field = {
+  id: string;
+  name: string;
+  courseId: string;
+  total: number;
+  marks: Mark[];
+};
+
+export type Mark = {
+  id: string;
+  fieldId: string;
+  studentId: string;
+  amount: number;
+  createdAt: string;
+  updatedAt: string | null;
+};
 export interface TheClass {
   id: string;
   slug: string;
@@ -43,6 +60,7 @@ export interface TheClass {
     price: number;
     createdAt: string;
     updatedAt: string | null;
+    fields: Field[];
   };
   lecturer: {
     id: string;

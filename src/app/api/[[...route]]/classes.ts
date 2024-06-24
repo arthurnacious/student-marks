@@ -60,7 +60,15 @@ const app = new Hono()
     const data = await db.query.classes.findFirst({
       where: eq(classes.slug, slug),
       with: {
-        course: true,
+        course: {
+          with: {
+            fields: {
+              with: {
+                marks: true,
+              },
+            },
+          },
+        },
         lecturer: true,
         students: {
           with: {

@@ -1,31 +1,18 @@
 "use client";
-import {
-  useBulkDeleteSTudentsFromClass,
-  useGetClasseBySlug,
-} from "@/query/classes";
-import AddStudentsModal from "./add-students";
+import { useGetClasseBySlug } from "@/query/classes";
 import React, { FC } from "react";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import TableSkeleton from "@/components/skeleton/table";
+import { ThemeColorDescriptor } from "next/dist/lib/metadata/types/metadata-types";
+import { TheClass } from "../students";
 
 interface Props {
-  theClass: {
-    id: string;
-    slug: string;
-    price: number;
-    notes: string | null;
-    students: {
-      id: string;
-      studentId: string;
-      role: string;
-    }[];
-  };
+  theClass: TheClass;
 }
 
 const PaymentsTab: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
-  const removeStudents = useBulkDeleteSTudentsFromClass(theClass.id);
   return (
     <>
       <div>{/* <AddStudentsModal theClass={theClass} /> */}</div>
@@ -37,9 +24,10 @@ const PaymentsTab: FC<Props> = ({ theClass }) => {
           columns={columns}
           onDelete={(rows) => {
             const ids = rows.map((row) => row.original.id);
-            removeStudents.mutate({ ids });
+            // removeStudents.mutate({ ids });
           }}
-          isLoading={removeStudents.isPending || isLoading}
+          // isLoading={removeStudents.isPending || isLoading}
+          isLoading={isLoading}
           data={data.students}
         />
       ) : (
