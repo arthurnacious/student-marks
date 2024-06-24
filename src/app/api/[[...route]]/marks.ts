@@ -8,7 +8,7 @@ import {
   studentsToClasses,
 } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -74,12 +74,26 @@ const app = new Hono()
     ),
     async (ctx) => {
       const studentId = ctx.req.param("studentId");
-      console.log({ studentId });
       const { marks: fieldIds } = ctx.req.valid("json");
       try {
         for (const [fieldId, amount] of Object.entries(fieldIds)) {
-          console.log({ studentId, fieldId, amount });
-          await db.insert(marks).values({ studentId, fieldId, amount });
+          const existingRecord = await db.query.marks.findFirst({
+            where: and(
+              eq(marks.fieldId, fieldId),
+              eq(marks.studentId, studentId)
+            ),
+          });
+
+          if (existingRecord) {
+            await db
+              .update(marks)
+              .set({ studentId, fieldId, amount })
+              .where(
+                and(eq(marks.studentId, studentId), eq(marks.fieldId, fieldId))
+              );
+          } else {
+            await db.insert(marks).values({ studentId, fieldId, amount });
+          }
         }
 
         return ctx.json({ data: fieldIds });
