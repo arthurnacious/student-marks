@@ -4,7 +4,6 @@ import React from "react";
 import EditCourseForm from "../../_components/crud/edit-course-form";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import CreateFieldsForm from "../../_components/crud/create-fields";
 import { notFound } from "next/navigation";
 
 interface Props {

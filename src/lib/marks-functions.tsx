@@ -1,8 +1,8 @@
-type Mark = {
+export type Mark = {
   id: string;
-  amount: number;
   fieldId: string;
   studentId: string;
+  amount: number;
 };
 
 type Field = {

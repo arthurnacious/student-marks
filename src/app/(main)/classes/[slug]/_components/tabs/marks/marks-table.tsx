@@ -4,17 +4,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import TableSkeleton from "@/components/skeleton/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useHandleAttendance } from "@/query/class-sessions";
 import React, { FC, useState } from "react";
 import { TheClass } from "../students";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MarkStudentModal from "./mark-student-modal";
 

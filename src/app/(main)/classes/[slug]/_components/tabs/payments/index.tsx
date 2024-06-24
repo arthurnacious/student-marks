@@ -6,6 +6,7 @@ import { columns } from "./columns";
 import TableSkeleton from "@/components/skeleton/table";
 import { ThemeColorDescriptor } from "next/dist/lib/metadata/types/metadata-types";
 import { TheClass } from "../students";
+import PaymentsTable from "./payments-table";
 
 interface Props {
   theClass: TheClass;
@@ -18,18 +19,8 @@ const PaymentsTab: FC<Props> = ({ theClass }) => {
       <div>{/* <AddStudentsModal theClass={theClass} /> */}</div>
       {isLoading ? (
         <TableSkeleton cols={4} />
-      ) : data && data.students?.length > 0 ? (
-        <DataTable
-          deleteWording="Remove Student"
-          columns={columns}
-          onDelete={(rows) => {
-            const ids = rows.map((row) => row.original.id);
-            // removeStudents.mutate({ ids });
-          }}
-          // isLoading={removeStudents.isPending || isLoading}
-          isLoading={isLoading}
-          data={data.students}
-        />
+      ) : data?.data && data.data?.students?.length > 0 ? (
+        <PaymentsTable theClass={theClass} />
       ) : (
         <div className="flex items-center justify-center">
           <h3 className="text-2xl ">

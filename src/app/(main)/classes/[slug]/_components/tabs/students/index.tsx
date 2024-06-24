@@ -8,6 +8,7 @@ import React, { FC } from "react";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import TableSkeleton from "@/components/skeleton/table";
+import { Mark } from "@/lib/marks-functions";
 
 export type Attendance = {
   id: string;
@@ -33,14 +34,6 @@ export type Field = {
   marks: Mark[];
 };
 
-export type Mark = {
-  id: string;
-  fieldId: string;
-  studentId: string;
-  amount: number;
-  createdAt: string;
-  updatedAt: string | null;
-};
 export interface TheClass {
   id: string;
   slug: string;
