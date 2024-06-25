@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +13,8 @@ import { TheClass } from "../students";
 import { useGetClasseBySlug } from "@/query/classes";
 import { Button } from "@/components/ui/button";
 import { FaMoneyBill } from "react-icons/fa";
+import StudentsPaymentModal from "./students-payment-modal";
+import { getPaymentAmount } from "@/lib/payments-functions";
 
 interface Props {
   theClass: TheClass;
@@ -20,17 +22,10 @@ interface Props {
 
 const PaymentsTable: FC<Props> = ({ theClass }) => {
   const { data } = useGetClasseBySlug(theClass.slug, theClass);
+  const [studentId, setStudentId] = useState<string | undefined>(undefined);
 
   const getClassPrice = (): number => {
     return data?.data?.price ?? 0;
-  };
-
-  const getPayment = (studentId: string): number => {
-    const payment = data?.data?.payments.find(
-      ({ userId }) => studentId === userId
-    );
-
-    return payment?.amount ?? 0;
   };
 
   const getOwedAmount = (paymentAmount: number, classPrice: number): number => {
@@ -41,7 +36,13 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
   const coursePrice = getClassPrice();
   return (
     <>
-      <p>Class Price is R {coursePrice} Plus cost(s) of any material taken </p>
+      <StudentsPaymentModal
+        classId={theClass.id}
+        studentId={studentId}
+        setStudentId={setStudentId}
+        payments={data?.data?.payments}
+      />
+      <p>Class Price is R {coursePrice} Plus cost(s) of any material taken.</p>
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
@@ -52,7 +53,10 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
         </TableHeader>
         <TableBody>
           {data?.data?.students.map(({ student }) => {
-            const paymentAmount = getPayment(student.id);
+            const paymentAmount = getPaymentAmount(
+              student.id,
+              data?.data?.payments
+            );
             const owedAmount = getOwedAmount(paymentAmount, coursePrice);
 
             return (
@@ -72,7 +76,7 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
                       className="text-red-500 flex items-center"
                       title={`${student.name} has to payed more money than class price and material`}
                     >
-                      Payed {Math.abs(owedAmount)} More
+                      Payed R {Math.abs(owedAmount)} More
                     </small>
                   ) : (
                     <small
@@ -84,7 +88,9 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
                   )}
                 </TableCell>
                 <TableCell className="p-0">
-                  <Button size="xs">Mark Payment</Button>
+                  <Button size="sm" onClick={() => setStudentId(student.id)}>
+                    Mark Payment
+                  </Button>
                 </TableCell>
               </TableRow>
             );

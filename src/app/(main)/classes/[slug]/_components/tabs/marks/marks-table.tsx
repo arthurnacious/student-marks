@@ -85,7 +85,10 @@ const MarksTable: FC<Props> = ({ theClass }) => {
                         getBackgroundColor(percentage);
 
                       return (
-                        <TableCell key={`stu:${student.id}-cell:${id}`}>
+                        <TableCell
+                          key={`stu:${student.id}-cell:${id}`}
+                          className="py-0 px-1"
+                        >
                           <div
                             className={`${backgroundColorClass} rounded-lg flex items-center justify-center text-nowrap px-2 py-1`}
                           >
@@ -94,7 +97,7 @@ const MarksTable: FC<Props> = ({ theClass }) => {
                         </TableCell>
                       );
                     })}
-                    <TableCell>
+                    <TableCell className="py-0">
                       <Button
                         size="sm"
                         onClick={() => setStudentId(student.id)}

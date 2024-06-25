@@ -7,6 +7,7 @@ import classes from "./classes";
 import classesSessions from "./class-sessions";
 import classStudents from "./class-students";
 import materials from "./materials";
+import payments from "./payments";
 import marks from "./marks";
 import users from "./users";
 import { handle } from "hono/vercel";
@@ -25,7 +26,8 @@ const route = new Hono()
   .route("/class-students", classStudents)
   .route("/marks", marks)
   .route("/users", users)
-  .route("/materials", materials);
+  .route("/materials", materials)
+  .route("/payments", payments);
 
 export const GET = handle(route);
 export const POST = handle(route);

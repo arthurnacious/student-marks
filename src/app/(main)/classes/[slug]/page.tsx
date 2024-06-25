@@ -1,14 +1,14 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import React, { FC } from "react";
 import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";
-import StudentsTab from "./_components/tabs/students";
 import { PiCalendar, PiCheck, PiMoney, PiStudent } from "react-icons/pi";
+import { MdOutlineStorage } from "react-icons/md";
+import StudentsTab from "./_components/tabs/students";
 import AttendanceTab from "./_components/tabs/attendance";
 import MarksTab from "./_components/tabs/marks";
 import PaymentsTab from "./_components/tabs/payments";
+import React, { FC } from "react";
 
 interface Props {
   params: { slug: string };
@@ -30,9 +30,13 @@ const PresentClass: FC<Props> = async ({ params: { slug } }) => {
               <PiStudent className="mr-2" />
               Students
             </TabsTrigger>
-            <TabsTrigger value="attendance">
+            <TabsTrigger value="attendances">
               <PiCalendar className="mr-2" />
               Attendance
+            </TabsTrigger>
+            <TabsTrigger value="materials">
+              <MdOutlineStorage className="mr-2" />
+              Materials
             </TabsTrigger>
             <TabsTrigger value="marks">
               <PiCheck className="mr-2" />
@@ -46,8 +50,12 @@ const PresentClass: FC<Props> = async ({ params: { slug } }) => {
           <TabsContent value="students" className="flex flex-col gap-4">
             <StudentsTab theClass={theClass} />
           </TabsContent>
-          <TabsContent value="attendance">
+          <TabsContent value="attendances">
             <AttendanceTab theClass={theClass} />
+          </TabsContent>
+          <TabsContent value="materials">
+            <p>Materials</p>
+            {/* <AttendanceTab theClass={theClass} /> */}
           </TabsContent>
           <TabsContent value="marks">
             <MarksTab theClass={theClass} />

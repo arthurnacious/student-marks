@@ -116,6 +116,7 @@ const app = new Hono()
         where: eq(courses.id, values.courseId),
         columns: {
           name: true,
+          price: true,
         },
       });
 
@@ -125,6 +126,7 @@ const app = new Hono()
 
       try {
         const date = new Date();
+        const price = course.price ?? 0;
         const randomNumber = Math.floor(Math.random() * (5000 - 1000)) + 1000;
         let slug = slugify(
           `${course.name}-${user.name}-${formatDate(
@@ -134,7 +136,7 @@ const app = new Hono()
         );
         await db
           .insert(classes)
-          .values({ ...values, slug, creatorId: user.id });
+          .values({ ...values, price, slug, creatorId: user.id });
 
         return ctx.json({ slug });
       } catch (error: any) {
