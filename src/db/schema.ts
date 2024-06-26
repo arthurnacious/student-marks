@@ -436,7 +436,7 @@ export const attendanceRelations = relations(attendances, ({ one }) => ({
   }),
 }));
 
-export const materialRelations = relations(materials, ({ one, many }) => ({
+export const materialsRelations = relations(materials, ({ one, many }) => ({
   class: one(courses, {
     fields: [materials.courseId],
     references: [courses.id],
@@ -520,5 +520,8 @@ export const insertMaterialSchema = createInsertSchema(materials);
 export const insertUserSchema = createInsertSchema(users);
 export const insertStudentsToClasses = createInsertSchema(studentsToClasses);
 export const insertClassSessionSchema = createInsertSchema(classSessions);
+export const insertMaterialClassStudentSchema = createInsertSchema(
+  materialsClassStudent
+);
 export const insertAttendanceSchema = createInsertSchema(attendances);
 export const insertPaymentSchema = createInsertSchema(payments);

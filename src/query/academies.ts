@@ -11,7 +11,17 @@ type RequestType = InferRequestType<
   (typeof client.api.academies)["bulk-delete"]["$post"]
 >["json"];
 
-export const useGetAcademies = () => {
+interface initialData {
+  id: string;
+  name: string;
+  slug: string;
+  _count: {
+    courses: number;
+    lecturers: number;
+  };
+}
+
+export const useGetAcademies = (initialData?: initialData[]) => {
   const query = useQuery({
     queryKey: ["academies"],
     queryFn: async () => {
@@ -22,6 +32,7 @@ export const useGetAcademies = () => {
       const { data } = await response.json();
       return data;
     },
+    initialData: initialData ?? undefined,
   });
   return query;
 };
@@ -54,7 +65,7 @@ export const useGetAcademiesCouses = (academyId?: string) => {
     queryKey: ["academies", academyId, "courses"],
     queryFn: async () => {
       const response = await client.api.academies[":id"].courses.$get({
-        param: { id: academyId },
+        param: { id: academyId! },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch academies courses");

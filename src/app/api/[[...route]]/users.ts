@@ -71,7 +71,10 @@ const app = new Hono()
         });
 
         return ctx.json({ data });
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .post(
@@ -89,7 +92,10 @@ const app = new Hono()
         const data = await db.delete(users).where(inArray(users.id, userIds));
 
         return ctx.json({ data: userIds });
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .get("/:id", async (ctx) => {

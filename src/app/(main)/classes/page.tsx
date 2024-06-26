@@ -5,6 +5,7 @@ import { client } from "@/lib/hono";
 
 interface Props {}
 
+// export const fetchCache = "force-no-store";
 const ClassesPage: FC<Props> = async ({}) => {
   const response = await client.api.classes.$get();
   const data = await response.json();

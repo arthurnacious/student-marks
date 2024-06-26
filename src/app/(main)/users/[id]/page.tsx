@@ -27,7 +27,7 @@ interface Props {
 }
 
 const ViewUserPage: React.FC<Props> = async ({ params: { id } }) => {
-  const [user, marks] = await Promise.all([
+  const [userData, marks] = await Promise.all([
     client.api.users[":id"]
       .$get({
         param: { id },
@@ -40,9 +40,11 @@ const ViewUserPage: React.FC<Props> = async ({ params: { id } }) => {
       .then((response) => response.json()),
   ]);
 
-  console.log({ marks: marks[0].class.course });
+  const user = userData?.data;
 
-  if (!user) return notFound();
+  if (!user) {
+    return notFound();
+  }
 
   return (
     <PageContainerWrapper title="View User">

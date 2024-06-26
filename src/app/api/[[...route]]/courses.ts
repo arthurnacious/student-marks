@@ -92,7 +92,10 @@ const app = new Hono()
           .values({ ...values, slug, academyId: values.academy });
 
         return ctx.json({ data });
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .get("/:slug", async (ctx) => {
@@ -188,7 +191,8 @@ const app = new Hono()
         });
         return ctx.json({ data: response });
       } catch (error: any) {
-        console.log({ error });
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
       }
       return ctx.json({ data });
     }
@@ -251,7 +255,8 @@ const app = new Hono()
         });
         return ctx.json({ data: response });
       } catch (error: any) {
-        console.log({ error });
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
       }
     }
   )
@@ -303,12 +308,10 @@ const app = new Hono()
     ),
     async (ctx) => {
       const { ids } = ctx.req.valid("json");
-      console.log({ ids });
-      try {
-        const data = await db.delete(courses).where(inArray(courses.id, ids));
 
-        return ctx.json({ data: ids });
-      } catch (error: any) {}
+      const data = await db.delete(courses).where(inArray(courses.id, ids));
+
+      return ctx.json({ data: ids });
     }
   );
 

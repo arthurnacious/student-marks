@@ -40,18 +40,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useGetClasseBySlug } from "@/query/classes";
+import { TheClass } from "../students";
 
 interface Props {
-  theClass: {
-    id: string;
-    slug: string;
-    price: number;
-    notes: string | null;
-    students: {
-      id: string;
-      studentId: string;
-    }[];
-  };
+  theClass: TheClass;
 }
 const postUrl = client.api["class-sessions"][":classId"].$post;
 type ResponseType = InferResponseType<typeof postUrl>;

@@ -20,7 +20,7 @@ export const useGetUsersAcademies = () => {
     queryKey: ["user", userId, "academies"],
     queryFn: async () => {
       const response = await client.api.users[":id"].academies.$get({
-        param: { id: userId },
+        param: { id: userId! },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch users academies");
@@ -87,7 +87,7 @@ export const useSearchUsers = (keyword?: string) => {
       const { data } = await response.json();
       return data;
     },
-    enabled: Boolean(keyword) && keyword.length >= 2,
+    enabled: !!(keyword && keyword.length >= 2),
   });
   return query;
 };

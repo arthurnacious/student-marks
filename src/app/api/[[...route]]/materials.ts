@@ -26,21 +26,20 @@ const app = new Hono()
           .where(inArray(materials.id, values.ids));
 
         return ctx.json({ data: values.ids });
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .get("/:id", async (ctx) => {
     const id = ctx.req.param("id");
 
-    try {
-      const data = await db.query.materials.findFirst({
-        where: eq(materials.id, id),
-      });
+    const data = await db.query.materials.findFirst({
+      where: eq(materials.id, id),
+    });
 
-      return ctx.json({ data });
-    } catch (error: any) {
-      console.log(error);
-    }
+    return ctx.json({ data });
   })
   .patch(
     "/:id",

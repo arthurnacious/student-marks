@@ -54,7 +54,7 @@ const MarkStudentModal: FC<Props> = ({
     marks: z.object(
       fields.reduce((acc, field) => {
         acc[field.id] = z.number().min(1, {
-          message: `${field.name} mark must be at least 1 character long.`,
+          message: `${field.name} mark must be at least 1.`,
         });
         return acc;
       }, {} as { [key: string]: z.ZodNumber })
@@ -62,6 +62,20 @@ const MarkStudentModal: FC<Props> = ({
   });
 
   type FormValues = z.input<typeof formSchema>;
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      marks: fields.reduce((acc, field) => {
+        const mark = field.marks.find(
+          (mark) => mark.fieldId === field.id && mark.studentId === studentId
+        );
+        acc[field.id] = mark ? mark.amount : 1;
+
+        return acc;
+      }, {} as { [key: string]: number }),
+    },
+  });
+
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
       const response = await postMarkUrl({
@@ -84,16 +98,6 @@ const MarkStudentModal: FC<Props> = ({
   useEffect(() => {
     setIsOpen(studentId ? true : false);
   }, [studentId]);
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      marks: fields.reduce((acc, field) => {
-        acc[field.id] = "";
-        return acc;
-      }, {} as { [key: string]: string }),
-    },
-  });
 
   function onSubmit(values: FormValues) {
     mutation.mutate(values);
@@ -131,31 +135,28 @@ const MarkStudentModal: FC<Props> = ({
                       key={id}
                       control={form.control}
                       name={`marks.${id}`}
-                      render={({ field }) => {
-                        field.value = !field.value ? value : field.value;
-                        return (
-                          <FormItem>
-                            <FormLabel>
-                              {name}
-                              <small className="italic ml-1">
-                                (out of :{total})
-                              </small>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="100"
-                                {...field}
-                                onChange={(event) =>
-                                  field.onChange(+event.target.value)
-                                }
-                                className="max-w-xs"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {name}
+                            <small className="italic ml-1">
+                              (out of :{total})
+                            </small>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="100"
+                              {...field}
+                              onChange={(event) =>
+                                field.onChange(+event.target.value)
+                              }
+                              className="max-w-xs"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
                   );
                 })}

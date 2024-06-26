@@ -76,25 +76,25 @@ const app = new Hono()
         return ctx.json({ error: "Internal server error" }, 500);
       }
     }
-  );
-// .get("/:classId", async (ctx) => {
-//   const classId = ctx.req.param("classId");
-//   // const session = await auth();
-//   // if (!session?.user) {
-//   //   return ctx.json({ error: "Unauthorized" }, 401);
-//   // }
+  )
+  .get("/:classId", async (ctx) => {
+    const classId = ctx.req.param("classId");
+    // const session = await auth();
+    // if (!session?.user) {
+    //   return ctx.json({ error: "Unauthorized" }, 401);
+    // }
 
-//   const data = await db.query.classSessions.findMany({
-//     where: eq(classSessions.classId, classId),
-//     with: {
-//       attendances: true,
-//     },
-//     columns: {
-//       id: true,
-//       name: true,
-//     },
-//   });
-//   return ctx.json({ data });
-// });
+    const data = await db.query.classSessions.findMany({
+      where: eq(classSessions.classId, classId),
+      with: {
+        attendances: true,
+      },
+      columns: {
+        id: true,
+        name: true,
+      },
+    });
+    return ctx.json({ data });
+  });
 
 export default app;

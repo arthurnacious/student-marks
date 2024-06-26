@@ -15,7 +15,7 @@ export type field = {
   total: number;
 };
 
-export const useGetCourses = () => {
+export const useGetCourses = (initialData: any) => {
   const query = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -38,7 +38,8 @@ export const useBulkDeleteCourses = () => {
         json,
       });
 
-      return response.json();
+      const data = await response.json();
+      return data;
     },
     onSuccess: () => {
       toast.success("Courses successfully deleted");

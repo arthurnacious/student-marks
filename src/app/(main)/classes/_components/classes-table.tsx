@@ -14,6 +14,7 @@ interface Props {
 
 const ClassesTable: React.FC<Props> = ({ initialData }) => {
   const { data, isLoading } = useGetClasses();
+  console.log({ data });
   const deleteClasses = useBulkDeleteClasses();
 
   return (

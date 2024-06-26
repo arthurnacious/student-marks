@@ -114,7 +114,7 @@ const MarksTable: FC<Props> = ({ theClass }) => {
       ) : (
         <div className="flex items-center justify-center">
           <h3 className="text-2xl ">
-            There are no makrs field for {theClass.course.name}.
+            There are no marks field for {theClass.course.name}.
           </h3>
         </div>
       )}

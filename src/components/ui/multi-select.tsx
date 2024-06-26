@@ -75,7 +75,7 @@ const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
     );
 
     useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
+      const handleClickOutside = (event: Event) => {
         if (
           containerRef.current &&
           !containerRef.current.contains(event.target as Node)

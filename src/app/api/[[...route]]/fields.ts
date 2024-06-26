@@ -26,20 +26,19 @@ const app = new Hono()
 
         return ctx.json({ data: ids });
       } catch (error: any) {
-        console.log({ error });
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
       }
     }
   )
   .get("/:id", async (ctx) => {
     const id = ctx.req.param("id");
 
-    try {
-      const data = await db.query.fields.findFirst({
-        where: eq(fields.id, id),
-      });
+    const data = await db.query.fields.findFirst({
+      where: eq(fields.id, id),
+    });
 
-      return ctx.json({ data });
-    } catch (error: any) {}
+    return ctx.json({ data: data });
   })
   .patch(
     "/:id",
@@ -101,7 +100,8 @@ const app = new Hono()
 
         return ctx.json({ data: response });
       } catch (error: any) {
-        console.log({ error });
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
       }
     }
   )
@@ -112,7 +112,10 @@ const app = new Hono()
       const data = await db.delete(fields).where(eq(fields.id, id));
 
       return ctx.json({ data });
-    } catch (error: any) {}
+    } catch (error: any) {
+      console.error("Error processing request:", error);
+      return ctx.json({ error: "Internal server error" }, 500);
+    }
   });
 
 export default app;

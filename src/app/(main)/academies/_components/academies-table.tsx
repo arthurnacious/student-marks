@@ -1,19 +1,24 @@
 "use client";
 import React from "react";
 import { DataTable } from "@/components/data-table";
-import { Academies, columns } from "./columns";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { columns } from "./columns";
 import AddAcademModal from "./crud/add-academy";
-import { client } from "@/lib/hono";
 import { useBulkDeleteAcademies, useGetAcademies } from "@/query/academies";
-import { Loader2 } from "lucide-react";
 import TableSkeleton from "@/components/skeleton/table";
 interface Props {
-  initialData: any;
+  initialData: {
+    id: string;
+    name: string;
+    slug: string;
+    _count: {
+      courses: number;
+      lecturers: number;
+    };
+  }[];
 }
 
 const AcademiesTable: React.FC<Props> = ({ initialData }) => {
-  const { data, isLoading } = useGetAcademies();
+  const { data, isLoading } = useGetAcademies(initialData);
   const deleteAcademies = useBulkDeleteAcademies();
 
   return (

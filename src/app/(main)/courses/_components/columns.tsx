@@ -22,7 +22,7 @@ export type Courses = {
   fields: number;
   academy: {
     name: string;
-  };
+  } | null;
 };
 
 export const columns: ColumnDef<Courses>[] = [
@@ -69,7 +69,7 @@ export const columns: ColumnDef<Courses>[] = [
     },
     cell: ({ row }) => {
       const course = row.original;
-      return `${course.academy.name} Academy`;
+      return `${course.academy?.name} Academy`;
     },
   },
   {

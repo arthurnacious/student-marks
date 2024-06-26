@@ -67,7 +67,7 @@ export const columns: ColumnDef<Session>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const studentClass = row.original;
+      const session = row.original;
 
       return (
         <DropdownMenu>
@@ -80,11 +80,8 @@ export const columns: ColumnDef<Session>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link
-                href={`/users/${studentClass.studentId}`}
-                className="cursor-pointer"
-              >
-                View Student
+              <Link href={`/sessions/${session.id}`} className="cursor-pointer">
+                View Session
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

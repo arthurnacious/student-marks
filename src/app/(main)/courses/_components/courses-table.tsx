@@ -13,7 +13,7 @@ interface Props {
 }
 
 const CoursesTable: React.FC<Props> = ({ initialData }) => {
-  const { data, isLoading } = useGetCourses();
+  const { data, isLoading } = useGetCourses(initialData);
   const deleteCourses = useBulkDeleteCourses();
 
   return (

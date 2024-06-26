@@ -5,7 +5,7 @@ import UsersTable from "./_components/users-table";
 interface Props {}
 
 const Page: React.FC<Props> = async () => {
-  const response = await client.api.users[":role?"].$get({
+  const response = await client.api.users.role[":role?"].$get({
     param: { role: "" },
   });
   const data = await response.json();

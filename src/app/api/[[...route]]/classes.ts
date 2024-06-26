@@ -42,11 +42,11 @@ const app = new Hono()
       },
       extras: {
         students:
-          sql<number>`(select count(*) from ${studentsToClasses} where 'studentsToClasses.classId' = ${classes.id})`.as(
+          sql<number>`(select count(*) from ${studentsToClasses} where studentToClasses.classId = ${classes.id})`.as(
             "students"
           ),
         sessions:
-          sql<number>`(select count(*) from ${classSessions} where 'classSessions.classId' = ${classes.id})`.as(
+          sql<number>`(select count(*) from ${classSessions} where classSessions.classId = ${classes.id})`.as(
             "sessions"
           ),
       },
@@ -67,8 +67,10 @@ const app = new Hono()
                 marks: true,
               },
             },
+            materials: true,
           },
         },
+        materials: true,
         lecturer: true,
         students: {
           with: {

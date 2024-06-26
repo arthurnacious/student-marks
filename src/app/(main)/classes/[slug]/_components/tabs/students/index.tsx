@@ -34,6 +34,14 @@ export type Field = {
   marks: Mark[];
 };
 
+export type Material = {
+  id: string;
+  name: string;
+  courseId: string;
+  price: number;
+  amount: number;
+};
+
 export interface TheClass {
   id: string;
   slug: string;
@@ -54,7 +62,14 @@ export interface TheClass {
     createdAt: string;
     updatedAt: string | null;
     fields: Field[];
+    materials: Material[];
   };
+  materials: {
+    id: string;
+    materialId: string;
+    classId: string;
+    studentId: string;
+  }[];
   lecturer: {
     id: string;
     name: string;

@@ -38,6 +38,7 @@ const app = new Hono()
       )
       .groupBy(academies.id)
       .orderBy(academies.name);
+
     return ctx.json({ data });
   })
   .post(
@@ -46,24 +47,6 @@ const app = new Hono()
     async (ctx) => {
       const values = ctx.req.valid("json");
       let slug = slugify(values.name.toLowerCase());
-      let counter = 1;
-      let isSlugAvailable = false;
-
-      // while (!isSlugAvailable) {
-      //   const [result] = await db
-      //     .select({ name: academies.name })
-      //     .from(academies)
-      //     .where(eq(academies.slug, slug));
-
-      //   if (result) {
-      //     // Slug already exists, increment the counter and create a new slug
-      //     slug = `${slugify(values.name.toLowerCase())}-${counter}`;
-      //     counter++;
-      //   } else {
-      //     // Slug is available
-      //     isSlugAvailable = true;
-      //   }
-      // }
 
       const [existingName] = await db
         .select()
@@ -74,15 +57,9 @@ const app = new Hono()
         return ctx.json({ name: "name already taken" }, 422);
       }
 
-      try {
-        const data = await db.insert(academies).values({ slug, ...values });
+      const data = await db.insert(academies).values({ slug, ...values });
 
-        return ctx.json({ data });
-      } catch (error: any) {
-        // if (error.code === "DUP") {
-        //   throw new Error({ title: "Duplicate name", statusCode: 422 });
-        // }
-      }
+      return ctx.json({ data });
     }
   )
   .get("/:slug", async (ctx) => {
@@ -117,47 +94,41 @@ const app = new Hono()
         return ctx.json({ name: "name already taken" }, 422);
       }
 
-      try {
-        const academy = await db.query.academies.findFirst({
-          where: eq(academies.slug, slug),
-        });
+      const academy = await db.query.academies.findFirst({
+        where: eq(academies.slug, slug),
+      });
 
-        if (!academy) {
-          return ctx.json({ error: "Not Found" }, 404);
-        }
-
-        const academyId = academy.id;
-
-        const [data] = await db
-          .update(academies)
-          .set({ ...values, slug: newSlug })
-          .where(eq(academies.id, academyId));
-
-        //update academy heads and lecurers
-        await db
-          .delete(academyHeadsToAcademies)
-          .where(eq(academyHeadsToAcademies.academyId, academyId));
-
-        heads.forEach(async (academyHeadId) => {
-          await db
-            .insert(academyHeadsToAcademies)
-            .values({ academyHeadId, academyId });
-        });
-
-        await db
-          .delete(lecturersToAcademies)
-          .where(eq(lecturersToAcademies.academyId, academyId));
-
-        lecturers.forEach(async (lecturerId) => {
-          await db
-            .insert(lecturersToAcademies)
-            .values({ lecturerId, academyId });
-        });
-
-        return ctx.json({ data });
-      } catch (error: any) {
-        console.log({ error: error });
+      if (!academy) {
+        return ctx.json({ error: "Not Found" }, 404);
       }
+
+      const academyId = academy.id;
+
+      const [data] = await db
+        .update(academies)
+        .set({ ...values, slug: newSlug })
+        .where(eq(academies.id, academyId));
+
+      //update academy heads and lecurers
+      await db
+        .delete(academyHeadsToAcademies)
+        .where(eq(academyHeadsToAcademies.academyId, academyId));
+
+      heads.forEach(async (academyHeadId) => {
+        await db
+          .insert(academyHeadsToAcademies)
+          .values({ academyHeadId, academyId });
+      });
+
+      await db
+        .delete(lecturersToAcademies)
+        .where(eq(lecturersToAcademies.academyId, academyId));
+
+      lecturers.forEach(async (lecturerId) => {
+        await db.insert(lecturersToAcademies).values({ lecturerId, academyId });
+      });
+
+      return ctx.json({ data });
     }
   )
   .post(
@@ -177,7 +148,10 @@ const app = new Hono()
           .where(inArray(academies.id, values.ids));
 
         return ctx.json({ data: values.ids });
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error("Error processing request:", error);
+        return ctx.json({ error: "Internal server error" }, 500);
+      }
     }
   )
   .get("/:id/courses", async (ctx) => {

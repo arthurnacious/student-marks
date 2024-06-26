@@ -1,8 +1,6 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import React, { FC } from "react";
-import CoursesTable from "./_components/courses-table";
 import { client } from "@/lib/hono";
-import { courses } from "@/db/schema";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

@@ -3,8 +3,8 @@ import { client } from "@/lib/hono";
 import React from "react";
 import EditAcademyForm from "../../_components/crud/edit-academy-form";
 import Link from "next/link";
-import { FaBackward } from "react-icons/fa";
-import { ArrowLeft, StepBack } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: { slug: string };
@@ -16,7 +16,9 @@ const EditAcademy: React.FC<Props> = async ({ params: { slug } }) => {
   });
   const { data: academy } = await response.json();
 
-  if (!academy) notFound();
+  if (!academy) {
+    return notFound();
+  }
 
   return (
     <PageContainerWrapper

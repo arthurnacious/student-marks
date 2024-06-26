@@ -9,6 +9,7 @@ import AttendanceTab from "./_components/tabs/attendance";
 import MarksTab from "./_components/tabs/marks";
 import PaymentsTab from "./_components/tabs/payments";
 import React, { FC } from "react";
+import MaterialsTab from "./_components/tabs/materials";
 
 interface Props {
   params: { slug: string };
@@ -54,8 +55,7 @@ const PresentClass: FC<Props> = async ({ params: { slug } }) => {
             <AttendanceTab theClass={theClass} />
           </TabsContent>
           <TabsContent value="materials">
-            <p>Materials</p>
-            {/* <AttendanceTab theClass={theClass} /> */}
+            <MaterialsTab theClass={theClass} />
           </TabsContent>
           <TabsContent value="marks">
             <MarksTab theClass={theClass} />
