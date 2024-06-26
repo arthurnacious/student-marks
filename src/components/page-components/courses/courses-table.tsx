@@ -8,12 +8,10 @@ import { useBulkDeleteCourses, useGetCourses } from "@/query/courses";
 import { Loader2 } from "lucide-react";
 import TableSkeleton from "@/components/skeleton/table";
 import AddCourseModal from "./crud/add-course";
-interface Props {
-  initialData: any;
-}
+interface Props {}
 
-const CoursesTable: React.FC<Props> = ({ initialData }) => {
-  const { data, isLoading } = useGetCourses(initialData);
+const CoursesTable: React.FC<Props> = ({}) => {
+  const { data, isLoading } = useGetCourses();
   const deleteCourses = useBulkDeleteCourses();
 
   return (

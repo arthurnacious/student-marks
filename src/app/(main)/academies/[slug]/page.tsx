@@ -1,27 +1,18 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { client } from "@/lib/hono";
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
 import { FaChalkboard, FaChalkboardTeacher, FaCrown } from "react-icons/fa";
 import CountUpCard from "@/components/count-up-card";
 import { notFound } from "next/navigation";
-import { courses } from "@/db/schema";
-import LecturersTable from "./_components/lecturers-table";
-import CoursesTable from "./_components/courses-table";
-import HeadsTable from "./_components/heads-table";
+import LecturersTable from "@/components/page-components/academies/slug/lecturers-table";
+import CoursesTable from "@/components/page-components/academies/slug/courses-table";
+import HeadsTable from "@/components/page-components/academies/slug/heads-table";
 
 interface Props {
   params: { slug: string };

@@ -7,29 +7,28 @@ import { InferRequestType } from "hono";
 const deleteSessionsUrl =
   client.api["class-sessions"][":id"].sessions["bulk-delete"].$post;
 type RequestType = InferRequestType<typeof deleteSessionsUrl>["json"];
+
+const getSTudentsMarksUrl = client.api.marks[":userId"].$get;
 type AttendanceRequestType = {
   studentId: string;
   role: string;
   classSessionId: string;
 };
 
-// export const useGetSessionsByClassId = (classId: string, initialData?: any) => {
-//   const query = useQuery({
-//     queryKey: ["classes", classId, "sessions"],
-//     queryFn: async () => {
-//       const response = await client.api["class-sessions"][":classId"].$get({
-//         param: { classId },
-//       });
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch class sessions");
-//       }
-//       const { data } = await response.json();
-//       return data;
-//     },
-//     initialData,
-//   });
-//   return query;
-// };
+export const useGetStudentsMarks = (studentId: string) => {
+  const query = useQuery({
+    queryKey: ["students", studentId, "marks"],
+    queryFn: async () => {
+      const response = await getSTudentsMarksUrl({
+        param: { userId: studentId },
+      });
+
+      const data = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
 
 export const useBulkDeleteSessionsMarks = (classId: string) => {
   const queryClient = useQueryClient();

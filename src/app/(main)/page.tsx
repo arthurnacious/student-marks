@@ -1,5 +1,4 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
-import Image from "next/image";
 
 export default function Home() {
   return (

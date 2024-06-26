@@ -4,9 +4,8 @@ import { client } from "@/lib/hono";
 import { toast } from "sonner";
 import { InferRequestType } from "hono";
 
-type RequestType = InferRequestType<
-  (typeof client.api.courses)["bulk-delete"]["$post"]
->["json"];
+const bulkDeleteUrl = client.api.courses["bulk-delete"].$post;
+type RequestType = InferRequestType<typeof bulkDeleteUrl>["json"];
 
 export type field = {
   id: string;
@@ -15,7 +14,7 @@ export type field = {
   total: number;
 };
 
-export const useGetCourses = (initialData: any) => {
+export const useGetCourses = () => {
   const query = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -34,7 +33,7 @@ export const useBulkDeleteCourses = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.courses["bulk-delete"]["$post"]({
+      const response = await bulkDeleteUrl({
         json,
       });
 

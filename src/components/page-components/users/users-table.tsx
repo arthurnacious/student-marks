@@ -1,18 +1,14 @@
 "use client";
 import React from "react";
 import { DataTable } from "@/components/data-table";
-import { Users, columns } from "./columns";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { columns } from "./columns";
 import AddUserModal from "./crud/add-user-modal";
-import { client } from "@/lib/hono";
 import { useBulkDeleteUsers, useGetUsers } from "@/query/users";
-import { Loader2 } from "lucide-react";
 import TableSkeleton from "@/components/skeleton/table";
-interface Props {
-  initialData: any;
-}
 
-const UsersTable: React.FC<Props> = ({ initialData }) => {
+interface Props {}
+
+const UsersTable: React.FC<Props> = ({}) => {
   const { data, isLoading } = useGetUsers();
   const deleteUsers = useBulkDeleteUsers();
   return (

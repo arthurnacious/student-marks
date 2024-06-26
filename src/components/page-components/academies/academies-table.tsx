@@ -5,20 +5,11 @@ import { columns } from "./columns";
 import AddAcademModal from "./crud/add-academy";
 import { useBulkDeleteAcademies, useGetAcademies } from "@/query/academies";
 import TableSkeleton from "@/components/skeleton/table";
-interface Props {
-  initialData: {
-    id: string;
-    name: string;
-    slug: string;
-    _count: {
-      courses: number;
-      lecturers: number;
-    };
-  }[];
-}
 
-const AcademiesTable: React.FC<Props> = ({ initialData }) => {
-  const { data, isLoading } = useGetAcademies(initialData);
+interface Props {}
+
+const AcademiesTable: React.FC<Props> = ({}) => {
+  const { data, isLoading } = useGetAcademies();
   const deleteAcademies = useBulkDeleteAcademies();
 
   return (

@@ -1,6 +1,6 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { ArrowLeft } from "lucide-react";
-import CourseFieldsTable from "./_components/course-fields-table";
+import CourseFieldsTable from "@/components/page-components/courses/slug/fields/course-fields-table";
 import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";
 import Link from "next/link";

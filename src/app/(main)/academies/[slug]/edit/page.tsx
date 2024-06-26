@@ -1,7 +1,7 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { client } from "@/lib/hono";
 import React from "react";
-import EditAcademyForm from "../../_components/crud/edit-academy-form";
+import EditAcademyForm from "../../../../../components/page-components/academies/crud/edit-academy-form";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";

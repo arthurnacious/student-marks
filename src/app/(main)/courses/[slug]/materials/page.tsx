@@ -1,6 +1,6 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { ArrowLeft } from "lucide-react";
-import CourseMaterialsTable from "./_components/course-materials-table";
+import CourseMaterialsTable from "@/components/page-components/courses/slug/materials/course-materials-table";
 import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";
 import Link from "next/link";

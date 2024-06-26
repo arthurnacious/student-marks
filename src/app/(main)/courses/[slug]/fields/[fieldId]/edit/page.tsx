@@ -1,5 +1,5 @@
 import PageContainerWrapper from "@/components/page-container-wrapper";
-import EditFieldForm from "./_components/edit-field-form";
+import EditFieldForm from "@/components/page-components/courses/slug/fields/fieldId/edit-field-form";
 import { ArrowLeft } from "lucide-react";
 import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";

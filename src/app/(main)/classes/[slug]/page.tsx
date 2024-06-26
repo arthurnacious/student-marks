@@ -4,12 +4,12 @@ import { client } from "@/lib/hono";
 import { notFound } from "next/navigation";
 import { PiCalendar, PiCheck, PiMoney, PiStudent } from "react-icons/pi";
 import { MdOutlineStorage } from "react-icons/md";
-import StudentsTab from "./_components/tabs/students";
-import AttendanceTab from "./_components/tabs/attendance";
-import MarksTab from "./_components/tabs/marks";
-import PaymentsTab from "./_components/tabs/payments";
+import StudentsTab from "@/components/page-components/classes/slug/tabs/students";
+import AttendanceTab from "@/components/page-components/classes/slug/tabs/attendance";
+import MarksTab from "@/components/page-components/classes/slug/tabs/marks";
+import PaymentsTab from "@/components/page-components/classes/slug/tabs/payments";
+import MaterialsTab from "@/components/page-components/classes/slug/tabs/materials";
 import React, { FC } from "react";
-import MaterialsTab from "./_components/tabs/materials";
 
 interface Props {
   params: { slug: string };
