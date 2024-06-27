@@ -14,7 +14,11 @@ import { useGetClasseBySlug } from "@/query/classes";
 import { Button } from "@/components/ui/button";
 import { FaMoneyBill } from "react-icons/fa";
 import StudentsPaymentModal from "./students-payment-modal";
-import { getPaymentAmount } from "@/lib/payments-functions";
+import {
+  getMaterialSumAmount,
+  getOwingAmount,
+  getTotalPaymentAmount,
+} from "@/lib/payments-functions";
 
 interface Props {
   theClass: TheClass;
@@ -24,13 +28,13 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
   const { data } = useGetClasseBySlug(theClass.slug, theClass);
   const [studentId, setStudentId] = useState<string | undefined>(undefined);
 
-  const getClassPrice = (): number => {
-    return data?.data?.price ?? 0;
-  };
+  const classInfo = data?.data;
 
-  const getOwedAmount = (paymentAmount: number, classPrice: number): number => {
-    const owedAmount = classPrice - paymentAmount;
-    return owedAmount;
+  const studentMaterials = classInfo?.materials;
+  const courseMaterials = classInfo?.course.materials;
+
+  const getClassPrice = (): number => {
+    return classInfo?.price ?? 0;
   };
 
   const coursePrice = getClassPrice();
@@ -40,43 +44,54 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
         classId={theClass.id}
         studentId={studentId}
         setStudentId={setStudentId}
-        payments={data?.data?.payments}
+        payments={classInfo?.payments}
       />
       <p>Class Price is R {coursePrice} Plus cost(s) of any material taken.</p>
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
             <TableHead>Student Name</TableHead>
-            <TableHead className="text-center">Payment</TableHead>
+            <TableHead>Total Material Cost</TableHead>
+            <TableHead>Payment</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.data?.students.map(({ student }) => {
-            const paymentAmount = getPaymentAmount(
+          {classInfo?.students.map(({ student }) => {
+            const materialCost = getMaterialSumAmount({
+              courseMaterials,
+              studentMaterials,
+              studentId: student.id,
+            });
+            const totalAmountPayed = getTotalPaymentAmount(
               student.id,
-              data?.data?.payments
+              classInfo?.payments
             );
-            const owedAmount = getOwedAmount(paymentAmount, coursePrice);
+            const owingAmount = getOwingAmount(
+              totalAmountPayed,
+              coursePrice,
+              materialCost
+            );
 
             return (
               <TableRow key={student.id}>
                 <TableCell className="font-medium">{student.name}</TableCell>
-                <TableCell className="flex justify-center items-center gap-2">
-                  R {paymentAmount}{" "}
-                  {owedAmount > 0 ? (
+                <TableCell>R {materialCost}</TableCell>
+                <TableCell className="flex items-center gap-2">
+                  R {totalAmountPayed}{" "}
+                  {owingAmount > 0 ? (
                     <small
                       className="text-yellow-500 flex items-center"
-                      title={`${student.name} has to pay ${paymentAmount} still`}
+                      title={`${student.name} has to pay ${totalAmountPayed} still`}
                     >
-                      R {owedAmount} Outstanding
+                      R {owingAmount} Outstanding
                     </small>
-                  ) : owedAmount < 0 ? (
+                  ) : owingAmount < 0 ? (
                     <small
                       className="text-red-500 flex items-center"
                       title={`${student.name} has to payed more money than class price and material`}
                     >
-                      Payed R {Math.abs(owedAmount)} More
+                      Payed R {Math.abs(owingAmount)} More
                     </small>
                   ) : (
                     <small

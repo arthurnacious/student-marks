@@ -41,7 +41,8 @@ export const useGetClasseBySlug = (
       if (!response.ok) {
         throw new Error("Failed to fetch classe");
       }
-      return await response.json();
+      const data = await response.json();
+      return data;
     },
     initialData: initialData ? { data: { ...initialData } } : undefined,
   });

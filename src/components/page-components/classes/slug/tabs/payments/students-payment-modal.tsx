@@ -37,7 +37,7 @@ import { client } from "@/lib/hono";
 import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 import { paymentTypeName } from "@/types/payment";
-import { Payment, getPaymentAmount } from "@/lib/payments-functions";
+import { Payment, getTotalPaymentAmount } from "@/lib/payments-functions";
 
 interface Props {
   classId: string;
@@ -68,7 +68,7 @@ const StudentsPaymentModal: FC<Props> = ({
     ),
   });
 
-  const amount = getPaymentAmount(studentId as string, payments);
+  const amount = getTotalPaymentAmount(studentId as string, payments);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
