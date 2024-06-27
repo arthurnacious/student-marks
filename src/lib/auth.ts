@@ -1,4 +1,5 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
+import { Provider } from "next-auth/providers";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
@@ -6,7 +7,16 @@ import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { accounts, sessions, users, verificationTokens } from "@/db/schema";
 
-export const providers = [GithubProvider];
+export const providers: Provider[] = [
+  GithubProvider({
+    clientId: process.env.AUTH_GITHUB_ID,
+    clientSecret: process.env.AUTH_GITHUB_SECRET,
+  }),
+  GoogleProvider({
+    clientId: process.env.AUTH_GOOGLE_ID,
+    clientSecret: process.env.AUTH_GOOGLE_SECRET,
+  }),
+];
 export const basePath = "/api/auth";
 
 const authOptions: NextAuthConfig = {
