@@ -1,4 +1,3 @@
-import { Poppins, Space_Grotesk } from "next/font/google";
 import type { Config } from "tailwindcss";
 
 const config = {
@@ -22,6 +21,8 @@ const config = {
       fontFamily: {
         poppins: ["poppins", "sans-serif"],
         SpaceGrotesk: ["Space Grotesk", "sans-serif"],
+        graduate: ["Graduate", "serif"],
+        "cedarville-cursive": ["Cedarville Cursive", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",

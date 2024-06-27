@@ -1,7 +1,7 @@
 "use client";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export type Classes = {
   id: string;
@@ -106,31 +107,12 @@ export const columns: ColumnDef<Classes>[] = [
       const roster = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`classes/${roster.slug}`} className="cursor-pointer">
-                Go to class
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`classes/${roster.slug}/edit`}
-                className="cursor-pointer"
-              >
-                Edit Course
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link
+          href={`classes/${roster.slug}`}
+          className={buttonVariants({ className: "cursor-pointer" })}
+        >
+          Go to class
+        </Link>
       );
     },
   },

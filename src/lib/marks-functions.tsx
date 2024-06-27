@@ -16,7 +16,7 @@ type Course = {
   fields: Field[];
 };
 
-type Academy = {
+export type Academy = {
   name: string;
   courses: Course[] | null;
 };
@@ -40,10 +40,10 @@ type FetchedData = {
 
 // Grouping function
 // Grouping function
-export const groupData = (data: FetchedData[]): Map<string, Academy> => {
+export const groupData = (data?: FetchedData[]): Map<string, Academy> => {
   const academiesMap = new Map<string, Academy>();
 
-  data.forEach(({ class: { course, ...rest } }) => {
+  data?.forEach(({ class: { course, ...rest } }) => {
     const academyName = course.academy?.name || "Unknown Academy";
     const courseName = course.name;
 

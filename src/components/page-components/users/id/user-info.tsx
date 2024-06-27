@@ -12,7 +12,7 @@ import { client } from "@/lib/hono";
 import { Edit, Loader2, SquareCheckBigIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import React, { FC } from "react";
+import React, { FC, Fragment } from "react";
 import { formatDate } from "date-fns";
 import {
   calculateBackgroundColor,
@@ -32,8 +32,16 @@ const UserInfo: FC<Props> = ({ studentId }) => {
   const { data: user, isLoading: userIsLoading } = useGetUserById(studentId);
 
   if (marksIsLoading || userIsLoading) {
-    return <Loader2 className="size-10 animate-spin" />;
+    return (
+      <div className="flex flex-col gap-2 justify-center items-center">
+        <p className="text-3xl">
+          Loading user Info <span className="animate-ping">...</span>
+        </p>
+        <Loader2 className="size-24 animate-spin" />
+      </div>
+    );
   }
+
   return (
     <>
       <div className="bg-gradient-to-r from-teal-950 to-black/50 rounded-lg">
@@ -65,12 +73,12 @@ const UserInfo: FC<Props> = ({ studentId }) => {
           </div>
         </div>
       </div>
-      <div className="w-full h-full border border-neutral-500/50 bg-neutral-800/20 rounded p-8">
+      <div className="w-full  border border-neutral-500/50 bg-neutral-800/20 rounded p-8 mt-5">
         <h2>Enrollment History</h2>
         <p className="text-slate-400 text-xs">
           Check out a list of all courses available to you.
         </p>
-        {marks && marks.length === 0 && (
+        {marks && marks.length > 0 ? (
           <div className="py-5">
             <Table>
               <TableHeader>
@@ -88,14 +96,13 @@ const UserInfo: FC<Props> = ({ studentId }) => {
               <TableBody>
                 {marks.map((mark) => {
                   const total = calculateTotal(mark.class.course.fields);
-                  console.log({ mark: mark.class.payments[0] });
                   return (
                     <TableRow key={mark.id}>
                       <TableCell className="font-medium">
-                        <div className="flex flex-col gap-1 items-center text-nowrap">
+                        <div className="flex gap-1 items-center text-nowrap">
                           <div>{mark.class.course.name}</div>
-                          <div className="text-xs text-slate-500">
-                            {getPrice(mark.class.course.price)}
+                          <div className="text-sm text-neutral-500">
+                            ({getPrice(mark.class.course.price)})
                           </div>
                         </div>
                       </TableCell>
@@ -107,18 +114,16 @@ const UserInfo: FC<Props> = ({ studentId }) => {
                         {formatDate(mark.class.createdAt, "yyyy-MM-dd")}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col items-center ">
-                          {mark.class.payments[0] ? (
-                            <div className="flex flex-col gap-1 items-center text-nowrap">
-                              {getPrice(mark.class.payments[0]?.amount ?? 0)}
-                              <div className="text-xs text-slate-500">
-                                {mark.class.payments[0].type}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-red-500">Outstanding</span>
-                          )}
-                        </div>
+                        {mark.class.payments[0] ? (
+                          <Fragment>
+                            {getPrice(mark.class.payments[0]?.amount ?? 0)}
+                            <span className="text-xs text-slate-500 ml-2">
+                              ({mark.class.payments[0].type})
+                            </span>
+                          </Fragment>
+                        ) : (
+                          <span className="text-red-500">Outstanding</span>
+                        )}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-center items-center">
@@ -139,7 +144,7 @@ const UserInfo: FC<Props> = ({ studentId }) => {
                               "text-xl px-2 py-1 rounded font-bold"
                             )}
                           >
-                            {total} %
+                            Total: {total} %
                           </span>
                         </div>
                       </TableCell>
@@ -148,6 +153,10 @@ const UserInfo: FC<Props> = ({ studentId }) => {
                 })}
               </TableBody>
             </Table>
+          </div>
+        ) : (
+          <div className="py-5">
+            <h2>There are no classes available this student.</h2>
           </div>
         )}
       </div>

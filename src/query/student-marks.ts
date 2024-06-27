@@ -8,7 +8,7 @@ const deleteSessionsUrl =
   client.api["class-sessions"][":id"].sessions["bulk-delete"].$post;
 type RequestType = InferRequestType<typeof deleteSessionsUrl>["json"];
 
-const getSTudentsMarksUrl = client.api.marks[":userId"].$get;
+const getStudentsMarksUrl = client.api.marks[":userId"].$get;
 type AttendanceRequestType = {
   studentId: string;
   role: string;
@@ -19,7 +19,7 @@ export const useGetStudentsMarks = (studentId: string) => {
   const query = useQuery({
     queryKey: ["students", studentId, "marks"],
     queryFn: async () => {
-      const response = await getSTudentsMarksUrl({
+      const response = await getStudentsMarksUrl({
         param: { userId: studentId },
       });
 
