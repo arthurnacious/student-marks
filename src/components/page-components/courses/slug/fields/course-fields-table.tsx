@@ -25,7 +25,7 @@ const CourseFieldsTable: React.FC<Props> = ({ initialData, course }) => {
       {course.classCount === 0 ? (
         <AddFieldModal courseName={course.name} courseSlug={course.slug} />
       ) : (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-red-500/40">
           You cant add/delete fields for a course that has ran
         </p>
       )}

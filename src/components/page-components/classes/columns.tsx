@@ -1,19 +1,10 @@
 "use client";
-import { ArrowUpDown, MoreVertical } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 export type Classes = {
   id: string;
@@ -82,6 +73,20 @@ export const columns: ColumnDef<Classes>[] = [
     cell: ({ row }) => {
       const course = row.original;
       return course.lecturer.name;
+    },
+  },
+  {
+    accessorKey: "type",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Class Type
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
     },
   },
   {

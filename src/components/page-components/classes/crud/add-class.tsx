@@ -28,15 +28,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetAcademiesCouses } from "@/query/academies";
 import { toast } from "sonner";
-import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
+import { client } from "@/lib/hono";
+import { ClassType } from "@/types/class";
 import { useGetUsersAcademies } from "@/query/users";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAcademiesCouses } from "@/query/academies";
-import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 
 interface Props {}
@@ -49,6 +50,7 @@ const formSchema = z.object({
   course: z.string().min(1, {
     message: "Academy is required.",
   }),
+  type: z.nativeEnum(ClassType),
 });
 
 type formValues = z.input<typeof formSchema>;
@@ -66,6 +68,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
     defaultValues: {
       course: "",
       notes: "",
+      type: ClassType.FT,
     },
   });
 
@@ -105,6 +108,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
     mutation.mutate({
       courseId: values.course,
       notes: values.notes,
+      type: values.type,
     });
   }
 
@@ -194,6 +198,36 @@ const AddClassModal: React.FC<Props> = ({}) => {
                         </SelectContent>
                       </Select>
                     )}
+                    <FormDescription>
+                      The course you are presenting today..
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="my-5">
+                    <FormLabel>Class Type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a course" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(ClassType).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
                       The course you are presenting today..
                     </FormDescription>

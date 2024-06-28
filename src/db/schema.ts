@@ -19,6 +19,7 @@ import { dbCredentials } from "./credentials";
 import { relations } from "drizzle-orm";
 import { StatusName } from "@/types/course";
 import { paymentTypeName } from "@/types/payment";
+import { ClassType } from "@/types/class";
 
 const poolConnection = mysql.createPool(dbCredentials);
 
@@ -174,6 +175,7 @@ export const materialsClassStudent = mysqlTable("materialClassStudent", {
   studentId: varchar("studentId", { length: 255 })
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  price: int("price").notNull(),
 });
 
 export const fields = mysqlTable("fields", {
@@ -201,6 +203,7 @@ export const fields = mysqlTable("fields", {
 //   }),
 // });
 
+const classTypes: string[] = Object.values(ClassType);
 export const classes = mysqlTable(
   "classes",
   {
@@ -214,6 +217,9 @@ export const classes = mysqlTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     slug: varchar("slug", { length: 255 }).unique().notNull(),
+    type: mysqlEnum("type", classTypes as [string, ...string[]])
+      .default(ClassType.FT)
+      .notNull(),
     notes: varchar("notes", { length: 255 }),
     price: int("price").notNull().default(0), //make a carbon copy from course as course price can always be changed
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -513,7 +519,7 @@ export const academyHeadsToAcademiesRelations = relations(
 );
 
 export const insertAcademySchema = createInsertSchema(academies);
-export const insertCourseSchema = createInsertSchema(academies);
+export const insertCourseSchema = createInsertSchema(courses);
 export const insertFieldSchema = createInsertSchema(fields);
 export const insertClassesSchema = createInsertSchema(classes);
 export const insertMaterialSchema = createInsertSchema(materials);

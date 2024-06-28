@@ -14,6 +14,7 @@ import { TheClass } from "../students";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCheckMaterials } from "@/query/class-materials";
+import { convertToZARCurrency } from "@/lib/utils";
 
 interface Props {
   theClass: TheClass;
@@ -26,7 +27,7 @@ const MaterialsTable: FC<Props> = ({ theClass }) => {
     theClass.id
   );
 
-  const materials = data?.data?.course.materials;
+  const materials = data?.course.materials;
 
   const handleCheckboxChange = (
     v: boolean,
@@ -43,7 +44,7 @@ const MaterialsTable: FC<Props> = ({ theClass }) => {
     studentId: string;
     materialId: string;
   }): boolean => {
-    const material = data?.data?.materials.find(
+    const material = data?.materials.find(
       (material) =>
         studentId === material.studentId && materialId === material.materialId
     );
@@ -60,15 +61,18 @@ const MaterialsTable: FC<Props> = ({ theClass }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              {materials.map(({ id, name }) => (
+              {materials.map(({ id, name, price }) => (
                 <TableHead key={`head:${id}`} className="text-center">
-                  {name}
+                  {name}{" "}
+                  <small className="italic">
+                    ({convertToZARCurrency(price)} per item)
+                  </small>
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.data?.students.map(({ student }) => {
+            {data?.students.map(({ student }) => {
               return (
                 <TableRow key={student.id}>
                   <TableCell className="font-medium">{student.name}</TableCell>
@@ -99,7 +103,7 @@ const MaterialsTable: FC<Props> = ({ theClass }) => {
       ) : (
         <div className="flex items-center justify-center">
           <h3 className="text-2xl ">
-            There are no materials field for {theClass.course.name}.
+            There are no materials for {theClass.course.name}.
           </h3>
         </div>
       )}

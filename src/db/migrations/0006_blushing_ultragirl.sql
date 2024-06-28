@@ -1,0 +1,1 @@
+ALTER TABLE `classes` MODIFY COLUMN `type` enum('Training Conference','Full Time','Part Time') NOT NULL DEFAULT 'Full Time';

@@ -29,7 +29,7 @@ const app = new Hono().post(
       if (existingPayment) {
         data = await db
           .update(payments)
-          .set({ amount: values.amount })
+          .set({ amount: values.amount * 100 })
           .where(
             and(
               eq(payments.userId, values.userId),
@@ -39,7 +39,12 @@ const app = new Hono().post(
       } else {
         data = await db
           .insert(payments)
-          .values({ ...values, userId: values.userId, classId: classId });
+          .values({
+            ...values,
+            amount: values.amount * 100,
+            userId: values.userId,
+            classId: classId,
+          });
       }
 
       return ctx.json({ data });

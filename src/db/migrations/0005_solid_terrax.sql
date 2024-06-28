@@ -1,0 +1,1 @@
+ALTER TABLE `classes` ADD `type` enum('Training Conference','fULL Time','Part Time') DEFAULT 'fULL Time' NOT NULL;

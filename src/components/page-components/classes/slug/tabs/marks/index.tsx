@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import TableSkeleton from "@/components/skeleton/table";
 import { TheClass } from "../students";
 import MarksTable from "./marks-table";
+import { notFound } from "next/navigation";
 
 interface Props {
   theClass: TheClass;
@@ -12,15 +13,13 @@ interface Props {
 const MarksTab: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
 
-  return (
-    <>
-      {isLoading ? (
-        <TableSkeleton cols={4} />
-      ) : (
-        <MarksTable theClass={theClass} />
-      )}
-    </>
-  );
+  if (isLoading) return <TableSkeleton cols={4} />;
+
+  if (!data) {
+    return notFound();
+  }
+
+  return <MarksTable theClass={data} />;
 };
 
 export default MarksTab;

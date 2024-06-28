@@ -19,34 +19,44 @@ import {
   getOwingAmount,
   getTotalPaymentAmount,
 } from "@/lib/payments-functions";
+import TableSkeleton from "@/components/skeleton/table";
+import { convertToZARCurrency } from "@/lib/utils";
 
 interface Props {
   theClass: TheClass;
 }
 
 const PaymentsTable: FC<Props> = ({ theClass }) => {
-  const { data } = useGetClasseBySlug(theClass.slug, theClass);
+  const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
   const [studentId, setStudentId] = useState<string | undefined>(undefined);
 
-  const classInfo = data?.data;
-
-  const studentMaterials = classInfo?.materials;
-  const courseMaterials = classInfo?.course.materials;
+  const studentMaterials = data?.materials;
+  const courseMaterials = data?.course.materials;
 
   const getClassPrice = (): number => {
-    return classInfo?.price ?? 0;
+    return data?.price ?? 0;
   };
 
   const coursePrice = getClassPrice();
+
+  if (isLoading) return <TableSkeleton cols={4} />;
+
+  if (!data) {
+    return <div>No data</div>;
+  }
+
   return (
     <>
       <StudentsPaymentModal
         classId={theClass.id}
         studentId={studentId}
         setStudentId={setStudentId}
-        payments={classInfo?.payments}
+        payments={data?.payments}
       />
-      <p>Class Price is R {coursePrice} Plus cost(s) of any material taken.</p>
+      <p>
+        Class Price is {convertToZARCurrency(coursePrice)} Plus cost(s) of any
+        material taken.
+      </p>
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
@@ -57,7 +67,7 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {classInfo?.students.map(({ student }) => {
+          {data?.students.map(({ student }) => {
             const materialCost = getMaterialSumAmount({
               courseMaterials,
               studentMaterials,
@@ -65,7 +75,7 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
             });
             const totalAmountPayed = getTotalPaymentAmount(
               student.id,
-              classInfo?.payments
+              data?.payments
             );
             const owingAmount = getOwingAmount(
               totalAmountPayed,
@@ -76,22 +86,24 @@ const PaymentsTable: FC<Props> = ({ theClass }) => {
             return (
               <TableRow key={student.id}>
                 <TableCell className="font-medium">{student.name}</TableCell>
-                <TableCell>R {materialCost}</TableCell>
+                <TableCell>{convertToZARCurrency(materialCost)}</TableCell>
                 <TableCell className="flex items-center gap-2">
-                  R {totalAmountPayed}{" "}
+                  {convertToZARCurrency(totalAmountPayed)}{" "}
                   {owingAmount > 0 ? (
                     <small
                       className="text-yellow-500 flex items-center"
-                      title={`${student.name} has to pay ${totalAmountPayed} still`}
+                      title={`${student.name} has to pay ${convertToZARCurrency(
+                        totalAmountPayed
+                      )} still`}
                     >
-                      R {owingAmount} Outstanding
+                      {convertToZARCurrency(owingAmount)} Outstanding
                     </small>
                   ) : owingAmount < 0 ? (
                     <small
                       className="text-red-500 flex items-center"
                       title={`${student.name} has to payed more money than class price and material`}
                     >
-                      Payed R {Math.abs(owingAmount)} More
+                      Payed {convertToZARCurrency(Math.abs(owingAmount))} More
                     </small>
                   ) : (
                     <small

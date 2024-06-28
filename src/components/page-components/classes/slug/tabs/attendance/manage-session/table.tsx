@@ -22,7 +22,7 @@ const StudentsTab: FC<Props> = ({ theClass }) => {
       </div>
       {isLoading ? (
         <TableSkeleton cols={4} />
-      ) : data?.data && data.data?.sessions && data.data.sessions.length > 0 ? (
+      ) : data && data.sessions && data.sessions.length > 0 ? (
         <DataTable
           columns={columns}
           onDelete={(rows) => {
@@ -30,7 +30,7 @@ const StudentsTab: FC<Props> = ({ theClass }) => {
             removeSessions.mutate({ ids });
           }}
           isLoading={removeSessions.isPending || isLoading}
-          data={data.data.sessions}
+          data={data.sessions}
         />
       ) : (
         <div className="flex items-center justify-center">

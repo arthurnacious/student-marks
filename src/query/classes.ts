@@ -9,8 +9,9 @@ const removeStudentsFromClassUrl =
 type ResponseType = InferResponseType<typeof removeStudentsFromClassUrl>;
 type RequestType = InferRequestType<typeof removeStudentsFromClassUrl>["json"];
 
+const getClassBySlugUrl = client.api.classes[":slug"].$get;
 type ClassBySlugReturnType = InferResponseType<
-  (typeof client.api.classes)[":slug"]["$get"]
+  typeof getClassBySlugUrl
 >["data"];
 
 export const useGetClasses = () => {
@@ -35,13 +36,13 @@ export const useGetClasseBySlug = (
   const query = useQuery({
     queryKey: ["classes", slug],
     queryFn: async () => {
-      const response = await client.api.classes[":slug"].$get({
+      const response = await getClassBySlugUrl({
         param: { slug },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch classe");
       }
-      const data = await response.json();
+      const { data } = await response.json();
       return data;
     },
     initialData: initialData ? { data: { ...initialData } } : undefined,

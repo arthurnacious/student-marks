@@ -40,8 +40,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {}
 
-type ResponseType = InferResponseType<typeof client.api.courses.$post>;
-type RequestType = InferRequestType<typeof client.api.courses.$post>["json"];
+const createCourseUrl = client.api.courses.$post;
+type ResponseType = InferResponseType<typeof createCourseUrl>;
+type RequestType = InferRequestType<typeof createCourseUrl>["json"];
 
 const formSchema = z.object({
   academy: z.string().min(2, {
@@ -50,12 +51,14 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters long.",
   }),
+  price: z.number().min(1, {
+    message: "Price must be at least 1 characters long.",
+  }),
 });
 
 type formValues = z.input<typeof formSchema>;
 
 const AddCourseModal: React.FC<Props> = ({}) => {
-  const [fieldCount, setFieldCount] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -64,6 +67,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
     defaultValues: {
       academy: "",
       name: "",
+      price: 0,
     },
   });
 
@@ -71,7 +75,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
 
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
-      const response = await client.api.courses.$post({ json: values });
+      const response = await createCourseUrl({ json: values });
 
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
@@ -99,7 +103,6 @@ const AddCourseModal: React.FC<Props> = ({}) => {
   function onOpenChange(b: boolean) {
     form.reset();
     setIsOpen(b);
-    setFieldCount(1);
   }
 
   return (
@@ -147,29 +150,52 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                       </Select>
                     )}
                     <FormDescription>
-                      You can manage academies addresses in your{" "}
+                      You can manage academies list in your{" "}
                       <Link href="/academies">academy settings</Link>.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="mb-6">
-                    <FormLabel>Course</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Math 1" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This wil be the name of the course
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex gap-x-5 mb-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Course Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Math 1" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This will be the name of the course
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Course Price</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Math 1"
+                          {...field}
+                          onChange={(e) => field.onChange(+e.target.value)}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Course Price without the R
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <Button isLoading={mutation.isPending}>Create</Button>
             </form>
           </Form>

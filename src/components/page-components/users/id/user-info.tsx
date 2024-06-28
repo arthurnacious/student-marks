@@ -18,7 +18,7 @@ import {
   calculateBackgroundColor,
   calculateTotal,
 } from "@/lib/marks-functions";
-import { cn, getPrice } from "@/lib/utils";
+import { cn, convertToZARCurrency } from "@/lib/utils";
 import { useGetStudentsMarks } from "@/query/student-marks";
 import { useGetUserById } from "@/query/users";
 
@@ -102,7 +102,7 @@ const UserInfo: FC<Props> = ({ studentId }) => {
                         <div className="flex gap-1 items-center text-nowrap">
                           <div>{mark.class.course.name}</div>
                           <div className="text-sm text-neutral-500">
-                            ({getPrice(mark.class.course.price)})
+                            ({convertToZARCurrency(mark.class.course.price)})
                           </div>
                         </div>
                       </TableCell>
@@ -116,7 +116,9 @@ const UserInfo: FC<Props> = ({ studentId }) => {
                       <TableCell>
                         {mark.class.payments[0] ? (
                           <Fragment>
-                            {getPrice(mark.class.payments[0]?.amount ?? 0)}
+                            {convertToZARCurrency(
+                              mark.class.payments[0]?.amount ?? 0
+                            )}
                             <span className="text-xs text-slate-500 ml-2">
                               ({mark.class.payments[0].type})
                             </span>

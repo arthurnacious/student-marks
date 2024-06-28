@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { FC } from "react";
 import BackButton from "./_back-button";
 import BackBackdrop from "./_back-backdrop";
-import EditAcademyForm from "../../../../../../components/page-components/academies/crud/edit-academy-form";
+import EditAcademyForm from "@/components/page-components/academies/crud/edit-academy-form";
 import { client } from "@/lib/hono";
 
 interface Props {

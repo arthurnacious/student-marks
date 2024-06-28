@@ -13,7 +13,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { getPrice } from "@/lib/utils";
+import { convertToZARCurrency } from "@/lib/utils";
 
 export type Material = {
   id: string;
@@ -65,7 +65,7 @@ export const columns: ColumnDef<Material>[] = [
     header: "Price",
     cell: ({ row }) => {
       const material = row.original;
-      return getPrice(material.price);
+      return convertToZARCurrency(material.price);
     },
   },
   {

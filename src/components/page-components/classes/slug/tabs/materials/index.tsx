@@ -12,15 +12,13 @@ interface Props {
 const MaterialsTab: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
 
-  return (
-    <>
-      {isLoading ? (
-        <TableSkeleton cols={4} />
-      ) : (
-        <MaterialsTable theClass={theClass} />
-      )}
-    </>
-  );
+  if (isLoading) return <TableSkeleton cols={4} />;
+
+  if (!data) {
+    return <div>No data</div>;
+  }
+
+  return <MaterialsTable theClass={data} />;
 };
 
 export default MaterialsTab;

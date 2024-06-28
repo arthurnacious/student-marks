@@ -176,9 +176,9 @@ const AddStudentsModal: React.FC<Props> = ({ theClass }) => {
                         <SelectContent>
                           {students?.map((student) => {
                             const isDisabled =
-                              classData?.data &&
-                              classData.data?.students?.length > 0 &&
-                              classData.data?.students.some(
+                              classData &&
+                              classData.students?.length > 0 &&
+                              classData.students.some(
                                 (s) => s.studentId === student.id
                               );
                             return (

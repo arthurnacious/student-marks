@@ -7,39 +7,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import React, { useState } from "react";
 import {
   Form,
-  FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
-import { useGetUsersAcademies, useSearchUsers } from "@/query/users";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAcademiesCouses } from "@/query/academies";
-import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { useGetClasseBySlug } from "@/query/classes";
 import { TheClass } from "../students";
 
 interface Props {
@@ -67,11 +54,6 @@ const AddSessionsModal: React.FC<Props> = ({ theClass }) => {
       name: "",
     },
   });
-
-  const { data: classData, isLoading: loadingClass } = useGetClasseBySlug(
-    theClass.slug,
-    theClass
-  );
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (values): Promise<ResponseType> => {

@@ -49,6 +49,7 @@ export interface TheClass {
   courseId: string;
   creatorId: string;
   notes: string | null;
+  type: string;
   createdAt: string;
   updatedAt: string | null;
   course: {
@@ -68,6 +69,7 @@ export interface TheClass {
     id: string;
     materialId: string;
     classId: string;
+    price: number;
     studentId: string;
   }[];
   lecturer: {
@@ -125,7 +127,7 @@ const StudentsTab: FC<Props> = ({ theClass }) => {
       </div>
       {isLoading ? (
         <TableSkeleton cols={4} />
-      ) : data?.data && data.data?.students && data.data.students.length > 0 ? (
+      ) : data && data?.students && data.students.length > 0 ? (
         <DataTable
           deleteWording="Remove Student"
           columns={columns}
@@ -134,7 +136,7 @@ const StudentsTab: FC<Props> = ({ theClass }) => {
             removeStudents.mutate({ ids });
           }}
           isLoading={removeStudents.isPending || isLoading}
-          data={data.data.students}
+          data={data.students}
         />
       ) : (
         <div className="flex items-center justify-center">

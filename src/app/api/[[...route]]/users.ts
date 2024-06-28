@@ -127,6 +127,9 @@ const app = new Hono()
     const academies = userWithAcademies.academiesLeading.map(
       ({ academy }) => academy
     );
+    academies.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
 
     return ctx.json({ data: academies });
   })

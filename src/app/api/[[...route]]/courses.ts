@@ -35,6 +35,7 @@ const app = new Hono()
         updatedAt: courses.updatedAt,
         slug: courses.slug,
         status: courses.status,
+        price: courses.price,
         academy: {
           name: academies.name,
         },
@@ -51,7 +52,10 @@ const app = new Hono()
   })
   .post(
     "/",
-    zValidator("json", createCourseSchema.pick({ name: true, academy: true })),
+    zValidator(
+      "json",
+      createCourseSchema.pick({ name: true, academy: true, price: true })
+    ),
     async (ctx) => {
       const values = ctx.req.valid("json");
       let slug = slugify(values.name.toLowerCase());
@@ -86,6 +90,7 @@ const app = new Hono()
 
       try {
         values.name = toTitleCase(values.name);
+        values.price = values.price ? values.price * 100 : undefined;
 
         const data = await db
           .insert(courses)

@@ -57,13 +57,13 @@ const StudentsTable: FC<Props> = ({ theClass }) => {
   };
 
   const calculateTotalAttendance = (): number => {
-    if (!data?.data) return 0;
-    const totalSessions = data.data.sessions.length;
-    const totalStudents = data.data.students.length;
+    if (!data) return 0;
+    const totalSessions = data.sessions.length;
+    const totalStudents = data.students.length;
     if (totalSessions === 0 || totalStudents === 0) return 100;
     let attendedSessions = 0;
 
-    data.data.sessions.forEach((session) => {
+    data.sessions.forEach((session) => {
       attendedSessions += session.attendances.filter(
         (attendance) => attendance.role === "Present"
       ).length;
@@ -79,14 +79,14 @@ const StudentsTable: FC<Props> = ({ theClass }) => {
     <>
       {isLoading ? (
         <TableSkeleton cols={4} />
-      ) : data?.data && data.data?.students && data.data.students.length > 0 ? (
+      ) : data && data.students && data.students.length > 0 ? (
         <>
           <Table className="mt-5">
             <TableHeader>
               <TableRow className="bg-neutral-950">
                 <TableHead className="text-slate-100">Student</TableHead>
                 <TableHead
-                  colSpan={data?.data?.sessions.length ?? 1}
+                  colSpan={data?.sessions.length ?? 1}
                   className="text-center text-slate-100"
                 >
                   Sessions
@@ -94,7 +94,7 @@ const StudentsTable: FC<Props> = ({ theClass }) => {
               </TableRow>
               <TableRow>
                 <TableHead>Name</TableHead>
-                {data?.data?.sessions.map(({ id, name }) => (
+                {data.sessions.map(({ id, name }) => (
                   <TableHead
                     key={`header-${id}`}
                     className="w-[100px] text-nowrap"
@@ -105,13 +105,13 @@ const StudentsTable: FC<Props> = ({ theClass }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.data?.students.map(({ student }) => {
+              {data.students.map(({ student }) => {
                 return (
                   <TableRow key={student.id}>
                     <TableCell className="font-medium">
                       {student.name}
                     </TableCell>
-                    {data?.data?.sessions.map(({ id, attendances }) => {
+                    {data.sessions.map(({ id, attendances }) => {
                       const isChecked = checkIsChecked(attendances, student);
                       return (
                         <TableCell key={`cell-${id}`} className="text-center">
@@ -133,11 +133,14 @@ const StudentsTable: FC<Props> = ({ theClass }) => {
               })}
             </TableBody>
           </Table>
-          {data.data.sessions.length > 0 || data.data.sessions.length > 0 ? (
-            <div className="flex w-full justify-between items-center">
-              <AttendanceCounter totalAttendance={calculateTotalAttendance()} />
-            </div>
-          ) : null}
+          {data.sessions.length > 0 ||
+            (data.sessions.length > 0 && (
+              <div className="flex w-full justify-between items-center">
+                <AttendanceCounter
+                  totalAttendance={calculateTotalAttendance()}
+                />
+              </div>
+            ))}
         </>
       ) : (
         <div className="flex items-center justify-center">

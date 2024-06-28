@@ -25,7 +25,7 @@ export const getTotalPaymentAmount = (
 ): number => {
   const payment = payments?.find(({ userId }) => studentId === userId);
 
-  return payment ? payment.amount / 100 : 0;
+  return payment ? payment.amount : 0;
 };
 
 export const getMaterialSumAmount = ({
@@ -44,7 +44,7 @@ export const getMaterialSumAmount = ({
     materialOfCurrentStudent?.reduce((acc, curr) => {
       const materialCost =
         courseMaterials?.find(({ id }) => id === curr.materialId)?.price ?? 0;
-      return acc + materialCost / 100;
+      return acc + materialCost;
     }, 0) ?? 0;
 
   return sum;

@@ -22,7 +22,7 @@ const MarksTable: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug);
   const [studentId, setStudentId] = useState<string | undefined>(undefined);
 
-  const fields = data?.data?.course.fields;
+  const fields = data?.course.fields;
 
   const getStudentMarks = (studentId: string, fieldId: string) => {
     const mark = fields
@@ -72,7 +72,7 @@ const MarksTable: FC<Props> = ({ theClass }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.data?.students.map(({ student }) => {
+              {data?.students.map(({ student }) => {
                 return (
                   <TableRow key={student.id}>
                     <TableCell className="font-medium">

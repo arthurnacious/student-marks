@@ -14,21 +14,21 @@ interface Props {
 
 const PaymentsTab: FC<Props> = ({ theClass }) => {
   const { data, isLoading } = useGetClasseBySlug(theClass.slug, theClass);
-  return (
-    <>
-      <div>{/* <AddStudentsModal theClass={theClass} /> */}</div>
-      {isLoading ? (
-        <TableSkeleton cols={4} />
-      ) : data?.data && data.data?.students?.length > 0 ? (
-        <PaymentsTable theClass={theClass} />
-      ) : (
-        <div className="flex items-center justify-center">
-          <h3 className="text-2xl ">
-            There are no students enrolled for this class.
-          </h3>
-        </div>
-      )}
-    </>
+
+  if (isLoading) return <TableSkeleton cols={4} />;
+
+  if (!data) {
+    return <div>No data</div>;
+  }
+
+  return data && data.students?.length > 0 ? (
+    <PaymentsTable theClass={theClass} />
+  ) : (
+    <div className="flex items-center justify-center">
+      <h3 className="text-2xl ">
+        There are no students enrolled for this class.
+      </h3>
+    </div>
   );
 };
 

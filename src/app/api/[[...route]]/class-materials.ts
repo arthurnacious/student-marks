@@ -4,11 +4,12 @@ import {
   classSessions,
   classes,
   insertMaterialClassStudentSchema,
+  materials,
   materialsClassStudent,
 } from "@/db/schema";
 import { toTitleCase } from "@/lib/utils";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -33,8 +34,16 @@ const app = new Hono().post(
     // if (!session?.user) {
     //   return ctx.json({ error: "Unauthorized" }, 401);
     // }
+
+    const material = await db.query.materials.findFirst({
+      where: eq(materials.id, materialId),
+      columns: {
+        price: true,
+      },
+    });
+
     try {
-      const existingSTudentMaterial =
+      const existingStudentMaterial =
         await db.query.materialsClassStudent.findFirst({
           where: and(
             eq(materialsClassStudent.studentId, studentId),
@@ -47,7 +56,9 @@ const app = new Hono().post(
         });
 
       let data;
-      if (existingSTudentMaterial) {
+      let materialAction: "subract" | "add" = "subract";
+      if (existingStudentMaterial) {
+        materialAction = "add";
         data = await db
           .delete(materialsClassStudent)
           .where(
@@ -62,8 +73,18 @@ const app = new Hono().post(
           studentId,
           materialId,
           classId,
+          price: material?.price ?? 0,
         });
       }
+      const sqlData = await db
+        .update(materials)
+        .set({
+          amount: sql`${materials.amount} ${
+            materialAction === "add" ? sql`+` : sql`-`
+          } 1`,
+        })
+        .where(eq(materials.id, materialId));
+      console.log({ sqlData });
 
       return ctx.json({ data });
     } catch (error: any) {

@@ -5,10 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const getPrice = (amount?: number): string => {
-  return amount && amount > 0 ? `R ${amount / 100}` : "R 0";
-};
-
 export const makeInitials = (name: string): string => {
   // Split the name by spaces into an array of words
   const words = name.trim().split(/\s+/);
@@ -21,4 +17,16 @@ export const makeInitials = (name: string): string => {
 
 export const toTitleCase = (str: string): string => {
   return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+export const convertToZARCurrency = (rawAmount: number): string => {
+  const amount = rawAmount / 100;
+
+  // Format as ZAR currency
+  const formattedAmount = amount.toLocaleString("en-ZA", {
+    style: "currency",
+    currency: "ZAR",
+  });
+
+  return formattedAmount;
 };

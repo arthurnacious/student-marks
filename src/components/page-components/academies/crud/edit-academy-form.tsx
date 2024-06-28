@@ -68,6 +68,11 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
       }
+      values.lecturers.forEach((lecturerId) => {
+        queryClient.invalidateQueries({
+          queryKey: ["user", lecturerId, "academies"],
+        });
+      });
       return response.json();
     },
     onSuccess: () => {

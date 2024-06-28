@@ -7,6 +7,7 @@ import {
   insertAcademySchema,
   lecturersToAcademies,
 } from "@/db/schema";
+import { toTitleCase } from "@/lib/utils";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
@@ -47,6 +48,7 @@ const app = new Hono()
     async (ctx) => {
       const values = ctx.req.valid("json");
       let slug = slugify(values.name.toLowerCase());
+      values.name = toTitleCase(values.name);
 
       const [existingName] = await db
         .select()
