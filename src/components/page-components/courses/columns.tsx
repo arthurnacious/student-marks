@@ -13,6 +13,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { convertToZARCurrency } from "@/lib/utils";
 
 export type Courses = {
   id: string;
@@ -78,7 +79,7 @@ export const columns: ColumnDef<Courses>[] = [
     },
     cell: ({ row }) => {
       const course = row.original;
-      return `R ${convertToZARCurrency(course.price)`;
+      return `R ${convertToZARCurrency(course.price)}`;
     },
   },
   {
