@@ -9,7 +9,7 @@ interface Props {
 
 const TableSkeleton: FC<Props> = ({ rows = 7, cols }) => {
   return (
-    <ScrollArea className="flex flex-col justify-center max-w-fit">
+    <ScrollArea className="flex flex-col justify-center max-w-[calc(100vw-15rem)]">
       <Skeleton className="h-10 w-80 my-2" />
       <div>
         <table>
