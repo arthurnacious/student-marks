@@ -96,6 +96,10 @@ const AddUserModal: React.FC<Props> = ({}) => {
       onOpenChange(false);
       toast.success("User inserted successfully");
       queryClient.invalidateQueries({ queryKey: ["users", null] });
+      //for all the users types
+      Object.values(RoleName).forEach((role) => {
+        queryClient.invalidateQueries({ queryKey: ["users", role] });
+      });
     },
     onError: (error: any) => {
       toast.error("failed to insert user");

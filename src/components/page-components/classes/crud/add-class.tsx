@@ -31,7 +31,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetAcademiesCouses } from "@/query/academies";
+import { useGetAcademiesCourses } from "@/query/academies";
 import { toast } from "sonner";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
@@ -75,7 +75,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
   const { data: usersAcademies, isLoading: loadingAcademies } =
     useGetUsersAcademies();
 
-  const { data: courses, isLoading: loadingCourses } = useGetAcademiesCouses(
+  const { data: courses, isLoading: loadingCourses } = useGetAcademiesCourses(
     selectedAcademy?.id
   );
 

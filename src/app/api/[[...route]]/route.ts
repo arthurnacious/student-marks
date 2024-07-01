@@ -1,6 +1,7 @@
 // index.ts
 import { Hono } from "hono";
 import academies from "./academies";
+import academyHeads from "./academy-heads";
 import courses from "./courses";
 import fields from "./fields";
 import classes from "./classes";
@@ -20,6 +21,7 @@ const route = new Hono()
   .basePath("/api")
   // .use(authMiddleware)
   .route("/academies", academies)
+  .route("/academy-heads", academyHeads)
   .route("/courses", courses)
   .route("/fields", fields)
   .route("/classes", classes)

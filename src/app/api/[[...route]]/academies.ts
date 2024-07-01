@@ -163,17 +163,6 @@ const app = new Hono()
     });
     return ctx.json({ data });
   })
-  .get("/:id/academy-heads", async (ctx) => {
-    const academyId = ctx.req.param("id");
-
-    const data = await db.query.academyHeadsToAcademies.findMany({
-      where: eq(lecturersToAcademies.academyId, academyId),
-      with: {
-        head: true,
-      },
-    });
-    return ctx.json({ data });
-  })
   .get("/:id/lecturers", async (ctx) => {
     const academyId = ctx.req.param("id");
     const data = await db.query.lecturersToAcademies.findMany({

@@ -14,17 +14,25 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
-export type Academies = {
+export type AcademiesHeads = {
   id: string;
-  name: string;
-  slug: string;
-  _count: {
-    courses: number;
-    lecturers: number;
+  academyId: string;
+  academyHeadId: string;
+  head: {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: string | null;
+    image: string | null;
+    role: string;
+    isGardian: boolean | null;
+    activeTill: string | null;
+    createdAt: string;
+    updatedAt: string | null;
   };
 };
 
-export const columns: ColumnDef<Academies>[] = [
+export const columns: ColumnDef<AcademiesHeads>[] = [
   {
     id: "Select",
     header: ({ table }) => (
@@ -60,28 +68,27 @@ export const columns: ColumnDef<Academies>[] = [
         </Button>
       );
     },
-  },
-  {
-    // accessorKey: "_count.courses",
-    header: "Courses",
     cell: ({ row }) => {
-      const academy = row.original;
-      return academy._count.courses;
+      const academyHead = row.original;
+      return academyHead.head.name;
     },
   },
   {
     // accessorKey: "_count.lecturers",
-    header: "Lecturers",
-    cell: ({ row }) => {
-      const academy = row.original;
-      return academy._count.lecturers;
+    header: "email",
+    cell: ({
+      row: {
+        original: { head },
+      },
+    }) => {
+      return head.email;
     },
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const academy = row.original;
+      const academyHead = row.original;
 
       return (
         <DropdownMenu>
@@ -95,35 +102,10 @@ export const columns: ColumnDef<Academies>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link
-                href={`academies/${academy.slug}`}
+                href={`users/${academyHead.head.id}`}
                 className="cursor-pointer"
               >
-                View Academy
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/edit`}
-                className="cursor-pointer"
-              >
-                Edit Academy
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/heads`}
-                className="cursor-pointer"
-              >
-                Manage Academy Heads
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/lecturers`}
-                className="cursor-pointer"
-              >
-                Manage Lecturers
+                View User
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -60,7 +60,7 @@ export const useBulkDeleteAcademies = () => {
   return mutation;
 };
 
-export const useGetAcademiesCouses = (academyId?: string) => {
+export const useGetAcademiesCourses = (academyId?: string) => {
   const query = useQuery({
     queryKey: ["academies", academyId, "courses"],
     queryFn: async () => {
@@ -76,4 +76,74 @@ export const useGetAcademiesCouses = (academyId?: string) => {
     enabled: !!academyId,
   });
   return query;
+};
+
+export const useGetAcademyBySlug = (academySlug: string) => {
+  const query = useQuery({
+    queryKey: ["academies", academySlug],
+    queryFn: async () => {
+      const response = await client.api.academies[":slug"].$get({
+        param: { slug: academySlug },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch academiy");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
+
+export const useGetAcademiesHeads = (academySlug: string) => {
+  const { data: academyData, isLoading } = useGetAcademyBySlug(academySlug);
+
+  if (!isLoading && !academyData) {
+    throw new Error("Failed to fetch academy");
+  }
+  const query = useQuery({
+    queryKey: ["academies", academyData?.id, "heads"],
+    queryFn: async () => {
+      const response = await client.api["academy-heads"][":id"].$get({
+        param: {
+          id: academyData?.id ?? "",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch academy");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
+
+export const useBulkDeleteAcademiesHeads = (academyId: string) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation<unknown, Error, RequestType>({
+    mutationFn: async (json) => {
+      const response = await client.api["academy-heads"][":id"]["bulk-delete"][
+        "$post"
+      ]({
+        param: { id: academyId },
+        json,
+      });
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success("Academy heads successfully deleted");
+      queryClient.invalidateQueries({ queryKey: ["academies"] });
+      queryClient.invalidateQueries({
+        queryKey: ["academies", academyId, "heads"],
+      });
+    },
+    onError: (error: any) => {
+      console.log({ error });
+      toast.error("failed to delete academies");
+    },
+  });
+
+  return mutation;
 };
