@@ -52,7 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (isLoading) {
       props.children = (
         <>
-          <Loader2 className="size animate-spin" /> Loading{" "}
+          <Loader2 className="size animate-spin" /> Loading
         </>
       );
       props.disabled = true;

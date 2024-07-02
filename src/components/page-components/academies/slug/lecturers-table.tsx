@@ -12,10 +12,10 @@ import { format, formatDistance, subDays } from "date-fns";
 import React, { FC } from "react";
 
 interface Props {
-  academy: {
+  academy?: {
     name: string;
   };
-  lecturers: {
+  lecturers?: {
     id: string;
     academyId: string;
     lecturerId: string;
@@ -47,7 +47,7 @@ const LecturersTable: FC<Props> = ({ academy, lecturers }) => {
   return (
     <Table>
       <TableCaption className="my-5">
-        A list of {academy.name} lecturers.
+        A list of {academy?.name ?? "Academy"} lecturers.
       </TableCaption>
       <TableHeader>
         <TableRow>
@@ -58,7 +58,7 @@ const LecturersTable: FC<Props> = ({ academy, lecturers }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {lecturers.map((pivot) => (
+        {lecturers?.map((pivot) => (
           <TableRow key={pivot.id}>
             <TableCell>{pivot.lecturer.name}</TableCell>
             <TableCell>{getStatus(pivot.lecturer.createdAt)}</TableCell>

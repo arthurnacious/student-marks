@@ -12,26 +12,31 @@ import { format, formatDistance, subDays } from "date-fns";
 import React, { FC } from "react";
 
 interface Props {
-  academy: {
+  academy?: {
     name: string;
   };
-  courses: {
+  courses?: {
     id: string;
     name: string;
+    status: string | null;
     createdAt: string;
     updatedAt: string | null;
   }[];
 }
 
-function getStatus(): React.ReactNode {
-  return <span className="bg-green-600/20 rounded-lg px-2">Active</span>;
+function getStatus(status: string | null): React.ReactNode {
+  return status && status === "Active" ? (
+    <span className="bg-green-600/20 rounded-lg px-2">Active</span>
+  ) : (
+    <span className="bg-red-600/20 rounded-lg px-2">Paused</span>
+  );
 }
 
 const CoursesTable: FC<Props> = ({ academy, courses }) => {
   return (
     <Table>
       <TableCaption className="my-5">
-        A list of {academy.name} courses.
+        A list of {academy?.name ?? "Academy"} courses.
       </TableCaption>
       <TableHeader>
         <TableRow>
@@ -41,10 +46,10 @@ const CoursesTable: FC<Props> = ({ academy, courses }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {courses.map((course) => (
+        {courses?.map((course) => (
           <TableRow key={course.id}>
             <TableCell>{course.name}</TableCell>
-            <TableCell>{getStatus()}</TableCell>
+            <TableCell>{getStatus(course.status)}</TableCell>
             <TableCell className="text-right">
               {formatDistance(
                 subDays(new Date(course.createdAt), 3),
