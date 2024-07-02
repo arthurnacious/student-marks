@@ -14,6 +14,7 @@ import {
   useGetAcademiesLecturers,
   useGetAcademyBySlug,
 } from "@/query/academies";
+import Link from "next/link";
 
 interface Props {
   slug: string;
@@ -85,18 +86,28 @@ const ViewAcademyTabs: FC<Props> = ({ slug }) => {
 
           <TabsContent value="academyHeads" className="m-0 rounded-none">
             <Card x-chunk="course-academy-heads" className="p-5 rounded">
-              <h2 className="text-2xl py-5 uppercase">
+              <h2 className="text-2xl pt-5 uppercase">
                 {academyData?.name ?? ""} Academy Heads
               </h2>
+              {academyData && (
+                <Link href={`/academies/${academyData.slug}/heads`}>
+                  Manage Academy Heads
+                </Link>
+              )}
               <HeadsTable heads={academyHeads.data} academy={academyData} />
             </Card>
           </TabsContent>
 
           <TabsContent value="lecturers" className="m-0 rounded-none">
             <Card x-chunk="course-academy-lecturers" className="p-5 rounded">
-              <h2 className="text-2xl py-5 uppercase">
+              <h2 className="text-2xl pt-5 uppercase">
                 {academyData?.name ?? ""} Academy Lecturers
               </h2>
+              {academyData && (
+                <Link href={`/academies/${academyData.slug}/lecturers`}>
+                  Manage Academy Lecturers
+                </Link>
+              )}
               <div>
                 <LecturersTable
                   lecturers={academyLecturers.data}
