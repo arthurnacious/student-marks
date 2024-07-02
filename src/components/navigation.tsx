@@ -137,12 +137,12 @@ function Navigation() {
         <NavigationLink name="Classes" to="/classes">
           <GiTeacher className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
         </NavigationLink>
-        <NavigationLink name="Marks" to="/marks">
-          <GiCheckMark className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
-        </NavigationLink>
         <NavigationLink name="Users" to="/users">
           <PiUserSquare className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
         </NavigationLink>
+        {/* <NavigationLink name="My Marks" to="/marks">
+          <GiCheckMark className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
+        </NavigationLink> */}
       </div>
     </motion.nav>
   );
