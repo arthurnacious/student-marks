@@ -522,6 +522,8 @@ export const insertAcademySchema = createInsertSchema(academies);
 export const insertAcademyHeadsToAcademySchema = createInsertSchema(
   academyHeadsToAcademies
 );
+export const insertLecturersToAcademySchema =
+  createInsertSchema(lecturersToAcademies);
 export const insertCourseSchema = createInsertSchema(courses);
 export const insertFieldSchema = createInsertSchema(fields);
 export const insertClassesSchema = createInsertSchema(classes);

@@ -1,4 +1,5 @@
 import AcademyHeadsTable from "@/components/page-components/academies/slug/heads/academy-heads-table";
+import AcademyLecturersTable from "@/components/page-components/academies/slug/lecturers/academy-lecturers-table";
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +12,7 @@ interface Props {
 const page: FC<Props> = ({ params: { slug } }) => {
   return (
     <PageContainerWrapper
-      title={`Manage Academy Heads`}
+      title={`Manage Academy Lecturers`}
       trail={
         <Link
           href="/academies"
@@ -21,7 +22,7 @@ const page: FC<Props> = ({ params: { slug } }) => {
         </Link>
       }
     >
-      <AcademyHeadsTable slug={slug} />
+      <AcademyLecturersTable slug={slug} />
     </PageContainerWrapper>
   );
 };

@@ -4,12 +4,31 @@ import { client } from "@/lib/hono";
 import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.academies)["bulk-delete"]["$post"]
+const bulkDeleteAcademiesUrl = client.api.academies["bulk-delete"]["$post"];
+type bulkDeleteAcademiesResponseType = InferResponseType<
+  typeof bulkDeleteAcademiesUrl
 >;
-type RequestType = InferRequestType<
-  (typeof client.api.academies)["bulk-delete"]["$post"]
+type bulkDeleteAcademiesRequestType = InferRequestType<
+  typeof bulkDeleteAcademiesUrl
 >["json"];
+
+const bulkDeleteAcademyHeadsUrl =
+  client.api["academy-heads"][":id"]["bulk-delete"].$post;
+type bulkDeleteAcademyHeadsRequest = InferRequestType<
+  typeof bulkDeleteAcademyHeadsUrl
+>["json"];
+type bulkDeleteAcademyHeadsResponse = InferResponseType<
+  typeof bulkDeleteAcademyHeadsUrl
+>;
+
+const bulkDeleteAcademyLecturerUrl =
+  client.api["academy-lecturers"][":id"]["bulk-delete"].$post;
+type bulkDeleteAcademyRequest = InferRequestType<
+  typeof bulkDeleteAcademyLecturerUrl
+>["json"];
+type bulkDeleteAcademyResponse = InferResponseType<
+  typeof bulkDeleteAcademyLecturerUrl
+>;
 
 interface initialData {
   id: string;
@@ -39,9 +58,13 @@ export const useGetAcademies = (initialData?: initialData[]) => {
 
 export const useBulkDeleteAcademies = () => {
   const queryClient = useQueryClient();
-  const mutation = useMutation<unknown, Error, RequestType>({
+  const mutation = useMutation<
+    bulkDeleteAcademiesResponseType,
+    Error,
+    bulkDeleteAcademiesRequestType
+  >({
     mutationFn: async (json) => {
-      const response = await client.api.academies["bulk-delete"]["$post"]({
+      const response = await bulkDeleteAcademiesUrl({
         json,
       });
 
@@ -119,13 +142,39 @@ export const useGetAcademiesHeads = (academySlug: string) => {
   return query;
 };
 
+export const useGetAcademiesLecturers = (academySlug: string) => {
+  const { data: academyData, isLoading } = useGetAcademyBySlug(academySlug);
+
+  if (!isLoading && !academyData) {
+    throw new Error("Failed to fetch academy");
+  }
+  const query = useQuery({
+    queryKey: ["academies", academyData?.id, "lecturers"],
+    queryFn: async () => {
+      const response = await client.api["academy-lecturers"][":id"].$get({
+        param: {
+          id: academyData?.id ?? "",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch academy");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
+
 export const useBulkDeleteAcademiesHeads = (academyId: string) => {
   const queryClient = useQueryClient();
-  const mutation = useMutation<unknown, Error, RequestType>({
+  const mutation = useMutation<
+    bulkDeleteAcademyHeadsResponse,
+    Error,
+    bulkDeleteAcademyHeadsRequest
+  >({
     mutationFn: async (json) => {
-      const response = await client.api["academy-heads"][":id"]["bulk-delete"][
-        "$post"
-      ]({
+      const response = await bulkDeleteAcademyHeadsUrl({
         param: { id: academyId },
         json,
       });
@@ -137,6 +186,37 @@ export const useBulkDeleteAcademiesHeads = (academyId: string) => {
       queryClient.invalidateQueries({ queryKey: ["academies"] });
       queryClient.invalidateQueries({
         queryKey: ["academies", academyId, "heads"],
+      });
+    },
+    onError: (error: any) => {
+      console.log({ error });
+      toast.error("failed to delete academies");
+    },
+  });
+
+  return mutation;
+};
+
+export const useBulkDeleteAcademiesLecturers = (academyId: string) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation<
+    bulkDeleteAcademyResponse,
+    Error,
+    bulkDeleteAcademyRequest
+  >({
+    mutationFn: async (json) => {
+      const response = await bulkDeleteAcademyLecturerUrl({
+        param: { id: academyId },
+        json,
+      });
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success("Academy Lecturers successfully deleted");
+      queryClient.invalidateQueries({ queryKey: ["academies"] });
+      queryClient.invalidateQueries({
+        queryKey: ["academies", academyId, "lecturers"],
       });
     },
     onError: (error: any) => {

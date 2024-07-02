@@ -36,18 +36,18 @@ import { InferRequestType, InferResponseType } from "hono";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { RoleName } from "@/types/roles";
-import { useGetUsers } from "@/query/users";
+import { useGetUsers, useSearchUsers } from "@/query/users";
 import Link from "next/link";
 import { check } from "drizzle-orm/mysql-core";
 import { Input } from "@/components/ui/input";
 
 interface Props {
   academyId: string;
-  academiesHeads: {
+  academiesLecturers: {
     id: string;
     academyId: string;
-    academyHeadId: string;
-    head: {
+    lecturerId: string;
+    lecturer: {
       id: string;
       name: string;
       email: string;
@@ -62,19 +62,19 @@ interface Props {
   }[];
 }
 
-const postTypeUrl = client.api["academy-heads"][":id"].assign.$post;
+const postTypeUrl = client.api["academy-lecturers"][":id"].assign.$post;
 type ResponseType = InferResponseType<typeof postTypeUrl>;
 type RequestType = InferRequestType<typeof postTypeUrl>["json"];
 
 const formSchema = z.object({
-  academyHeadId: z.string(),
+  lecturerId: z.string(),
 });
 
 type formValues = z.input<typeof formSchema>;
 
-const AddAcademyHeadsModal: React.FC<Props> = ({
+const AddAcademyLecturersModal: React.FC<Props> = ({
   academyId,
-  academiesHeads,
+  academiesLecturers,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [keyword, setKeyword] = useState<string>("");
@@ -83,16 +83,19 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      academyHeadId: "",
+      lecturerId: "",
     },
   });
 
-  const { data: academyHeads, isLoading: loadingHeads } = useGetUsers(
-    RoleName.ACADEMYHEAD
-  );
+  const { data: lecturers, isLoading: loadingLecturers } = useSearchUsers({
+    keyword,
+    role: RoleName.LECTURER,
+  });
 
   const checkIfUserIsAlreadyAssigned = (userId: string): boolean => {
-    const found = academiesHeads.find((head) => head.academyHeadId === userId);
+    const found = academiesLecturers.find(
+      (lecturer) => lecturer.lecturerId === userId
+    );
 
     return !!found;
   };
@@ -116,16 +119,16 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
       return data;
     },
     onSuccess: (data) => {
-      toast.success("Academy head assigned successfully");
+      toast.success("Lecturer assigned successfully");
       queryClient.invalidateQueries({ queryKey: ["academies"] });
       queryClient.invalidateQueries({ queryKey: ["academies", academyId] });
       queryClient.invalidateQueries({
-        queryKey: ["academies", academyId, "heads"],
+        queryKey: ["academies", academyId, "lecturers"],
       });
       form.reset();
     },
     onError: (error: any) => {
-      toast.error("failed to assign academy head");
+      toast.error("failed to assign academy lecturer");
       onOpenChange(false);
     },
   });
@@ -143,12 +146,12 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
     <Dialog open={isOpen} onOpenChange={(b) => onOpenChange(b)}>
       <DialogTrigger asChild>
         <Button onClick={() => setIsOpen(!isOpen)}>
-          <PlusCircle className="mr-2" /> Add Academy Head
+          <PlusCircle className="mr-2" /> Add Academy Lecturer
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Academy Head</DialogTitle>
+          <DialogTitle>Assign Academy Lecturer</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
@@ -163,27 +166,31 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
                   />
                 </FormControl>
                 <FormDescription>
-                  Search for a student to enroll
+                  Search for a lecturer to assign
                 </FormDescription>
                 <FormMessage />
               </FormItem>
 
               <FormField
                 control={form.control}
-                name="academyHeadId"
+                name="lecturerId"
                 render={({ field }) => (
                   <FormItem className="my-5">
-                    <FormLabel>Course</FormLabel>
-                    {loadingHeads ? (
+                    <FormLabel>Lecturer</FormLabel>
+                    {keyword.length < 2 ? (
+                      <div className="rounded-md bg-neutral-500 h-10 w-full flex items-center justify-center text-slate-200">
+                        Search for Lecturer
+                      </div>
+                    ) : loadingLecturers ? (
                       <Skeleton className="h-10 w-full flex items-center justify-center text-black">
                         <Loader2 className="size-4 mr-2 animate-spin " />
-                        <span>Loading academy Heads</span>
+                        <span>Loading Lecturers</span>
                       </Skeleton>
-                    ) : academyHeads && academyHeads.length === 0 ? (
+                    ) : lecturers && lecturers.length === 0 ? (
                       <div className="rounded-md bg-neutral-500 h-10 w-full flex items-center justify-center text-slate-200">
-                        No academy heads found found on the system
+                        No Lecturers found found on the system
                         <small className="ml-2">
-                          Manage academy heads on the{" "}
+                          Manage Lecturers on the{" "}
                           <Link href="/users">users page</Link>
                         </small>
                       </div>
@@ -198,7 +205,7 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {academyHeads?.map((user) => (
+                          {lecturers?.map((user) => (
                             <SelectItem
                               key={user.id}
                               value={user.id}
@@ -211,7 +218,7 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
                       </Select>
                     )}
                     <FormDescription>
-                      Select a user to assign as academy head
+                      Select a user to assign as academy lecturer
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -226,4 +233,4 @@ const AddAcademyHeadsModal: React.FC<Props> = ({
   );
 };
 
-export default AddAcademyHeadsModal;
+export default AddAcademyLecturersModal;

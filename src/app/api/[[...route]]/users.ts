@@ -17,6 +17,11 @@ const createUserShcema = insertUserSchema.extend({
   activeTill: z.any().optional(),
 });
 
+const isRoleName = (role?: string): role is RoleName => {
+  if (!role) return false;
+  return Object.values(RoleName).includes(role as RoleName);
+};
+
 const app = new Hono()
   .get("/", async (ctx) => {
     const role = ctx.req.param("role");
@@ -133,12 +138,16 @@ const app = new Hono()
 
     return ctx.json({ data: academies });
   })
-  .get("/search/:keyword", async (ctx) => {
+  .get("/search/:keyword/role/:role?", async (ctx) => {
     const keyword = ctx.req.param("keyword");
+    const role = ctx.req.param("role");
+
+    const validRole = isRoleName(role) ? role : undefined;
+
     const results = await db.query.users.findMany({
       where: and(
         like(users.name, `%${keyword}%`),
-        eq(users.role, RoleName.STUDENT),
+        !!validRole ? eq(users.role, validRole) : undefined,
         or(gt(users.activeTill, new Date()), isNull(users.activeTill))
       ),
       columns: { id: true, name: true },

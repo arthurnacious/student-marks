@@ -15,10 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import MultiSelect from "@/components/ui/multi-select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetUsers } from "@/query/users";
-import { RoleName } from "@/types/roles";
 import { toast } from "sonner";
 import Error from "next/error";
 import type { courseWithRelations } from "@/types/fetch";

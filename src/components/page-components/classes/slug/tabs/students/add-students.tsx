@@ -41,6 +41,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useGetClasseBySlug } from "@/query/classes";
 import { TheClass } from "./index";
+import { RoleName } from "@/types/roles";
 
 interface Props {
   theClass: TheClass;
@@ -74,8 +75,9 @@ const AddStudentsModal: React.FC<Props> = ({ theClass }) => {
     theClass
   );
 
-  const { data: students, isLoading: loadingStudents } =
-    useSearchUsers(keyword);
+  const { data: students, isLoading: loadingStudents } = useSearchUsers({
+    keyword,
+  }); //anuone can be a student so not adding RoleName.STUDENT is okay here
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (values): Promise<ResponseType> => {
