@@ -79,7 +79,7 @@ export const columns: ColumnDef<Courses>[] = [
     },
     cell: ({ row }) => {
       const course = row.original;
-      return `R ${convertToZARCurrency(course.price)}`;
+      return convertToZARCurrency(course.price);
     },
   },
   {

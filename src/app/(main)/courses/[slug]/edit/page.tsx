@@ -22,7 +22,7 @@ const EditAcademy: React.FC<Props> = async ({ params: { slug } }) => {
 
   return (
     <PageContainerWrapper
-      title="Edit Academy"
+      title="Edit Course"
       trail={
         <Link
           href="/courses"

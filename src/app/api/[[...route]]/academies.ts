@@ -14,11 +14,6 @@ import { Hono } from "hono";
 import slugify from "slugify";
 import { z } from "zod";
 
-const updateAcademyShcema = insertAcademySchema.extend({
-  heads: z.array(z.string()),
-  lecturers: z.array(z.string()),
-});
-
 const app = new Hono()
   .get("/", async (ctx) => {
     const data = await db
@@ -77,12 +72,9 @@ const app = new Hono()
   })
   .patch(
     "/:slug",
-    zValidator(
-      "json",
-      updateAcademyShcema.pick({ name: true, heads: true, lecturers: true })
-    ),
+    zValidator("json", insertAcademySchema.pick({ name: true })),
     async (ctx) => {
-      const { heads, lecturers, ...values } = ctx.req.valid("json");
+      const values = ctx.req.valid("json");
 
       const slug = ctx.req.param("slug");
       const newSlug = slugify(values.name.toLowerCase());
@@ -96,39 +88,10 @@ const app = new Hono()
         return ctx.json({ name: "name already taken" }, 422);
       }
 
-      const academy = await db.query.academies.findFirst({
-        where: eq(academies.slug, slug),
-      });
-
-      if (!academy) {
-        return ctx.json({ error: "Not Found" }, 404);
-      }
-
-      const academyId = academy.id;
-
       const [data] = await db
         .update(academies)
         .set({ ...values, slug: newSlug })
-        .where(eq(academies.id, academyId));
-
-      //update academy heads and lecurers
-      await db
-        .delete(academyHeadsToAcademies)
-        .where(eq(academyHeadsToAcademies.academyId, academyId));
-
-      heads.forEach(async (academyHeadId) => {
-        await db
-          .insert(academyHeadsToAcademies)
-          .values({ academyHeadId, academyId });
-      });
-
-      await db
-        .delete(lecturersToAcademies)
-        .where(eq(lecturersToAcademies.academyId, academyId));
-
-      lecturers.forEach(async (lecturerId) => {
-        await db.insert(lecturersToAcademies).values({ lecturerId, academyId });
-      });
+        .where(eq(academies.slug, slug));
 
       return ctx.json({ data });
     }

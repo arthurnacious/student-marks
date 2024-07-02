@@ -24,11 +24,11 @@ import Error from "next/error";
 import type { academyWithRelations } from "@/types/fetch";
 import { notFound, useRouter } from "next/navigation";
 
-type RequestType = {
-  name: string;
-  heads: string[];
-  lecturers: string[];
-};
+const updateAcademyUrl = client.api.academies[":slug"].$patch;
+type updateAcademyRequestType = InferRequestType<
+  typeof updateAcademyUrl
+>["json"];
+type updateAcademyResponseType = InferResponseType<typeof updateAcademyUrl>;
 
 interface academiesType extends academyWithRelations {}
 
@@ -40,8 +40,6 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  heads: z.array(z.string()),
-  lecturers: z.array(z.string()),
 });
 
 type formValues = z.input<typeof formSchema>;
@@ -54,25 +52,22 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: academy?.name ?? "",
-      heads: academy?.heads?.map(({ academyHeadId }) => academyHeadId) ?? [],
-      lecturers: academy?.lecturers?.map(({ lecturerId }) => lecturerId) ?? [],
     },
   });
 
-  const mutation = useMutation<unknown, Error, RequestType>({
+  const mutation = useMutation<
+    updateAcademyResponseType,
+    Error,
+    updateAcademyRequestType
+  >({
     mutationFn: async (values) => {
-      const response = await client.api.academies[":slug"].$patch({
+      const response = await updateAcademyUrl({
         json: values,
         param: { slug: academy?.slug ?? "--" },
       });
       if (response.status === 422) {
         throw new Error({ title: "name is already taken", statusCode: 422 });
       }
-      values.lecturers.forEach((lecturerId) => {
-        queryClient.invalidateQueries({
-          queryKey: ["user", lecturerId, "academies"],
-        });
-      });
       return response.json();
     },
     onSuccess: () => {
@@ -92,9 +87,6 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
       toast.error("failed to insert academy");
     },
   });
-
-  const academyHeads = useGetUsers(RoleName.ACADEMYHEAD);
-  const lecturers = useGetUsers(RoleName.LECTURER);
 
   function onSubmit(values: formValues) {
     mutation.mutate(values);
@@ -121,55 +113,6 @@ const EditAcademyForm: React.FC<Props> = ({ academy }) => {
                 <FormControl>
                   <Input placeholder="shadcn" {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="heads"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Academy Heads</FormLabel>
-                <FormControl>
-                  <MultiSelect
-                    {...field}
-                    isLoading={academyHeads.isLoading}
-                    options={academyHeads.data?.map(({ id, name }) => ({
-                      value: id,
-                      label: name,
-                    }))}
-                  />
-                </FormControl>
-                <FormDescription>
-                  These are academy head(s) belonging to this academy
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="lecturers"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Lecturers</FormLabel>
-                <FormControl>
-                  <MultiSelect
-                    {...field}
-                    isLoading={lecturers.isLoading}
-                    options={lecturers.data?.map(({ id, name }) => ({
-                      value: id,
-                      label: name,
-                    }))}
-                  />
-                </FormControl>
-                <FormDescription>
-                  These are lecturers who may present classes or assign marks
-                  for course within this academy
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
