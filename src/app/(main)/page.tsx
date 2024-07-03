@@ -1,12 +1,19 @@
+import CoursesChart from "@/components/charts/courses";
+import CounterUpItems from "@/components/page-components/dashboard/counter-up-items";
+import RecentClassesTable from "@/components/page-components/dashboard/recent-classes-table";
+import RecentUsersTable from "@/components/page-components/dashboard/recent-users-table";
+import Welcome from "@/components/page-components/dashboard/welcome";
 import PageContainerWrapper from "@/components/page-container-wrapper";
 
 export default function Home() {
   return (
     <PageContainerWrapper title="Dashboard">
-      <div className="w-full h-80 border border-neutral-500/50 bg-neutral-800/20 rounded" />
-      <div className="flex flex-row gap-2 mt-2 w-full">
-        <div className="border-neutral-500/50 h-60 w-1/2 bg-neutral-800/20 rounded border" />
-        <div className="border-neutral-500/50 h-60 w-1/2 bg-neutral-800/20 rounded border" />
+      <Welcome />
+      <CounterUpItems />
+      <CoursesChart />
+      <div className="grid grid-cols-2 gap-2 mt-2 w-full">
+        <RecentClassesTable />
+        <RecentUsersTable />
       </div>
     </PageContainerWrapper>
   );

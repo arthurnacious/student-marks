@@ -10,22 +10,19 @@ const bulkDeleteUsersUrl = client.api.users["bulk-delete"].$post;
 type ResponseType = InferResponseType<typeof bulkDeleteUsersUrl>;
 type RequestType = InferRequestType<typeof bulkDeleteUsersUrl>["json"];
 
-export const useGetUsersAcademies = () => {
-  const session = useSession();
-  const userId = session?.data?.user?.id;
+export const useGetLatestUsers = (limit: number) => {
+  // const session = useSession();
+  // const userId = session?.data?.user?.id;
   const query = useQuery({
-    queryKey: ["user", userId, "academies"],
+    queryKey: ["latest", "users", limit],
     queryFn: async () => {
-      const response = await client.api.users[":id"].academies.$get({
-        param: { id: userId! },
-      });
+      const response = await client.api.latest.users.$get();
       if (!response.ok) {
-        throw new Error("Failed to fetch users academies");
+        throw new Error("Failed to fetch latest users");
       }
       const { data } = await response.json();
       return data;
     },
-    enabled: !!userId,
   });
   return query;
 };
