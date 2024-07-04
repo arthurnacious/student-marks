@@ -27,7 +27,10 @@ const ChooseOverviewYear: FC<Props> = ({}) => {
     <div className="w-fit border border-neutral-500/50 bg-neutral-800/20 rounded p-5 my-5">
       <div className="flex items-center justify-between gap-5">
         <div className="text-2xl text-neutral-500">Current Year: {year}</div>
-        <Select onValueChange={(value) => setYear(Number(value))}>
+        <Select
+          onValueChange={(value) => setYear(Number(value))}
+          defaultValue={String(year)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select a year" />
           </SelectTrigger>
