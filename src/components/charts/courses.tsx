@@ -13,25 +13,10 @@ import {
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
 import { InputData, transformData, TransformedData } from "@/lib/graphs";
-import { classes } from "@/db/schema";
 
 interface Props {}
-interface DataType {
-  month: number;
-  count: number;
-}
 
-// const data = [
-//   { name: "Jan", Users: 45, Classes: 25 },
-//   { name: "Feb", Users: 70, Classes: 40 },
-//   { name: "Mar", Users: 3, Classes: 10 },
-//   { name: "Apr", Users: 4, Classes: 5 },
-//   { name: "May", Users: 10, Classes: 5 },
-//   { name: "Jun", Users: 12, Classes: 6 },
-//   { name: "Jul", Users: 5, Classes: 10 },
-// ];
-
-const CoursesChart: FC<Props> = () => {
+const CoursesChart: FC<Props> = ({}) => {
   const usersData = useGetUsersGraphData();
   const classesData = useGetClassesGraphData();
 

@@ -1,6 +1,6 @@
 export interface InputData {
-  users?: { data: { month: string; count: number }[] };
-  classes?: { data: { month: string; count: number }[] };
+  users?: { data: { month: number; count: number }[] | undefined };
+  classes?: { data: { month: number; count: number }[] | undefined };
 }
 
 export interface TransformedData {
@@ -8,6 +8,28 @@ export interface TransformedData {
   Users: number;
   Classes: number;
 }
+
+const convertMonthNumberToString = (monthNumber: string): string => {
+  const months: string[] = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Convert "01" to 1 and subtract 1 to adjust for zero-based indexing
+  const index = parseInt(monthNumber, 10) - 1;
+
+  return months[index] || ""; // Return month name or empty string if index is out of range
+};
 
 export const transformData = (inputData: InputData = {}): TransformedData[] => {
   const { users = { data: [] }, classes = { data: [] } } = inputData;
@@ -23,14 +45,14 @@ export const transformData = (inputData: InputData = {}): TransformedData[] => {
   });
 
   // Map user data
-  users.data.forEach((user) => {
-    const monthIndex = parseInt(user.month, 10) - 1; // Adjust month to zero-based index
+  users.data?.forEach((user) => {
+    const monthIndex = user.month - 1; // Adjust month to zero-based index
     data[monthIndex].Users = user.count || 0; // Default to 0 if count is undefined
   });
 
   // Map class data
-  classes.data.forEach((classItem) => {
-    const monthIndex = parseInt(classItem.month, 10) - 1; // Adjust month to zero-based index
+  classes.data?.forEach((classItem) => {
+    const monthIndex = classItem.month - 1; // Adjust month to zero-based index
     data[monthIndex].Classes = classItem.count || 0; // Default to 0 if count is undefined
   });
 
@@ -59,18 +81,3 @@ export const transformData = (inputData: InputData = {}): TransformedData[] => {
 
   return transformedData;
 };
-
-// Example usage:
-const inputData: InputData = {
-  users: {
-    data: [
-      { month: "01", count: 3 },
-      { month: "06", count: 6 },
-      { month: "07", count: 2 },
-    ],
-  },
-  classes: { data: [{ month: "06", count: 1 }] },
-};
-
-const data: TransformedData[] = transformData(inputData);
-console.log(data);
