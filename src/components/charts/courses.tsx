@@ -1,4 +1,5 @@
 "use client";
+import { useGetClassesGraphData, useGetUsersGraphData } from "@/query/graph";
 import React, { FC } from "react";
 import {
   BarChart,
@@ -10,20 +11,50 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { Skeleton } from "../ui/skeleton";
+import { InputData, transformData, TransformedData } from "@/lib/graphs";
+import { classes } from "@/db/schema";
 
 interface Props {}
+interface DataType {
+  month: number;
+  count: number;
+}
 
-const data = [
-  { name: "Jan", Courses: 30, Users: 45, Classes: 25 },
-  { name: "Feb", Courses: 50, Users: 70, Classes: 40 },
-  { name: "Mar", Courses: 0, Users: 3, Classes: 10 },
-  { name: "Apr", Courses: 0, Users: 4, Classes: 5 },
-  { name: "May", Courses: 0, Users: 10, Classes: 5 },
-  { name: "Jun", Courses: 1, Users: 12, Classes: 6 },
-  { name: "Jul", Courses: 2, Users: 5, Classes: 10 },
-];
+// const data = [
+//   { name: "Jan", Users: 45, Classes: 25 },
+//   { name: "Feb", Users: 70, Classes: 40 },
+//   { name: "Mar", Users: 3, Classes: 10 },
+//   { name: "Apr", Users: 4, Classes: 5 },
+//   { name: "May", Users: 10, Classes: 5 },
+//   { name: "Jun", Users: 12, Classes: 6 },
+//   { name: "Jul", Users: 5, Classes: 10 },
+// ];
 
 const CoursesChart: FC<Props> = () => {
+  const usersData = useGetUsersGraphData();
+  const classesData = useGetClassesGraphData();
+
+  const isLoading = usersData.isLoading || classesData.isLoading;
+
+  if (isLoading) {
+    return (
+      <div>
+        <Skeleton className="h-10 w-80 my-2" />
+        <div className="my-5">
+          <Skeleton className="h-[23rem] my-2" />
+        </div>
+      </div>
+    );
+  }
+
+  const inputData: InputData = {
+    users: { data: usersData.data },
+    classes: { data: classesData.data },
+  };
+
+  const data: TransformedData[] = transformData(inputData);
+
   return (
     <div className="w-full border border-neutral-500/50 bg-neutral-800/20 rounded p-5 mb-5">
       <h2 className="text-3xl">Overview</h2>
@@ -42,7 +73,7 @@ const CoursesChart: FC<Props> = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="Courses" fill="#4A6FA5" />
+          {/* <Bar dataKey="Courses" fill="#4A6FA5" /> */}
           <Bar dataKey="Users" fill="#4A7F50" />
           <Bar dataKey="Classes" fill="#A57F4A" />
         </BarChart>

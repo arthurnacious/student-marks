@@ -14,6 +14,7 @@ import payments from "./payments";
 import marks from "./marks";
 import users from "./users";
 import latest from "./latest";
+import graph from "./graph";
 import { handle } from "hono/vercel";
 // import { authMiddleware } from "./middleware";
 
@@ -35,7 +36,8 @@ const route = new Hono()
   .route("/users", users)
   .route("/materials", materials)
   .route("/payments", payments)
-  .route("/latest", latest);
+  .route("/latest", latest)
+  .route("/graph", graph);
 
 export const GET = handle(route);
 export const POST = handle(route);
