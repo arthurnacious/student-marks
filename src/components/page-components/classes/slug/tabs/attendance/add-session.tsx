@@ -84,6 +84,7 @@ const AddSessionsModal: React.FC<Props> = ({ theClass }) => {
 
   function onSubmit(values: formValues) {
     mutation.mutate(values);
+    form.reset();
   }
 
   function onOpenChange(b: boolean) {

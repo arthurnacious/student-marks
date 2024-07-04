@@ -1,3 +1,5 @@
+"use client";
+import RecentTableSkeleton from "@/components/skeleton/recent-table";
 import {
   Table,
   TableBody,
@@ -8,90 +10,67 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { latestClassesUrl, useGetLatestClasses } from "@/query/latest";
+import { formatDistance, subDays } from "date-fns";
+import { InferResponseType } from "hono";
 import React, { FC } from "react";
 
 interface Props {}
+type ClassData = InferResponseType<typeof latestClassesUrl>["data"][0];
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-];
+const calculateStudentAttendance = (classData: ClassData): number => {
+  const { students, sessions, attendance, id } = classData;
+  const expectedAttendance = students * sessions;
+  // const isConsistent = attendance === expectedAttendance;
+
+  let attendancePercentage = 100;
+
+  if (sessions > 0) {
+    attendancePercentage = (attendance / (students * sessions)) * 100;
+  }
+  return Math.round(attendancePercentage);
+};
 
 const RecentClassesTable: FC<Props> = ({}) => {
+  const limit = 10;
+  const { data: classes, isLoading } = useGetLatestClasses(limit);
+
+  if (isLoading) {
+    return <RecentTableSkeleton length={limit} />;
+  }
+
   return (
     <div className="border-neutral-500/50 h-full w-full bg-neutral-800/20 rounded border">
       <h2 className="text-3xl m-5">Recent Classes</h2>
       <Table>
-        <TableCaption>10 most recent classes.</TableCaption>
+        <TableCaption>{classes?.length} most recent classes.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Name</TableHead>
+            <TableHead>Course Name</TableHead>
+            <TableHead>Academy</TableHead>
             <TableHead>Students</TableHead>
+            <TableHead>lecturer</TableHead>
+            <TableHead>Attendance</TableHead>
+            <TableHead>Ran...</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-              <TableCell>{invoice.invoice}</TableCell>
-              <TableCell>{invoice.paymentStatus}</TableCell>
+          {classes?.map((clas) => (
+            <TableRow key={clas.id}>
+              <TableCell>{clas.course.name}</TableCell>
+              <TableCell>{clas.course.academy?.name} Academy</TableCell>
+              <TableCell>{clas.students}</TableCell>
+              <TableCell>{clas.lecturer.name}</TableCell>
+              <TableCell>{calculateStudentAttendance(clas)} %</TableCell>
+              <TableCell>
+                {formatDistance(
+                  subDays(new Date(clas.createdAt), 3),
+                  new Date(clas.createdAt),
+                  {
+                    addSuffix: true,
+                  }
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
