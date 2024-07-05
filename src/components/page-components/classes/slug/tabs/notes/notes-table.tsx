@@ -51,50 +51,56 @@ const NotesTable: FC<Props> = ({ theClass }) => {
         selectedNote={selectedNote}
         setSelectedNote={setSelectedNote}
       />
-      <Table className="mt-5">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[2%]">#</TableHead>
-            <TableHead className="w-[15%]">Date</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead className="w-[20%] text-center">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {classNotes?.map((note, idx) => (
-            <TableRow key={`note-${note.id}`}>
-              <TableCell>{idx + 1}</TableCell>
-              <TableCell className="font-medium">
-                {idx + 1}
-                {format(note.createdAt, "yyyy-MM-dd")} @{" "}
-                {format(note.createdAt, "HH:mm:ss")}
-              </TableCell>
-              <TableCell className="p-0 truncate">
-                {truncateTextByWords(note.body, 10)}
-              </TableCell>
-              <TableCell className="p-0 space-x-2 text-center">
-                <Button size="sm" onClick={() => setSelectedNote(note)}>
-                  View Note
-                </Button>
-                <Button
-                  size="sm"
-                  disabled={isPending}
-                  onClick={async () => {
-                    const ok = await deleteNote();
-
-                    if (ok) {
-                      doDeleteNote(note.id);
-                    }
-                  }}
-                  variant="destructive"
-                >
-                  Trash Note
-                </Button>
-              </TableCell>
+      {classNotes?.length > 0 ? (
+        <Table className="mt-5">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[2%]">#</TableHead>
+              <TableHead className="w-[15%]">Date</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead className="w-[20%] text-center">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {classNotes?.map((note, idx) => (
+              <TableRow key={`note-${note.id}`}>
+                <TableCell>{idx + 1}</TableCell>
+                <TableCell className="font-medium">
+                  {idx + 1}
+                  {format(note.createdAt, "yyyy-MM-dd")} @{" "}
+                  {format(note.createdAt, "HH:mm:ss")}
+                </TableCell>
+                <TableCell className="p-0 truncate">
+                  {truncateTextByWords(note.body, 10)}
+                </TableCell>
+                <TableCell className="p-0 space-x-2 text-center">
+                  <Button size="sm" onClick={() => setSelectedNote(note)}>
+                    View Note
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={isPending}
+                    onClick={async () => {
+                      const ok = await deleteNote();
+
+                      if (ok) {
+                        doDeleteNote(note.id);
+                      }
+                    }}
+                    variant="destructive"
+                  >
+                    Trash Note
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="text-center text-neutral-500 text-2xl">
+          No notes yet
+        </div>
+      )}
     </>
   );
 };

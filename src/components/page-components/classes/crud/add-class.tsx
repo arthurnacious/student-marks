@@ -67,7 +67,6 @@ const AddClassModal: React.FC<Props> = ({}) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       course: "",
-      notes: "",
       type: ClassType.FT,
     },
   });
@@ -107,7 +106,6 @@ const AddClassModal: React.FC<Props> = ({}) => {
   function onSubmit(values: formValues) {
     mutation.mutate({
       courseId: values.course,
-      notes: values.notes,
       type: values.type,
     });
   }
@@ -231,20 +229,6 @@ const AddClassModal: React.FC<Props> = ({}) => {
                     <FormDescription>
                       The course you are presenting today..
                     </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notes</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="For holiday school" {...field} />
-                    </FormControl>
-                    <FormDescription>Add a bit of notes here</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

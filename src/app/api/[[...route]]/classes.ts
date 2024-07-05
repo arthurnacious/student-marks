@@ -93,7 +93,7 @@ const app = new Hono()
     "/",
     zValidator(
       "json",
-      insertClassesSchema.pick({ courseId: true, notes: true, type: true })
+      insertClassesSchema.pick({ courseId: true, type: true })
     ),
     async (ctx) => {
       const values = ctx.req.valid("json");
