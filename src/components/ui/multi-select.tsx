@@ -27,9 +27,9 @@ const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
     const [filter, setFilter] = useState<string>("");
     const containerRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-      setSelectedOptions(value);
-    }, [value]);
+    // useEffect(() => {
+    //   setSelectedOptions(value);
+    // }, [value]);
 
     const toggleDropdown = () => {
       setDropdownVisible(!dropdownVisible);

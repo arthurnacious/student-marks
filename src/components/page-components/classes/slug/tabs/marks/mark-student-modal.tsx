@@ -14,13 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { Field } from "../students";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -47,7 +41,7 @@ const MarkStudentModal: FC<Props> = ({
   fields,
   setStudentId,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(studentId ? true : false);
   const queryClient = useQueryClient();
 
   const formSchema = z.object({
@@ -94,10 +88,6 @@ const MarkStudentModal: FC<Props> = ({
       toast.error("failed to set student marks");
     },
   });
-
-  useEffect(() => {
-    setIsOpen(studentId ? true : false);
-  }, [studentId]);
 
   function onSubmit(values: FormValues) {
     mutation.mutate(values);
