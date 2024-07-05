@@ -9,6 +9,7 @@ import classes from "./classes";
 import classesSessions from "./class-sessions";
 import classStudents from "./class-students";
 import classMaterials from "./class-materials";
+import classNotes from "./class-notes";
 import materials from "./materials";
 import payments from "./payments";
 import marks from "./marks";
@@ -33,6 +34,7 @@ const route = new Hono()
   .route("/class-sessions", classesSessions)
   .route("/class-students", classStudents)
   .route("/class-materials", classMaterials)
+  .route("/class-notes", classNotes)
   .route("/marks", marks)
   .route("/users", users)
   .route("/materials", materials)

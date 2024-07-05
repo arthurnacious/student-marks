@@ -1,10 +1,7 @@
 "use client";
 import { useGetClasseBySlug } from "@/query/classes";
 import React, { FC } from "react";
-import { DataTable } from "@/components/data-table";
-import { columns } from "./columns";
 import TableSkeleton from "@/components/skeleton/table";
-import { ThemeColorDescriptor } from "next/dist/lib/metadata/types/metadata-types";
 import { TheClass } from "../students";
 import PaymentsTable from "./payments-table";
 

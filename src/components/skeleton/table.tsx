@@ -5,12 +5,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface Props {
   rows?: number;
   cols: number;
+  searchable?: boolean;
 }
 
-const TableSkeleton: FC<Props> = ({ rows = 7, cols }) => {
+const TableSkeleton: FC<Props> = ({ rows = 7, cols, searchable = true }) => {
   return (
     <ScrollArea className="flex flex-col justify-center max-w-[calc(100vw-15rem)]">
-      <Skeleton className="h-10 w-80 my-2" />
+      {searchable && <Skeleton className="h-10 w-80 my-2" />}
       <div>
         <table>
           <thead>

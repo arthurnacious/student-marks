@@ -33,15 +33,12 @@ import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
-import { useGetUsersAcademies, useSearchUsers } from "@/query/users";
+import { useSearchUsers } from "@/query/users";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAcademiesCouses } from "@/query/academies";
-import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useGetClasseBySlug } from "@/query/classes";
 import { TheClass } from "./index";
-import { RoleName } from "@/types/roles";
 
 interface Props {
   theClass: TheClass;

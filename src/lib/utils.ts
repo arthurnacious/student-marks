@@ -30,3 +30,16 @@ export const convertToZARCurrency = (rawAmount: number): string => {
 
   return formattedAmount;
 };
+
+export const truncateTextByWords = (
+  text: string,
+  maxLength: number
+): string => {
+  if (!text) return ""; // Handle empty string gracefully
+
+  const words = text.split(" "); // Split the text into an array of words
+  if (words.length <= maxLength) return text; // No truncation needed
+
+  // Truncate to maxLength words and add ellipsis (...)
+  return `${words.slice(0, maxLength).join(" ")}...`;
+};

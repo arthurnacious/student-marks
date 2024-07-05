@@ -7,6 +7,7 @@ import {
   mysqlEnum,
   index,
   boolean,
+  text,
 } from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
@@ -220,7 +221,6 @@ export const classes = mysqlTable(
     type: mysqlEnum("type", classTypes as [string, ...string[]])
       .default(ClassType.FT)
       .notNull(),
-    notes: varchar("notes", { length: 255 }),
     price: int("price").notNull().default(0), //make a carbon copy from course as course price can always be changed
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt")
@@ -300,6 +300,20 @@ export const classSessions = mysqlTable("classSessions", {
     .notNull()
     .references(() => classes.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const classNotes = mysqlTable("classNotes", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  classId: varchar("classId", { length: 255 })
+    .notNull()
+    .references(() => classes.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")
     .defaultNow()
@@ -536,3 +550,4 @@ export const insertMaterialClassStudentSchema = createInsertSchema(
 );
 export const insertAttendanceSchema = createInsertSchema(attendances);
 export const insertPaymentSchema = createInsertSchema(payments);
+export const insertClassNotesSchema = createInsertSchema(classNotes);
