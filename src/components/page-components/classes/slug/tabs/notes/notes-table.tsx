@@ -51,7 +51,7 @@ const NotesTable: FC<Props> = ({ theClass }) => {
         selectedNote={selectedNote}
         setSelectedNote={setSelectedNote}
       />
-      {classNotes?.length > 0 ? (
+      {classNotes && classNotes?.length > 0 ? (
         <Table className="mt-5">
           <TableHeader>
             <TableRow>
