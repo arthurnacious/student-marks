@@ -45,7 +45,6 @@ interface Props {
     emailVerified: string | null;
     image: string | null;
     role: string;
-    isGardian: boolean | null;
     activeTill: string | null;
     createdAt: string;
     updatedAt: string | null;
@@ -63,7 +62,6 @@ const formSchema = z.object({
     })
     .email("This is not a valid email."),
   role: z.enum(Object.values(RoleName) as [string, ...string[]]),
-  isGardian: z.boolean(),
   activeTill: z.coerce.date().optional(),
 });
 
@@ -82,7 +80,6 @@ const EditUserForm: React.FC<Props> = ({ user }) => {
       name: user.name,
       email: user.email,
       role: RoleName[user.role as keyof typeof RoleName] ?? RoleName.STUDENT,
-      isGardian: user.isGardian ?? false,
       activeTill: user.activeTill ? new Date(user.activeTill) : new Date(),
     },
   });
@@ -175,25 +172,6 @@ const EditUserForm: React.FC<Props> = ({ user }) => {
               >
                 User has an active till date
               </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <FormField
-                control={form.control}
-                name="isGardian"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>User has dependands</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">

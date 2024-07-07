@@ -44,7 +44,6 @@ export const users = mysqlTable("users", {
   role: mysqlEnum("role", roles as [string, ...string[]])
     .default(RoleName.STUDENT)
     .notNull(),
-  isGardian: boolean("isGardian").default(false),
   activeTill: timestamp("activeTill"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")

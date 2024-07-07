@@ -8,6 +8,13 @@
       "when": 1720352053020,
       "tag": "0000_giant_prowler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1720355172660,
+      "tag": "0001_nasty_big_bertha",
+      "breakpoints": true
     }
   ]
 }

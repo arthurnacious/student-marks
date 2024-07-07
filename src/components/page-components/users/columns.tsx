@@ -22,6 +22,7 @@ export type Users = {
   image: string | null;
   role: string;
   activeTill: string | null;
+  isGuardian: boolean;
   createdAt: string;
   updatedAt: string | null;
 };
@@ -79,10 +80,8 @@ export const columns: ColumnDef<Users>[] = [
   },
   {
     accessorKey: "activeTill",
-    header: ({ column }) => <>Is Active</>,
-    cell: ({ row }) => {
-      const user = row.original;
-
+    header: () => <>Is Active</>,
+    cell: ({ row: { original: user } }) => {
       return !user.activeTill ||
         (user.activeTill && new Date(user.activeTill)) >= new Date() ? (
         <span className="text-green-500">Active</span>
@@ -94,38 +93,42 @@ export const columns: ColumnDef<Users>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const user = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`users/${user.id}`} className="cursor-pointer">
-                View Info
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`users/${user.id}/marks`} className="cursor-pointer">
-                View Marks
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`users/${user.id}/edit`} className="cursor-pointer">
-                Edit User
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row: { original: user } }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem asChild>
+            <Link href={`users/${user.id}`} className="cursor-pointer">
+              View Info
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`users/${user.id}/marks`} className="cursor-pointer">
+              View Marks
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href={`users/${user.id}/edit`} className="cursor-pointer">
+              Edit User
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link
+              href={`users/${user.id}/dependants`}
+              className="cursor-pointer"
+            >
+              Manage Dependants
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
   },
 ];

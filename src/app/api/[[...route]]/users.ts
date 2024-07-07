@@ -112,7 +112,6 @@ const app = new Hono()
       createUserShcema.pick({
         name: true,
         email: true,
-        isGardian: true,
         activeTill: true,
         role: true,
       })

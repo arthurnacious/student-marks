@@ -54,7 +54,6 @@ const formSchema = z.object({
     })
     .email("This is not a valid email."),
   role: z.enum(Object.values(RoleName) as [string, ...string[]]),
-  isGardian: z.boolean(),
   activeTill: z.coerce.date().optional(),
 });
 
@@ -72,7 +71,6 @@ const AddUserModal: React.FC<Props> = ({}) => {
       name: "",
       email: "",
       role: RoleName.STUDENT,
-      isGardian: false,
       activeTill: new Date(),
     },
   });
