@@ -577,3 +577,4 @@ export const insertMaterialClassStudentSchema = createInsertSchema(
 export const insertAttendanceSchema = createInsertSchema(attendances);
 export const insertPaymentSchema = createInsertSchema(payments);
 export const insertClassNotesSchema = createInsertSchema(classNotes);
+export const insertUsersDependentsSchema = createInsertSchema(usersDependents);

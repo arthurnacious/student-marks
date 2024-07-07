@@ -10,6 +10,15 @@ const bulkDeleteUsersUrl = client.api.users["bulk-delete"].$post;
 type ResponseType = InferResponseType<typeof bulkDeleteUsersUrl>;
 type RequestType = InferRequestType<typeof bulkDeleteUsersUrl>["json"];
 
+const bulkDeleteDependentsUrl =
+  client.api["users-dependents"][":userId"]["bulk-delete"].$post;
+type BulkDeleteUsersResponseType = InferResponseType<
+  typeof bulkDeleteDependentsUrl
+>;
+type BulkDeleteUsersRequestType = InferRequestType<
+  typeof bulkDeleteDependentsUrl
+>["json"];
+
 export const useGetUsersAcademies = () => {
   const session = useSession();
   const userId = session?.data?.user?.id;
@@ -89,7 +98,7 @@ export const useGetUserById = (id: string) => {
 
 export const useGetUsersDependents = (id: string) => {
   const query = useQuery({
-    queryKey: ["user", id],
+    queryKey: ["user", id, "dependents"],
     queryFn: async () => {
       const response = await client.api["users-dependents"][":userId"].$get({
         param: { userId: id },
@@ -102,6 +111,36 @@ export const useGetUsersDependents = (id: string) => {
     },
   });
   return query;
+};
+
+export const useBulkDeleteDependents = (guardianId: string) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation<
+    BulkDeleteUsersResponseType,
+    Error,
+    BulkDeleteUsersRequestType
+  >({
+    mutationFn: async (json) => {
+      const response = await bulkDeleteDependentsUrl({
+        param: { userId: guardianId },
+        json,
+      });
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success("dependents unlisted successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["user", guardianId, "dependents"],
+      });
+    },
+    onError: (error: any) => {
+      console.log({ error });
+      toast.error("failed to unlist dependents");
+    },
+  });
+
+  return mutation;
 };
 
 export const useSearchUsers = ({

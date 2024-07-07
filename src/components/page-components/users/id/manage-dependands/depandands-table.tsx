@@ -3,12 +3,12 @@ import React from "react";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import {
-  useBulkDeleteUsers,
+  useBulkDeleteDependents,
   useGetUserById,
-  useGetUsers,
   useGetUsersDependents,
 } from "@/query/users";
 import TableSkeleton from "@/components/skeleton/table";
+import AddDependentModal from "./crud/add-dependents";
 
 interface Props {
   userId: string;
@@ -17,10 +17,10 @@ interface Props {
 const DependentsTable: React.FC<Props> = ({ userId }) => {
   const { data, isLoading } = useGetUsersDependents(userId);
   const { data: user, isLoading: isLoadingUser } = useGetUserById(userId);
-  const deleteUsers = useBulkDeleteUsers();
+  const deleteUsers = useBulkDeleteDependents(userId);
   return (
     <div>
-      {/* <AddUserModal /> */}
+      <AddDependentModal guardianId={userId} />
       {isLoading || isLoadingUser ? (
         <TableSkeleton cols={4} />
       ) : data && data?.length > 0 ? (
