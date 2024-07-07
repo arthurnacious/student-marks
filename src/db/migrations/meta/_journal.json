@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1720352053020,
-      "tag": "0000_giant_prowler",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1720355172660,
-      "tag": "0001_nasty_big_bertha",
+      "when": 1720357491626,
+      "tag": "0000_safe_thunderball",
       "breakpoints": true
     }
   ]

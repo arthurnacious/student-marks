@@ -14,20 +14,18 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
-export type Users = {
+export type Pivot = {
   id: string;
-  name: string;
-  email: string | null;
-  emailVerified: string | null;
-  image: string | null;
-  role: string;
-  activeTill: string | null;
-  isGuardian: boolean;
-  createdAt: string;
-  updatedAt: string | null;
+  guardianId: string | null;
+  dependentId: string | null;
+  dependent: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
 };
 
-export const columns: ColumnDef<Users>[] = [
+export const columns: ColumnDef<Pivot>[] = [
   {
     id: "Select",
     header: ({ table }) => (
@@ -63,6 +61,7 @@ export const columns: ColumnDef<Users>[] = [
         </Button>
       );
     },
+    cell: ({ row: { original: pivot } }) => pivot.dependent?.name,
   },
   {
     accessorKey: "role",
@@ -72,23 +71,12 @@ export const columns: ColumnDef<Users>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Role
+          Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-  },
-  {
-    accessorKey: "activeTill",
-    header: () => <>Is Active</>,
-    cell: ({ row: { original: user } }) => {
-      return !user.activeTill ||
-        (user.activeTill && new Date(user.activeTill)) >= new Date() ? (
-        <span className="text-green-500">Active</span>
-      ) : (
-        <span className="text-red-500">Expired</span>
-      );
-    },
+    cell: ({ row: { original: pivot } }) => pivot.dependent?.email,
   },
   {
     id: "actions",
@@ -117,14 +105,6 @@ export const columns: ColumnDef<Users>[] = [
           <DropdownMenuItem asChild>
             <Link href={`users/${user.id}/edit`} className="cursor-pointer">
               Edit User
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              href={`users/${user.id}/dependents`}
-              className="cursor-pointer"
-            >
-              Manage dependents
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>

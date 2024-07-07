@@ -14,6 +14,7 @@ import materials from "./materials";
 import payments from "./payments";
 import marks from "./marks";
 import users from "./users";
+import usersDependents from "./users-dependents";
 import latest from "./latest";
 import graph from "./graph";
 import count from "./count";
@@ -37,6 +38,7 @@ const route = new Hono()
   .route("/class-notes", classNotes)
   .route("/marks", marks)
   .route("/users", users)
+  .route("/users-dependents", usersDependents)
   .route("/materials", materials)
   .route("/payments", payments)
   .route("/latest", latest)

@@ -157,12 +157,18 @@ CREATE TABLE `users` (
 	`emailVerified` timestamp(3),
 	`image` varchar(255),
 	`role` enum('Admin','Academy Head','Lecturer','Finance','Student','Guardian') NOT NULL DEFAULT 'Student',
-	`isGardian` boolean DEFAULT false,
 	`activeTill` timestamp,
 	`createdAt` timestamp NOT NULL DEFAULT (now()),
 	`updatedAt` timestamp DEFAULT (now()),
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),
 	CONSTRAINT `users_email_unique` UNIQUE(`email`)
+);
+--> statement-breakpoint
+CREATE TABLE `usersDependents` (
+	`id` varchar(255) NOT NULL,
+	`guardianId` varchar(255),
+	`dependentId` varchar(255),
+	CONSTRAINT `usersDependents_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `verificationTokens` (
@@ -196,6 +202,8 @@ ALTER TABLE `payments` ADD CONSTRAINT `payments_classId_classes_id_fk` FOREIGN K
 ALTER TABLE `sessions` ADD CONSTRAINT `sessions_userId_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `studentToClasses` ADD CONSTRAINT `studentToClasses_studentId_users_id_fk` FOREIGN KEY (`studentId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `studentToClasses` ADD CONSTRAINT `studentToClasses_classId_classes_id_fk` FOREIGN KEY (`classId`) REFERENCES `classes`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `usersDependents` ADD CONSTRAINT `usersDependents_guardianId_users_id_fk` FOREIGN KEY (`guardianId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `usersDependents` ADD CONSTRAINT `usersDependents_dependentId_users_id_fk` FOREIGN KEY (`dependentId`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX `slug_idx` ON `academies` (`slug`);--> statement-breakpoint
 CREATE INDEX `slug_idx` ON `classes` (`slug`);--> statement-breakpoint
 CREATE INDEX `slug_idx` ON `courses` (`slug`);

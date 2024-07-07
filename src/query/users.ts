@@ -87,6 +87,23 @@ export const useGetUserById = (id: string) => {
   return query;
 };
 
+export const useGetUsersDependents = (id: string) => {
+  const query = useQuery({
+    queryKey: ["user", id],
+    queryFn: async () => {
+      const response = await client.api["users-dependents"][":userId"].$get({
+        param: { userId: id },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch user");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
+
 export const useSearchUsers = ({
   keyword,
   role,

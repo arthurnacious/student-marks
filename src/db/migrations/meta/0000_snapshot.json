@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "6d435c7b-0e01-4f4d-8b5f-e8e7ada9b617",
+  "id": "d0f01264-058c-4ec2-9223-3db0572571b5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "academies": {
@@ -1291,14 +1291,6 @@
           "autoincrement": false,
           "default": "'Student'"
         },
-        "isGardian": {
-          "name": "isGardian",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": false
-        },
         "activeTill": {
           "name": "activeTill",
           "type": "timestamp",
@@ -1341,6 +1333,70 @@
           ]
         }
       }
+    },
+    "usersDependents": {
+      "name": "usersDependents",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guardianId": {
+          "name": "guardianId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dependentId": {
+          "name": "dependentId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "usersDependents_guardianId_users_id_fk": {
+          "name": "usersDependents_guardianId_users_id_fk",
+          "tableFrom": "usersDependents",
+          "tableTo": "users",
+          "columnsFrom": [
+            "guardianId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "usersDependents_dependentId_users_id_fk": {
+          "name": "usersDependents_dependentId_users_id_fk",
+          "tableFrom": "usersDependents",
+          "tableTo": "users",
+          "columnsFrom": [
+            "dependentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "usersDependents_id": {
+          "name": "usersDependents_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "verificationTokens": {
       "name": "verificationTokens",

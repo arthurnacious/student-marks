@@ -190,17 +190,23 @@ export const fields = mysqlTable("fields", {
   total: int("total").notNull(),
 });
 
-// export const usersToField = mysqlTable("usersToField", {
-//   id: varchar("id", { length: 255 })
-//     .primaryKey()
-//     .$defaultFn(() => crypto.randomUUID()),
-//   fieldId: varchar("fieldId", { length: 255 }).references(() => fields.id, {
-//     onDelete: "cascade",
-//   }),
-//   userId: varchar("userId", { length: 255 }).references(() => users.id, {
-//     onDelete: "cascade",
-//   }),
-// });
+export const usersDependents = mysqlTable("usersDependents", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  guardianId: varchar("guardianId", { length: 255 }).references(
+    () => users.id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  dependentId: varchar("dependentId", { length: 255 }).references(
+    () => users.id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+});
 
 const classTypes: string[] = Object.values(ClassType);
 export const classes = mysqlTable(
@@ -367,6 +373,12 @@ export const usersRelations = relations(users, ({ many }) => ({
   materials: many(materialsClassStudent),
   payments: many(payments),
   attendance: many(attendances),
+  guardians: many(usersDependents, {
+    relationName: "usersGuardians",
+  }),
+  dependents: many(usersDependents, {
+    relationName: "usersDependents",
+  }),
 }));
 
 export const studentsToClassesRelations = relations(
@@ -431,6 +443,22 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
   students: many(studentsToClasses),
   materials: many(materialsClassStudent),
 }));
+
+export const usersDependentsRelations = relations(
+  usersDependents,
+  ({ one }) => ({
+    guardian: one(users, {
+      fields: [usersDependents.guardianId],
+      references: [users.id],
+      relationName: "usersGuardians",
+    }),
+    dependent: one(users, {
+      fields: [usersDependents.dependentId],
+      references: [users.id],
+      relationName: "usersDependents",
+    }),
+  })
+);
 
 export const classSessionsRelations = relations(
   classSessions,
