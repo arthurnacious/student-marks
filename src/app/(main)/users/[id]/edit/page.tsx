@@ -1,3 +1,4 @@
+import GetUserContainer from "@/components/page-components/users/id/get-user-container";
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import React from "react";
 
@@ -8,10 +9,9 @@ interface Props {
 }
 
 const EditUserPage: React.FC<Props> = ({ params: { id } }) => {
-  console.log({ id });
   return (
     <PageContainerWrapper title="Edit User">
-      Edit User Page
+      <GetUserContainer userId={id} />
     </PageContainerWrapper>
   );
 };

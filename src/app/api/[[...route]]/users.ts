@@ -1,11 +1,6 @@
 // users.ts
 import { db } from "@/db";
-import {
-  academyHeadsToAcademies,
-  insertUserSchema,
-  lecturersToAcademies,
-  users,
-} from "@/db/schema";
+import { insertUserSchema, users } from "@/db/schema";
 import { toTitleCase } from "@/lib/utils";
 import { RoleName } from "@/types/roles";
 import { zValidator } from "@hono/zod-validator";
@@ -110,6 +105,32 @@ const app = new Hono()
     });
     return ctx.json({ data: user });
   })
+  .patch(
+    "/:id",
+    zValidator(
+      "json",
+      createUserShcema.pick({
+        name: true,
+        email: true,
+        isGardian: true,
+        activeTill: true,
+        role: true,
+      })
+    ),
+    async (ctx) => {
+      const userId = ctx.req.param("id");
+      const values = ctx.req.valid("json");
+      console.log({ values });
+      const user = await db
+        .update(users)
+        .set({
+          ...values,
+          activeTill: values.activeTill ? new Date(values.activeTill) : null,
+        })
+        .where(eq(users.id, userId));
+      return ctx.json({ data: user });
+    }
+  )
   .get("/:id/academies", async (ctx) => {
     const userId = ctx.req.param("id");
     const userWithAcademies = await db.query.users.findFirst({

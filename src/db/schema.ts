@@ -27,7 +27,6 @@ const poolConnection = mysql.createPool(dbCredentials);
 export const db = drizzle(poolConnection);
 
 const roles: string[] = Object.values(RoleName);
-
 export const users = mysqlTable("users", {
   id: varchar("id", { length: 255 })
     .primaryKey()

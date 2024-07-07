@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1718350546671,
-      "tag": "0000_bumpy_jack_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1718979846782,
-      "tag": "0001_messy_veda",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1718979957976,
-      "tag": "0002_legal_midnight",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1719160519121,
-      "tag": "0003_friendly_bedlam",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1719563793902,
-      "tag": "0004_military_tyger_tiger",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1719570693157,
-      "tag": "0005_solid_terrax",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1719572431600,
-      "tag": "0006_blushing_ultragirl",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1720172248570,
-      "tag": "0007_volatile_morlocks",
+      "when": 1720352053020,
+      "tag": "0000_giant_prowler",
       "breakpoints": true
     }
   ]

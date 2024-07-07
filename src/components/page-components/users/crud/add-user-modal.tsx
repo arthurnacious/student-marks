@@ -53,13 +53,7 @@ const formSchema = z.object({
       message: "Email is required.",
     })
     .email("This is not a valid email."),
-  role: z.enum([
-    RoleName.STUDENT,
-    RoleName.ADMIN,
-    RoleName.LECTURER,
-    RoleName.GUARDIAN,
-    RoleName.ACADEMYHEAD,
-  ]),
+  role: z.enum(Object.values(RoleName) as [string, ...string[]]),
   isGardian: z.boolean(),
   activeTill: z.coerce.date().optional(),
 });
