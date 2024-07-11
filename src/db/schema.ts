@@ -27,29 +27,37 @@ const poolConnection = mysql.createPool(dbCredentials);
 export const db = drizzle(poolConnection);
 
 const roles: string[] = Object.values(RoleName);
-export const users = mysqlTable("users", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 })
-    .notNull()
-    .unique()
-    .$defaultFn(() => `${crypto.randomUUID()}@email.com`), //fallback if there is no email provided
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }),
-  image: varchar("image", { length: 255 }),
-  role: mysqlEnum("role", roles as [string, ...string[]])
-    .default(RoleName.STUDENT)
-    .notNull(),
-  activeTill: timestamp("activeTill"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt")
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-});
+export const users = mysqlTable(
+  "users",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: varchar("name", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 })
+      .notNull()
+      .unique()
+      .$defaultFn(() => `${crypto.randomUUID()}@email.com`), //fallback if there is no email provided
+    emailVerified: timestamp("emailVerified", {
+      mode: "date",
+      fsp: 3,
+    }),
+    image: varchar("image", { length: 255 }),
+    role: mysqlEnum("role", roles as [string, ...string[]])
+      .default(RoleName.STUDENT)
+      .notNull(),
+    activeTill: timestamp("activeTill"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt")
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => {
+    return {
+      nameIdx: index("name_idx").on(table.name),
+    };
+  }
+);
 
 export const accounts = mysqlTable(
   "accounts",

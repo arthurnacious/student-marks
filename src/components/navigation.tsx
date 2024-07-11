@@ -48,7 +48,7 @@ const svgVariants = {
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  // const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
   const containerControls = useAnimationControls();
@@ -75,13 +75,11 @@ function Navigation() {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, svgControls, containerControls]);
 
   const handleOpenClose = () => {
     setIsOpen(!isOpen);
-    setSelectedProject(null);
+    // setSelectedProject(null);
   };
 
   return (

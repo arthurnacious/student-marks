@@ -4,5 +4,4 @@ export enum RoleName {
   LECTURER = "Lecturer",
   FINANCE = "Finance",
   STUDENT = "Student",
-  GUARDIAN = "Guardian",
 }
