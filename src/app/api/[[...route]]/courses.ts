@@ -46,6 +46,7 @@ const app = new Hono()
       .leftJoin(academies, eq(courses.academyId, academies.id))
       .leftJoin(classes, eq(courses.id, classes.courseId))
       .leftJoin(fields, eq(courses.id, fields.courseId))
+      .orderBy(courses.name)
       .groupBy(courses.id);
 
     return ctx.json({ data });

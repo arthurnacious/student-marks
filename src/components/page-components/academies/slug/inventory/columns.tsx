@@ -7,24 +7,30 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
-export type Academies = {
+export type Inventories = {
   id: string;
-  name: string;
-  slug: string;
-  _count: {
-    courses: number;
-    lecturers: number;
+  academyId: string;
+  lecturerId: string;
+  lecturer: {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: string | null;
+    image: string | null;
+    role: string;
+    activeTill: string | null;
+    createdAt: string;
+    updatedAt: string | null;
   };
 };
 
-export const columns: ColumnDef<Academies>[] = [
+export const columns: ColumnDef<Inventories>[] = [
   {
     id: "Select",
     header: ({ table }) => (
@@ -60,29 +66,32 @@ export const columns: ColumnDef<Academies>[] = [
         </Button>
       );
     },
-  },
-  {
-    // accessorKey: "_count.courses",
-    header: "Courses",
-    cell: ({ row }) => {
-      const academy = row.original;
-      return academy._count.courses;
+    cell: ({
+      row: {
+        original: { lecturer },
+      },
+    }) => {
+      return lecturer.name;
     },
   },
   {
-    // accessorKey: "_count.lecturers",
-    header: "Lecturers",
-    cell: ({ row }) => {
-      const academy = row.original;
-      return academy._count.lecturers;
+    header: "email",
+    cell: ({
+      row: {
+        original: { lecturer },
+      },
+    }) => {
+      return lecturer.email;
     },
   },
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const academy = row.original;
-
+    cell: ({
+      row: {
+        original: { lecturer },
+      },
+    }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -94,44 +103,8 @@ export const columns: ColumnDef<Academies>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}`}
-                className="cursor-pointer"
-              >
-                View Academy
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/edit`}
-                className="cursor-pointer"
-              >
-                Edit Academy
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/heads`}
-                className="cursor-pointer"
-              >
-                Manage Academy Heads
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/lecturers`}
-                className="cursor-pointer"
-              >
-                Manage Lecturers
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href={`academies/${academy.slug}/inventory`}
-                className="cursor-pointer"
-              >
-                Manage Inventory
+              <Link href={`users/${lecturer.id}`} className="cursor-pointer">
+                View User
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

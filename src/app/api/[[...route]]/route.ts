@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import academies from "./academies";
 import academyHeads from "./academy-heads";
 import academyLecturer from "./academy-lecturers";
+import academyInventories from "./academy-inventories";
 import courses from "./courses";
 import fields from "./fields";
 import classes from "./classes";
@@ -29,6 +30,7 @@ const route = new Hono()
   .route("/academies", academies)
   .route("/academy-heads", academyHeads)
   .route("/academy-lecturers", academyLecturer)
+  .route("/academy-inventories", academyInventories)
   .route("/courses", courses)
   .route("/fields", fields)
   .route("/classes", classes)
