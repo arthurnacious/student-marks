@@ -79,12 +79,13 @@ const app = new Hono().post(
       const sqlData = await db
         .update(materials)
         .set({
-          amount: sql`${materials.amount} ${
-            materialAction === "add" ? sql`+` : sql`-`
-          } 1`,
+          amount: sql`${
+            materialAction === "add"
+              ? sql`${materials.amount} + 1`
+              : sql`CASE WHEN ${materials.amount} > 0 THEN ${materials.amount} - 1 ELSE ${materials.amount} END`
+          }`,
         })
         .where(eq(materials.id, materialId));
-      console.log({ sqlData });
 
       return ctx.json({ data });
     } catch (error: any) {
