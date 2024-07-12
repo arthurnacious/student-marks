@@ -32,7 +32,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   searchCol?: keyof TData;
   deleteWording?: string;
-  onDelete: (rows: Row<TData>[]) => void;
+  onDelete?: (rows: Row<TData>[]) => void;
   disabled?: boolean;
   isLoading?: boolean;
 }
@@ -96,7 +96,7 @@ export function DataTable<TData, TValue>({
               className="max-w-sm"
             />
           )}
-          {selectedRows.length > 0 && (
+          {selectedRows.length > 0 && onDelete && (
             <Button
               isLoading={isLoading}
               size="sm"
