@@ -12,7 +12,7 @@ import {
 } from "@/db/schema";
 import { toTitleCase } from "@/lib/utils";
 import { zValidator } from "@hono/zod-validator";
-import { and, count, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, count, eq, inArray, like, ne, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import slugify from "slugify";
 import { z } from "zod";
@@ -161,6 +161,18 @@ const app = new Hono()
           where classes.courseId = courses.id
         )`.as("classCount"),
       },
+    });
+    return ctx.json({ data });
+  })
+  .get("/search/:academy/:keyword", async (ctx) => {
+    const keyword = ctx.req.param("keyword");
+    const academyId = ctx.req.param("academy");
+    const data = await db.query.courses.findMany({
+      where: and(
+        like(courses.slug, `%${keyword}%`),
+        eq(courses.academyId, academyId)
+      ),
+      orderBy: courses.name,
     });
     return ctx.json({ data });
   })

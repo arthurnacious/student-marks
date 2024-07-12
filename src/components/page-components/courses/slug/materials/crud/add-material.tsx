@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,28 +22,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
-import Link from "next/link";
-import { useGetAcademies } from "@/query/academies";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   courseName: string;
   courseSlug: string;
 }
 
-type ResponseType = InferResponseType<typeof client.api.courses.$post>;
 const postMethod = client.api.courses[":slug"].materials.$post;
 type RequestType = InferRequestType<typeof postMethod>["json"];
 
@@ -70,7 +59,7 @@ const AddMaterialModal: React.FC<Props> = ({ courseName, courseSlug }) => {
     },
   });
 
-  const mutation = useMutation<unknown, Error, RequestType>({
+  const { mutate: addMaterial } = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
       console.log({ courseSlug });
       const response = await client.api.courses[":slug"].materials.$post({
@@ -88,12 +77,12 @@ const AddMaterialModal: React.FC<Props> = ({ courseName, courseSlug }) => {
       });
     },
     onError: (error: any) => {
-      toast.error("failed to add course");
+      toast.error("failed to add material");
     },
   });
 
   function onSubmit(values: formValues) {
-    mutation.mutate(values);
+    addMaterial(values);
   }
 
   function onOpenChange(b: boolean) {
@@ -177,7 +166,7 @@ const AddMaterialModal: React.FC<Props> = ({ courseName, courseSlug }) => {
                   )}
                 />
               </div>
-              <Button isLoading={mutation.isPending}>Create</Button>
+              <Button isLoading={isPending}>Create</Button>
             </form>
           </Form>
         </div>

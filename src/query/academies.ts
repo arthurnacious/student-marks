@@ -166,6 +166,30 @@ export const useGetAcademiesLecturers = (academySlug: string) => {
   return query;
 };
 
+export const useGetAcademiesInventories = (academySlug: string) => {
+  const { data: academyData, isLoading } = useGetAcademyBySlug(academySlug);
+
+  if (!isLoading && !academyData) {
+    throw new Error("Failed to fetch academy");
+  }
+  const query = useQuery({
+    queryKey: ["academies", academyData?.id, "inventories"],
+    queryFn: async () => {
+      const response = await client.api["academy-inventories"][":id"].$get({
+        param: {
+          id: academyData?.id ?? "",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch academy");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
+
 export const useBulkDeleteAcademiesHeads = (academyId: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation<

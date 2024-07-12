@@ -89,3 +89,29 @@ export const useGetCourseFields = (slug: string, initialData?: field[]) => {
   });
   return query;
 };
+
+export const useSearchCourses = ({
+  keyword,
+  academyId,
+}: {
+  keyword: string;
+  academyId: string;
+}) => {
+  const query = useQuery({
+    enabled: keyword.length >= 2,
+    queryKey: ["courses", "search", keyword],
+    queryFn: async () => {
+      const response = await client.api.courses["search"][":academy"][
+        ":keyword"
+      ].$get({
+        param: { keyword, academy: academyId },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch courses");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};

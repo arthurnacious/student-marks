@@ -1,7 +1,6 @@
 //academy-inventories.ts
 import { db } from "@/db";
 import {
-  academyHeadsToAcademies,
   courses,
   insertLecturersToAcademySchema,
   lecturersToAcademies,
@@ -9,7 +8,6 @@ import {
 } from "@/db/schema";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { invariant } from "framer-motion";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -23,6 +21,7 @@ const app = new Hono()
         name: sql<string>`concat(${courses.name}, ' ', ${materials.name})`.as(
           "name"
         ),
+        academyId: courses.academyId,
         price: materials.price,
         amount: materials.amount,
       })

@@ -12,25 +12,19 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { format } from "path";
+import { convertToZARCurrency } from "@/lib/utils";
+
+type Props = {};
 
 export type Inventories = {
   id: string;
-  academyId: string;
-  lecturerId: string;
-  lecturer: {
-    id: string;
-    name: string;
-    email: string;
-    emailVerified: string | null;
-    image: string | null;
-    role: string;
-    activeTill: string | null;
-    createdAt: string;
-    updatedAt: string | null;
-  };
+  name: string;
+  price: number;
+  amount: number;
 };
 
-export const columns: ColumnDef<Inventories>[] = [
+export const columns = ({}: Props): ColumnDef<Inventories>[] => [
   {
     id: "Select",
     header: ({ table }) => (
@@ -66,22 +60,35 @@ export const columns: ColumnDef<Inventories>[] = [
         </Button>
       );
     },
-    cell: ({
-      row: {
-        original: { lecturer },
-      },
-    }) => {
-      return lecturer.name;
+  },
+  {
+    accessorKey: "amount",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Amount at hand <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
     },
   },
   {
-    header: "email",
-    cell: ({
-      row: {
-        original: { lecturer },
-      },
-    }) => {
-      return lecturer.email;
+    accessorKey: "price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row: { original: item } }) => {
+      return convertToZARCurrency(item.price);
     },
   },
   {
@@ -89,7 +96,7 @@ export const columns: ColumnDef<Inventories>[] = [
     header: "Actions",
     cell: ({
       row: {
-        original: { lecturer },
+        original: { id },
       },
     }) => {
       return (
@@ -103,8 +110,8 @@ export const columns: ColumnDef<Inventories>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`users/${lecturer.id}`} className="cursor-pointer">
-                View User
+              <Link href={`users/${id}`} className="cursor-pointer">
+                Edit Item
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

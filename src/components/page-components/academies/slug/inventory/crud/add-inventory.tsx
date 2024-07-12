@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,196 +35,250 @@ import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
-import { RoleName } from "@/types/roles";
-import { useGetUsers, useSearchUsers } from "@/query/users";
-import Link from "next/link";
-import { check } from "drizzle-orm/mysql-core";
 import { Input } from "@/components/ui/input";
+import { useSearchCourses } from "@/query/courses";
 
 interface Props {
   academyId: string;
-  academiesLecturers: {
-    id: string;
-    academyId: string;
-    lecturerId: string;
-    lecturer: {
-      id: string;
-      name: string;
-      email: string;
-      emailVerified: string | null;
-      image: string | null;
-      role: string;
-      activeTill: string | null;
-      createdAt: string;
-      updatedAt: string | null;
-    };
-  }[];
 }
 
-const postTypeUrl = client.api["academy-lecturers"][":id"].assign.$post;
-type ResponseType = InferResponseType<typeof postTypeUrl>;
+const postTypeUrl = client.api.courses[":slug"].materials.$post;
 type RequestType = InferRequestType<typeof postTypeUrl>["json"];
+type ResponseType = InferResponseType<typeof postTypeUrl>;
 
 const formSchema = z.object({
-  lecturerId: z.string(),
+  course: z.string(),
+  name: z.string().min(2, {
+    message: "name must be at least 2 characters long",
+  }),
+  price: z.number(),
+  amount: z.number(),
 });
 
 type formValues = z.input<typeof formSchema>;
 
-const AddAcademyInventoryModal: React.FC<Props> = ({
-  academyId,
-  academiesLecturers,
-}) => {
+const AddAcademyInventoryModal: React.FC<Props> = ({ academyId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [keyword, setKeyword] = useState<string>("");
+  const [courseSlug, setCourseSlug] = useState<string | undefined>(undefined);
   const queryClient = useQueryClient();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      lecturerId: "",
+      course: "",
+      name: "",
+      amount: 0,
+      price: 10,
     },
   });
 
-  const { data: lecturers, isLoading: loadingLecturers } = useSearchUsers({
+  const { data: courses, isLoading: loadingCourses } = useSearchCourses({
     keyword,
-    role: RoleName.LECTURER,
+    academyId,
   });
 
-  const checkIfUserIsAlreadyAssigned = (userId: string): boolean => {
-    const found = academiesLecturers.find(
-      (lecturer) => lecturer.lecturerId === userId
-    );
-
-    return !!found;
-  };
-
-  const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (values): Promise<ResponseType> => {
-      const response = await postTypeUrl({
-        param: { id: academyId },
+  const { mutate: addMaterial, isPending } = useMutation<
+    ResponseType,
+    Error,
+    RequestType
+  >({
+    mutationFn: async (values) => {
+      const response = await client.api.courses[":slug"].materials.$post({
         json: values,
+        param: { slug: courseSlug! },
       });
-
-      console.log({ response });
-
-      if (response.status === 422) {
-        throw new Error({
-          title: "user is already assigned",
-          statusCode: 422,
-        });
-      }
-      const data = await response.json();
-      return data;
+      return response.json();
     },
-    onSuccess: (data) => {
-      toast.success("Lecturer assigned successfully");
-      queryClient.invalidateQueries({ queryKey: ["academies"] });
-      queryClient.invalidateQueries({ queryKey: ["academies", academyId] });
-      queryClient.invalidateQueries({
-        queryKey: ["academies", academyId, "lecturers"],
+    onMutate: async (newItem) => {
+      const queryKey = ["academies", academyId, "inventories"];
+      await queryClient.cancelQueries({
+        queryKey,
       });
-      form.reset();
+
+      const previousItems = queryClient.getQueryData(queryKey);
+
+      queryClient.setQueryData(queryKey, (old: any[]) => {
+        old ? [...old, newItem] : [newItem];
+      });
+
+      return { previousItems };
+    },
+    onSuccess: () => {
+      onOpenChange(false);
+      toast.success("Material added successfully");
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({
+        queryKey: ["courses", courseSlug, "materials"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["academies", academyId, "inventories"],
+      });
     },
     onError: (error: any) => {
-      toast.error("failed to assign academy lecturer");
-      onOpenChange(false);
+      toast.error("failed to add material");
     },
   });
 
   function onSubmit(values: formValues) {
-    mutation.mutate(values);
+    addMaterial(values);
   }
 
   function onOpenChange(b: boolean) {
+    setKeyword("");
     form.reset();
     setIsOpen(b);
   }
+
+  const handleSelectChange = (id: string): void => {
+    const selectedCourse = courses?.find((course) => course.id === id);
+    if (selectedCourse) {
+      setCourseSlug(selectedCourse.slug);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={(b) => onOpenChange(b)}>
       <DialogTrigger asChild>
         <Button onClick={() => setIsOpen(!isOpen)}>
-          <PlusCircle className="mr-2" /> Add Academy Lecturer
+          <PlusCircle className="mr-2" /> Add Inventory
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Assign Academy Lecturer</DialogTitle>
+          <DialogTitle>Add Inventory</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormItem>
-                <FormLabel>Search</FormLabel>
+                <FormLabel>Search for course</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="John Doe"
+                    placeholder="maths"
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                   />
                 </FormControl>
-                <FormDescription>
-                  Search for a lecturer to assign
-                </FormDescription>
+                <FormDescription>Search for a course first</FormDescription>
                 <FormMessage />
               </FormItem>
 
               <FormField
                 control={form.control}
-                name="lecturerId"
+                name="course"
                 render={({ field }) => (
                   <FormItem className="my-5">
-                    <FormLabel>Lecturer</FormLabel>
+                    <FormLabel>Course</FormLabel>
                     {keyword.length < 2 ? (
                       <div className="rounded-md bg-neutral-500 h-10 w-full flex items-center justify-center text-slate-200">
-                        Search for Lecturer
+                        Search for Courses
                       </div>
-                    ) : loadingLecturers ? (
+                    ) : loadingCourses ? (
                       <Skeleton className="h-10 w-full flex items-center justify-center text-black">
                         <Loader2 className="size-4 mr-2 animate-spin " />
-                        <span>Loading Lecturers</span>
+                        <span>Loading Courses</span>
                       </Skeleton>
-                    ) : lecturers && lecturers.length === 0 ? (
+                    ) : courses && courses.length === 0 ? (
                       <div className="rounded-md bg-neutral-500 h-10 w-full flex items-center justify-center text-slate-200">
-                        No Lecturers found found on the system
-                        <small className="ml-2">
-                          Manage Lecturers on the{" "}
-                          <Link href="/users">users page</Link>
-                        </small>
+                        No Courses found found
                       </div>
                     ) : (
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(e) => {
+                          handleSelectChange(e);
+                          field.onChange(e);
+                        }}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a User" />
+                            <SelectValue placeholder="Select a Course" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {lecturers?.map((user) => (
-                            <SelectItem
-                              key={user.id}
-                              value={user.id}
-                              disabled={checkIfUserIsAlreadyAssigned(user.id)}
-                            >
-                              {user.name}
+                          {courses?.map(({ id, name, slug }) => (
+                            <SelectItem key={id} value={id}>
+                              {name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                     <FormDescription>
-                      Select a user to assign as academy lecturer
+                      Select a course to assign material to
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button isLoading={mutation.isPending}>Assign</Button>
+
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Material Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Book" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex gap-2">
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Amount in hand</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="2"
+                          {...field}
+                          onChange={(event) =>
+                            field.onChange(+event.target.value)
+                          }
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        This is the amount of the material you have at hand
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Material Price</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="10"
+                          {...field}
+                          onChange={(event) =>
+                            field.onChange(+event.target.value)
+                          }
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        This is the sale price of the material{" "}
+                        <small className="italic">Without R</small>
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Button isLoading={isPending} disabled={keyword.length < 2}>
+                Add
+              </Button>
             </form>
           </Form>
         </div>

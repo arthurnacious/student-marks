@@ -1,4 +1,4 @@
-import AcademyLecturersTable from "@/components/page-components/academies/slug/lecturers/academy-lecturers-table";
+import AcademyInventoriesTable from "@/components/page-components/academies/slug/inventory/academy-inventory-table";
 import PageContainerWrapper from "@/components/page-container-wrapper";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +11,7 @@ interface Props {
 const page: FC<Props> = ({ params: { slug } }) => {
   return (
     <PageContainerWrapper
-      title={`Manage Academy Lecturers`}
+      title={`Manage Academy Inventories`}
       trail={
         <Link
           href="/academies"
@@ -21,7 +21,7 @@ const page: FC<Props> = ({ params: { slug } }) => {
         </Link>
       }
     >
-      <AcademyLecturersTable slug={slug} />
+      <AcademyInventoriesTable slug={slug} />
     </PageContainerWrapper>
   );
 };
