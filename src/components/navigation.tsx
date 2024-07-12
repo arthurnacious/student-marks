@@ -93,16 +93,16 @@ function Navigation() {
       <div className="flex flex-row w-full justify-between place-items-center">
         {/* logo */}
         <div className="size-10 relative flex justify-center items-center border border-orange-500 rounded-full">
-          Creare
+          Markus
         </div>
         <button
-          className="p-1 rounded-full flex"
+          className="ml-1 p-1 rounded-full flex"
           onMouseDown={() => handleOpenClose()}
         >
           <motion.svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
