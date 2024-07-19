@@ -10,7 +10,7 @@ interface Props {
   params: { slug: string };
 }
 
-const EditAcademy: React.FC<Props> = async ({ params: { slug } }) => {
+const EditDepartment: React.FC<Props> = async ({ params: { slug } }) => {
   const response = await client.api.courses[":slug"].$get({
     param: { slug },
   });
@@ -42,4 +42,4 @@ const EditAcademy: React.FC<Props> = async ({ params: { slug } }) => {
   );
 };
 
-export default EditAcademy;
+export default EditDepartment;

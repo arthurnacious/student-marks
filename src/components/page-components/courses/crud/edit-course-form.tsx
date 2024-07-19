@@ -66,7 +66,7 @@ const EditCourseForm: React.FC<Props> = ({ course }) => {
     },
     onSuccess: () => {
       onOpenChange(false);
-      toast.success("Academy updated successfully");
+      toast.success("Department updated successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
       queryClient.invalidateQueries({
         queryKey: ["courses", course?.slug],

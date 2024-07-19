@@ -37,7 +37,9 @@ const CoursesPage: FC<Props> = async ({ params: { slug } }) => {
         <ul>
           <li>Name: {course.name}</li>
           {course.description && <li>Description: {course.description}</li>}
-          {course.academy && <li>Academy: {course.academy?.name} Academy</li>}
+          {course.department && (
+            <li>department: {course.department?.name} department</li>
+          )}
           <li>Fields: {course.fields.map((field) => field.name).join(", ")}</li>
           <li>Ran {course.classCount} times</li>
           <li>

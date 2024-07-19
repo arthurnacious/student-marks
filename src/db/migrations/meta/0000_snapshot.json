@@ -1,141 +1,9 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "d0f01264-058c-4ec2-9223-3db0572571b5",
+  "id": "620b6734-2c5c-4f83-9b02-193b3c348abc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "academies": {
-      "name": "academies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "slug": {
-          "name": "slug",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {
-        "slug_idx": {
-          "name": "slug_idx",
-          "columns": [
-            "slug"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "academies_id": {
-          "name": "academies_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {
-        "academies_slug_unique": {
-          "name": "academies_slug_unique",
-          "columns": [
-            "slug"
-          ]
-        }
-      }
-    },
-    "academyHeadsToAcademies": {
-      "name": "academyHeadsToAcademies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "academyId": {
-          "name": "academyId",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "academyHeadId": {
-          "name": "academyHeadId",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "academyHeadsToAcademies_academyId_academies_id_fk": {
-          "name": "academyHeadsToAcademies_academyId_academies_id_fk",
-          "tableFrom": "academyHeadsToAcademies",
-          "tableTo": "academies",
-          "columnsFrom": [
-            "academyId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "academyHeadsToAcademies_academyHeadId_users_id_fk": {
-          "name": "academyHeadsToAcademies_academyHeadId_users_id_fk",
-          "tableFrom": "academyHeadsToAcademies",
-          "tableTo": "users",
-          "columnsFrom": [
-            "academyHeadId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "academyHeadsToAcademies_id": {
-          "name": "academyHeadsToAcademies_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
     "accounts": {
       "name": "accounts",
       "columns": {
@@ -578,8 +446,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "academyId": {
-          "name": "academyId",
+        "departmentId": {
+          "name": "departmentId",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false,
@@ -649,12 +517,12 @@
         }
       },
       "foreignKeys": {
-        "courses_academyId_academies_id_fk": {
-          "name": "courses_academyId_academies_id_fk",
+        "courses_departmentId_departments_id_fk": {
+          "name": "courses_departmentId_departments_id_fk",
           "tableFrom": "courses",
-          "tableTo": "academies",
+          "tableTo": "departments",
           "columnsFrom": [
-            "academyId"
+            "departmentId"
           ],
           "columnsTo": [
             "id"
@@ -680,6 +548,138 @@
         },
         "courses_slug_unique": {
           "name": "courses_slug_unique",
+          "columns": [
+            "slug"
+          ]
+        }
+      }
+    },
+    "departmentLeadersToDepartments": {
+      "name": "departmentLeadersToDepartments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "departmentLeaderId": {
+          "name": "departmentLeaderId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "departmentLeadersToDepartments_departmentId_departments_id_fk": {
+          "name": "departmentLeadersToDepartments_departmentId_departments_id_fk",
+          "tableFrom": "departmentLeadersToDepartments",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "departmentLeadersToDepartments_departmentLeaderId_users_id_fk": {
+          "name": "departmentLeadersToDepartments_departmentLeaderId_users_id_fk",
+          "tableFrom": "departmentLeadersToDepartments",
+          "tableTo": "users",
+          "columnsFrom": [
+            "departmentLeaderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "departmentLeadersToDepartments_id": {
+          "name": "departmentLeadersToDepartments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "departments": {
+      "name": "departments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {
+        "slug_idx": {
+          "name": "slug_idx",
+          "columns": [
+            "slug"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "departments_id": {
+          "name": "departments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "departments_slug_unique": {
+          "name": "departments_slug_unique",
           "columns": [
             "slug"
           ]
@@ -744,8 +744,8 @@
       },
       "uniqueConstraints": {}
     },
-    "lecturersToAcademies": {
-      "name": "lecturersToAcademies",
+    "lecturersToDepartments": {
+      "name": "lecturersToDepartments",
       "columns": {
         "id": {
           "name": "id",
@@ -754,8 +754,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "academyId": {
-          "name": "academyId",
+        "departmentId": {
+          "name": "departmentId",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
@@ -771,12 +771,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "lecturersToAcademies_academyId_academies_id_fk": {
-          "name": "lecturersToAcademies_academyId_academies_id_fk",
-          "tableFrom": "lecturersToAcademies",
-          "tableTo": "academies",
+        "lecturersToDepartments_departmentId_departments_id_fk": {
+          "name": "lecturersToDepartments_departmentId_departments_id_fk",
+          "tableFrom": "lecturersToDepartments",
+          "tableTo": "departments",
           "columnsFrom": [
-            "academyId"
+            "departmentId"
           ],
           "columnsTo": [
             "id"
@@ -784,9 +784,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "lecturersToAcademies_lecturerId_users_id_fk": {
-          "name": "lecturersToAcademies_lecturerId_users_id_fk",
-          "tableFrom": "lecturersToAcademies",
+        "lecturersToDepartments_lecturerId_users_id_fk": {
+          "name": "lecturersToDepartments_lecturerId_users_id_fk",
+          "tableFrom": "lecturersToDepartments",
           "tableTo": "users",
           "columnsFrom": [
             "lecturerId"
@@ -799,8 +799,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "lecturersToAcademies_id": {
-          "name": "lecturersToAcademies_id",
+        "lecturersToDepartments_id": {
+          "name": "lecturersToDepartments_id",
           "columns": [
             "id"
           ]
@@ -1285,7 +1285,7 @@
         },
         "role": {
           "name": "role",
-          "type": "enum('Admin','Academy Head','Lecturer','Finance','Student','Guardian')",
+          "type": "enum('Admin','Department Leader','Lecturer','Finance','Student')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -1315,7 +1315,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "name_idx": {
+          "name": "name_idx",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "users_id": {

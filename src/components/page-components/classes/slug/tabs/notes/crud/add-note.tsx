@@ -47,7 +47,7 @@ type formValues = z.input<typeof formSchema>;
 const AddNoteModal: React.FC<Props> = ({ classId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  // const { mutate, isPending, isError, error, } = useCreateAcademy();
+  // const { mutate, isPending, isError, error, } = useCreateDepartment();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),

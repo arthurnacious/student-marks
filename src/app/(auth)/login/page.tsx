@@ -11,9 +11,9 @@ const LoginPage = ({}) => {
         Get Started...
       </h2>
       <LoginForm />
-      <div className="mt-10">
-        <p className="text-neutral-950 ">
-          By continuing on th eabove you are agreeing to our{" "}
+      <div className="mt-5">
+        <p className="text-neutral-700 ">
+          By continuing on the above you are agreeing to our{" "}
           <Link href="/terms">terms and privacy</Link>.
         </p>
       </div>

@@ -6,7 +6,6 @@ import {
   varchar,
   mysqlEnum,
   index,
-  boolean,
   text,
 } from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "next-auth/adapters";
@@ -17,7 +16,7 @@ import { RoleName } from "@/types/roles";
 import { AttendanceName } from "@/types/attendance";
 import { createInsertSchema } from "drizzle-zod";
 import { dbCredentials } from "./credentials";
-import { relations } from "drizzle-orm";
+import { not, relations } from "drizzle-orm";
 import { StatusName } from "@/types/course";
 import { paymentTypeName } from "@/types/payment";
 import { ClassType } from "@/types/class";
@@ -106,8 +105,8 @@ export const verificationTokens = mysqlTable(
 );
 
 ///school stuff
-export const academies = mysqlTable(
-  "academies",
+export const departments = mysqlTable(
+  "departments",
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
@@ -133,8 +132,8 @@ export const courses = mysqlTable(
     id: varchar("id", { length: 255 })
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    academyId: varchar("academyId", { length: 255 }).references(
-      () => academies.id,
+    departmentId: varchar("departmentId", { length: 255 }).references(
+      () => departments.id,
       { onDelete: "set null" }
     ),
     name: varchar("name", { length: 255 }).unique().notNull(),
@@ -279,25 +278,28 @@ export const payments = mysqlTable("payments", {
     .$onUpdate(() => new Date()),
 });
 
-export const academyHeadsToAcademies = mysqlTable("academyHeadsToAcademies", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  academyId: varchar("academyId", { length: 255 })
-    .notNull()
-    .references(() => academies.id, { onDelete: "cascade" }),
-  academyHeadId: varchar("academyHeadId", { length: 255 })
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-});
+export const departmentLeadersToDepartments = mysqlTable(
+  "departmentLeadersToDepartments",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    departmentId: varchar("departmentId", { length: 255 })
+      .notNull()
+      .references(() => departments.id, { onDelete: "cascade" }),
+    departmentLeaderId: varchar("departmentLeaderId", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  }
+);
 
-export const lecturersToAcademies = mysqlTable("lecturersToAcademies", {
+export const lecturersToDepartments = mysqlTable("lecturersToDepartments", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  academyId: varchar("academyId", { length: 255 })
+  departmentId: varchar("departmentId", { length: 255 })
     .notNull()
-    .references(() => academies.id, { onDelete: "cascade" }),
+    .references(() => departments.id, { onDelete: "cascade" }),
   lecturerId: varchar("lecturerId", { length: 255 })
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -363,11 +365,11 @@ export const marks = mysqlTable("marks", {
 
 //relationships
 export const usersRelations = relations(users, ({ many }) => ({
-  academiesLecturing: many(academyHeadsToAcademies, {
-    relationName: "academiesLecturing",
+  departmentsLecturing: many(departmentLeadersToDepartments, {
+    relationName: "departmentsLecturing",
   }),
-  academiesLeading: many(lecturersToAcademies, {
-    relationName: "academiesLeading",
+  departmentsLeading: many(lecturersToDepartments, {
+    relationName: "departmentsLeading",
   }),
   classes: many(studentsToClasses, {
     relationName: "attendedClasses",
@@ -417,16 +419,16 @@ export const marksRelations = relations(marks, ({ one }) => ({
   }),
 }));
 
-export const academiesRelations = relations(academies, ({ many }) => ({
+export const departmentsRelations = relations(departments, ({ many }) => ({
   courses: many(courses),
-  lecturers: many(lecturersToAcademies),
-  heads: many(academyHeadsToAcademies),
+  lecturers: many(lecturersToDepartments),
+  leaders: many(departmentLeadersToDepartments),
 }));
 
 export const coursesRelations = relations(courses, ({ one, many }) => ({
-  academy: one(academies, {
-    fields: [courses.academyId],
-    references: [academies.id],
+  department: one(departments, {
+    fields: [courses.departmentId],
+    references: [departments.id],
   }),
   fields: many(fields),
   classes: many(classes, {
@@ -450,6 +452,7 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
   sessions: many(classSessions),
   students: many(studentsToClasses),
   materials: many(materialsClassStudent),
+  notes: many(classNotes),
 }));
 
 export const usersDependentsRelations = relations(
@@ -535,43 +538,44 @@ export const fieldsRelations = relations(fields, ({ one, many }) => ({
   marks: many(marks),
 }));
 
-export const lecturerToAcademiesRelations = relations(
-  lecturersToAcademies,
+export const lecturerToDepartmentsRelations = relations(
+  lecturersToDepartments,
   ({ one }) => ({
-    academy: one(academies, {
-      fields: [lecturersToAcademies.academyId],
-      references: [academies.id],
+    department: one(departments, {
+      fields: [lecturersToDepartments.departmentId],
+      references: [departments.id],
     }),
     lecturer: one(users, {
-      fields: [lecturersToAcademies.lecturerId],
+      fields: [lecturersToDepartments.lecturerId],
       references: [users.id],
-      relationName: "academiesLeading",
+      relationName: "departmentsLeading",
     }),
   })
 );
 
-export const academyHeadsToAcademiesRelations = relations(
-  academyHeadsToAcademies,
+export const departmentLeadersToDepartmentsRelations = relations(
+  departmentLeadersToDepartments,
   ({ one }) => ({
-    academy: one(academies, {
-      fields: [academyHeadsToAcademies.academyId],
-      references: [academies.id],
-      relationName: "academiesLecturing",
+    department: one(departments, {
+      fields: [departmentLeadersToDepartments.departmentId],
+      references: [departments.id],
+      relationName: "departmentsLecturing",
     }),
-    head: one(users, {
-      fields: [academyHeadsToAcademies.academyHeadId],
+    leader: one(users, {
+      fields: [departmentLeadersToDepartments.departmentLeaderId],
       references: [users.id],
-      relationName: "academiesLeading",
+      relationName: "departmentsLeading",
     }),
   })
 );
 
-export const insertAcademySchema = createInsertSchema(academies);
-export const insertAcademyHeadsToAcademySchema = createInsertSchema(
-  academyHeadsToAcademies
+export const insertDepartmentSchema = createInsertSchema(departments);
+export const insertDepartmentLeadersToDepartmentSchema = createInsertSchema(
+  departmentLeadersToDepartments
 );
-export const insertLecturersToAcademySchema =
-  createInsertSchema(lecturersToAcademies);
+export const insertLecturersToDepartmentSchema = createInsertSchema(
+  lecturersToDepartments
+);
 export const insertCourseSchema = createInsertSchema(courses);
 export const insertFieldSchema = createInsertSchema(fields);
 export const insertClassesSchema = createInsertSchema(classes);

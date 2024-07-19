@@ -8,18 +8,15 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Separator from "@/components/ui/separator";
-import Google from "next-auth/providers/google";
-import { FaGoogle } from "react-icons/fa6";
+import { FaGithub, FaGoogle } from "react-icons/fa6";
 
 const formSchema = z.object({
   email: z.string().email("Email needs to be a valid email."),
@@ -48,7 +45,7 @@ const LoginForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 flex flex-col w-full"
+          className="space-y-5 flex flex-col w-full"
         >
           <div className="space-y-4">
             <FormField
@@ -93,12 +90,21 @@ const LoginForm = () => {
             <Separator />
             <span className="text-neutral-950">Or</span>
           </div>
-          <Button className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <FaGoogle className="size-4 mr-2 text-black" />
-            <span className="text-gray-700 font-medium">
-              Sign in with Google
-            </span>
-          </Button>
+          <div className="flex flex-col items-center justify-center w-full space-y-2">
+            <Button className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <FaGoogle className="size-4 mr-2 text-black" />
+              <span className="text-gray-700 font-medium">
+                Sign in with Google
+              </span>
+            </Button>
+
+            <Button className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <FaGithub className="size-4 mr-2 text-black" />
+              <span className="text-gray-700 font-medium">
+                Sign in with GitHub
+              </span>
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

@@ -45,7 +45,7 @@ export const useGetClasseBySlug = (
       const { data } = await response.json();
       return data;
     },
-    initialData: initialData ? { data: { ...initialData } } : undefined,
+    initialData: initialData ?? undefined,
   });
   return query;
 };
@@ -91,7 +91,7 @@ export const useBulkDeleteClasses = () => {
     },
     onError: (error: any) => {
       console.log({ error });
-      toast.error("failed to delete academies");
+      toast.error("failed to delete departments");
     },
   });
 

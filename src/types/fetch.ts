@@ -1,11 +1,11 @@
-export interface academyWithRelations {
+export interface departmentWithRelations {
   id: string;
   name: string;
   createdAt: string;
   updatedAt: string | null;
   slug: string;
-  lecturers: { academyId: string; lecturerId: string }[];
-  heads: { academyId: string; academyHeadId: string }[];
+  lecturers: { departmentId: string; lecturerId: string }[];
+  leaders: { departmentId: string; departmentLeaderId: string }[];
 }
 
 export interface courseWithRelations {
@@ -14,7 +14,7 @@ export interface courseWithRelations {
   createdAt: string;
   updatedAt: string | null;
   slug: string;
-  academyId: string | null;
+  departmentId: string | null;
   description: string | null;
   status: string | null;
   classCount: number;

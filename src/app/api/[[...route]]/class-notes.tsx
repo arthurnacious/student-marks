@@ -53,7 +53,10 @@ const app = new Hono()
     const noteId = ctx.req.param("noteId");
 
     const data = await db.query.classNotes.findFirst({
-      where: and(eq(classNotes.classId, classId), eq(classNotes.id, noteId)),
+      where: and(
+        eq(classNotes.classId, classId),
+        eq(classNotes.id, noteId as string)
+      ),
     });
 
     return ctx.json({ data: data });

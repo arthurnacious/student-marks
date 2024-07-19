@@ -35,7 +35,7 @@ import { client } from "@/lib/hono";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
 import Link from "next/link";
-import { useGetAcademies } from "@/query/academies";
+import { useGetDepartments } from "@/query/departments";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {}
@@ -45,8 +45,8 @@ type ResponseType = InferResponseType<typeof createCourseUrl>;
 type RequestType = InferRequestType<typeof createCourseUrl>["json"];
 
 const formSchema = z.object({
-  academy: z.string().min(2, {
-    message: "Academy is required.",
+  department: z.string().min(2, {
+    message: "Department is required.",
   }),
   name: z.string().min(2, {
     message: "Name must be at least 2 characters long.",
@@ -65,13 +65,13 @@ const AddCourseModal: React.FC<Props> = ({}) => {
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      academy: "",
+      department: "",
       name: "",
       price: 0,
     },
   });
 
-  const { data, isLoading } = useGetAcademies();
+  const { data, isLoading } = useGetDepartments();
 
   const mutation = useMutation<unknown, Error, RequestType>({
     mutationFn: async (values) => {
@@ -121,14 +121,14 @@ const AddCourseModal: React.FC<Props> = ({}) => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
-                name="academy"
+                name="department"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Academy</FormLabel>
+                    <FormLabel>Department</FormLabel>
                     {isLoading ? (
                       <Skeleton className="h-10 w-full flex items-center justify-center text-black">
                         <Loader2 className="size-4 mr-2 animate-spin " />
-                        <span>Loading academies</span>
+                        <span>Loading departments</span>
                       </Skeleton>
                     ) : (
                       <Select
@@ -137,21 +137,24 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select an academy" />
+                            <SelectValue placeholder="Select an department" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {data?.map((academy) => (
-                            <SelectItem key={academy.id} value={academy.id}>
-                              {academy.name}
+                          {data?.map((department) => (
+                            <SelectItem
+                              key={department.id}
+                              value={department.id}
+                            >
+                              {department.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                     <FormDescription>
-                      You can manage academies list in your{" "}
-                      <Link href="/academies">academy settings</Link>.
+                      You can manage departments list in your{" "}
+                      <Link href="/departments">department settings</Link>.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

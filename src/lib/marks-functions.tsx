@@ -16,7 +16,7 @@ type Course = {
   fields: Field[];
 };
 
-export type Academy = {
+export type Department = {
   name: string;
   courses: Course[] | null;
 };
@@ -28,7 +28,7 @@ type FetchedData = {
   class: {
     course: {
       name: string;
-      academy: { name: string } | null;
+      department: { name: string } | null;
       fields: {
         total: number;
         name: string;
@@ -40,23 +40,23 @@ type FetchedData = {
 
 // Grouping function
 // Grouping function
-export const groupData = (data?: FetchedData[]): Map<string, Academy> => {
-  const academiesMap = new Map<string, Academy>();
+export const groupData = (data?: FetchedData[]): Map<string, Department> => {
+  const departmentsMap = new Map<string, Department>();
 
   data?.forEach(({ class: { course, ...rest } }) => {
-    const academyName = course.academy?.name || "Unknown Academy";
+    const departmentName = course.department?.name || "Unknown Department";
     const courseName = course.name;
 
-    let academy = academiesMap.get(academyName);
-    if (!academy) {
-      academy = { name: academyName, courses: [] };
-      academiesMap.set(academyName, academy);
+    let department = departmentsMap.get(departmentName);
+    if (!department) {
+      department = { name: departmentName, courses: [] };
+      departmentsMap.set(departmentName, department);
     }
 
-    let courseObj = academy.courses?.find((c) => c.name === courseName);
+    let courseObj = department.courses?.find((c) => c.name === courseName);
     if (!courseObj) {
       courseObj = { name: courseName, fields: [] };
-      academy.courses?.push(courseObj);
+      department.courses?.push(courseObj);
     }
 
     course.fields.forEach(({ name, total, marks }) => {
@@ -66,14 +66,14 @@ export const groupData = (data?: FetchedData[]): Map<string, Academy> => {
     });
   });
 
-  return academiesMap;
+  return departmentsMap;
 };
 
 // Transformation function
 export const transformData = (
-  academiesMap: Map<string, Academy>
-): Academy[] => {
-  return Array.from(academiesMap.values());
+  departmentsMap: Map<string, Department>
+): Department[] => {
+  return Array.from(departmentsMap.values());
 };
 
 export const calculateTotal = (fields: Field[]): number => {

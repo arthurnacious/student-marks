@@ -130,14 +130,14 @@ const app = new Hono()
       return ctx.json({ data: user });
     }
   )
-  .get("/:id/academies", async (ctx) => {
+  .get("/:id/departments", async (ctx) => {
     const userId = ctx.req.param("id");
-    const userWithAcademies = await db.query.users.findFirst({
+    const userWithDepartments = await db.query.users.findFirst({
       where: eq(users.id, userId),
       with: {
-        academiesLeading: {
+        departmentsLeading: {
           with: {
-            academy: {
+            department: {
               columns: { name: true, id: true },
             },
           },
@@ -145,18 +145,18 @@ const app = new Hono()
       },
     });
 
-    if (!userWithAcademies) {
+    if (!userWithDepartments) {
       return ctx.json({ error: "User not found" }, 404);
     }
 
-    const academies = userWithAcademies.academiesLeading.map(
-      ({ academy }) => academy
+    const departments = userWithDepartments.departmentsLeading.map(
+      ({ department }) => department
     );
-    academies.sort((a, b) => {
+    departments.sort((a, b) => {
       return a.name.localeCompare(b.name);
     });
 
-    return ctx.json({ data: academies });
+    return ctx.json({ data: departments });
   })
   .get("/search/:keyword/role/:role?", async (ctx) => {
     const keyword = ctx.req.param("keyword");

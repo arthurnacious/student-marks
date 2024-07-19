@@ -31,12 +31,12 @@ const MarksDisplay: React.FC<Props> = ({ studentId }) => {
     return <div>Student has not marks allocation</div>;
   }
 
-  const academiesMap = groupData(data);
-  const academies = transformData(academiesMap);
+  const departmentsMap = groupData(data);
+  const departments = transformData(departmentsMap);
 
   return (
     <>
-      {academies.length === 0 ? (
+      {departments.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full">
           <div className="text-center">
             <p className="text-2xl"> Student has no marks</p>
@@ -55,7 +55,7 @@ const MarksDisplay: React.FC<Props> = ({ studentId }) => {
               </div>
             </div>
           </div>
-          <MarksSheet academies={academies} />
+          <MarksSheet departments={departments} />
         </div>
       )}
     </>

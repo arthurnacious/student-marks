@@ -28,16 +28,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetAcademiesCourses } from "@/query/academies";
+import { useGetDepartmentsCourses } from "@/query/departments";
 import { toast } from "sonner";
 import Error from "next/error";
 import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/hono";
 import { ClassType } from "@/types/class";
-import { useGetUsersAcademies } from "@/query/users";
+import { useGetUsersDepartments } from "@/query/users";
 import { useRouter } from "next/navigation";
 
 interface Props {}
@@ -48,7 +47,7 @@ type RequestType = InferRequestType<typeof client.api.classes.$post>["json"];
 const formSchema = z.object({
   notes: z.string(),
   course: z.string().min(1, {
-    message: "Academy is required.",
+    message: "Department is required.",
   }),
   type: z.nativeEnum(ClassType),
 });
@@ -56,7 +55,7 @@ const formSchema = z.object({
 type formValues = z.input<typeof formSchema>;
 
 const AddClassModal: React.FC<Props> = ({}) => {
-  const [selectedAcademy, setAcademy] = useState<
+  const [selectedDepartment, setDepartment] = useState<
     { name: string; id: string } | undefined
   >(undefined);
   const [isOpen, setIsOpen] = useState(false);
@@ -71,11 +70,11 @@ const AddClassModal: React.FC<Props> = ({}) => {
     },
   });
 
-  const { data: usersAcademies, isLoading: loadingAcademies } =
-    useGetUsersAcademies();
+  const { data: usersDepartments, isLoading: loadingDepartments } =
+    useGetUsersDepartments();
 
-  const { data: courses, isLoading: loadingCourses } = useGetAcademiesCourses(
-    selectedAcademy?.id
+  const { data: courses, isLoading: loadingCourses } = useGetDepartmentsCourses(
+    selectedDepartment?.id
   );
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
@@ -130,34 +129,34 @@ const AddClassModal: React.FC<Props> = ({}) => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormItem className="my-5">
-                <FormLabel>Academy</FormLabel>
-                {loadingAcademies ? (
+                <FormLabel>Department</FormLabel>
+                {loadingDepartments ? (
                   <Skeleton className="h-10 w-full flex items-center justify-center text-black">
                     <Loader2 className="size-4 mr-2 animate-spin " />
-                    <span>Loading academies</span>
+                    <span>Loading departments</span>
                   </Skeleton>
                 ) : (
                   <Select
                     onValueChange={(v) =>
-                      setAcademy(usersAcademies?.find((a) => a.id === v))
+                      setDepartment(usersDepartments?.find((a) => a.id === v))
                     }
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select an academy" />
+                        <SelectValue placeholder="Select an department" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {usersAcademies?.map((academy) => (
-                        <SelectItem key={academy.id} value={academy.id}>
-                          {academy.name}
+                      {usersDepartments?.map((department) => (
+                        <SelectItem key={department.id} value={department.id}>
+                          {department.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 )}
                 <FormDescription>
-                  This is just a lis of academies you are lecturing in.
+                  This is just a lis of departments you are lecturing in.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -168,9 +167,9 @@ const AddClassModal: React.FC<Props> = ({}) => {
                 render={({ field }) => (
                   <FormItem className="my-5">
                     <FormLabel>Course</FormLabel>
-                    {!selectedAcademy ? (
+                    {!selectedDepartment ? (
                       <div className="rounded-md bg-neutral-500 h-10 w-full flex items-center justify-center text-slate-200">
-                        Select an Academy
+                        Select an Department
                       </div>
                     ) : loadingCourses ? (
                       <Skeleton className="h-10 w-full flex items-center justify-center text-black">

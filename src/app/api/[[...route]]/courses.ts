@@ -1,7 +1,7 @@
 // courses.ts
 import { db } from "@/db";
 import {
-  academies,
+  departments,
   classes,
   courses,
   fields,
@@ -18,7 +18,7 @@ import slugify from "slugify";
 import { z } from "zod";
 
 const createCourseSchema = insertCourseSchema.extend({
-  academy: z.string(),
+  department: z.string(),
 });
 
 const updateCourseSchema = insertCourseSchema;
@@ -36,14 +36,14 @@ const app = new Hono()
         slug: courses.slug,
         status: courses.status,
         price: courses.price,
-        academy: {
-          name: academies.name,
+        department: {
+          name: departments.name,
         },
         classes: count(classes.id),
         fields: count(fields.id),
       })
       .from(courses)
-      .leftJoin(academies, eq(courses.academyId, academies.id))
+      .leftJoin(departments, eq(courses.departmentId, departments.id))
       .leftJoin(classes, eq(courses.id, classes.courseId))
       .leftJoin(fields, eq(courses.id, fields.courseId))
       .orderBy(courses.name)
@@ -55,7 +55,7 @@ const app = new Hono()
     "/",
     zValidator(
       "json",
-      createCourseSchema.pick({ name: true, academy: true, price: true })
+      createCourseSchema.pick({ name: true, department: true, price: true })
     ),
     async (ctx) => {
       const values = ctx.req.valid("json");
@@ -95,7 +95,7 @@ const app = new Hono()
 
         const data = await db
           .insert(courses)
-          .values({ ...values, slug, academyId: values.academy });
+          .values({ ...values, slug, departmentId: values.department });
 
         return ctx.json({ data });
       } catch (error: any) {
@@ -110,7 +110,7 @@ const app = new Hono()
       where: eq(courses.slug, slug),
       with: {
         fields: true,
-        academy: {
+        department: {
           columns: {
             name: true,
           },
@@ -164,13 +164,13 @@ const app = new Hono()
     });
     return ctx.json({ data });
   })
-  .get("/search/:academy/:keyword", async (ctx) => {
+  .get("/search/:department/:keyword", async (ctx) => {
     const keyword = ctx.req.param("keyword");
-    const academyId = ctx.req.param("academy");
+    const departmentId = ctx.req.param("department");
     const data = await db.query.courses.findMany({
       where: and(
         like(courses.slug, `%${keyword}%`),
-        eq(courses.academyId, academyId)
+        eq(courses.departmentId, departmentId)
       ),
       orderBy: courses.name,
     });

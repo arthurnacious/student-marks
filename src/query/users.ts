@@ -19,17 +19,17 @@ type BulkDeleteUsersRequestType = InferRequestType<
   typeof bulkDeleteDependentsUrl
 >["json"];
 
-export const useGetUsersAcademies = () => {
+export const useGetUsersDepartments = () => {
   const session = useSession();
   const userId = session?.data?.user?.id;
   const query = useQuery({
-    queryKey: ["user", userId, "academies"],
+    queryKey: ["user", userId, "departments"],
     queryFn: async () => {
-      const response = await client.api.users[":id"].academies.$get({
+      const response = await client.api.users[":id"].departments.$get({
         param: { id: userId! },
       });
       if (!response.ok) {
-        throw new Error("Failed to fetch users academies");
+        throw new Error("Failed to fetch users departments");
       }
       const { data } = await response.json();
       return data;

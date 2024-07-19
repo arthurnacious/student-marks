@@ -46,7 +46,7 @@ export const useBulkDeleteCourses = () => {
     },
     onError: (error: any) => {
       console.log({ error });
-      toast.error("failed to delete academies");
+      toast.error("failed to delete departments");
     },
   });
 
@@ -92,19 +92,19 @@ export const useGetCourseFields = (slug: string, initialData?: field[]) => {
 
 export const useSearchCourses = ({
   keyword,
-  academyId,
+  departmentId,
 }: {
   keyword: string;
-  academyId: string;
+  departmentId: string;
 }) => {
   const query = useQuery({
     enabled: keyword.length >= 2,
     queryKey: ["courses", "search", keyword],
     queryFn: async () => {
-      const response = await client.api.courses["search"][":academy"][
+      const response = await client.api.courses["search"][":department"][
         ":keyword"
       ].$get({
-        param: { keyword, academy: academyId },
+        param: { keyword, department: departmentId },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch courses");

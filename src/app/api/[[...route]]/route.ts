@@ -1,9 +1,9 @@
 // index.ts
 import { Hono } from "hono";
-import academies from "./academies";
-import academyHeads from "./academy-heads";
-import academyLecturer from "./academy-lecturers";
-import academyInventories from "./academy-inventories";
+import departments from "./departments";
+import departmentLeaders from "./department-leaders";
+import departmentLecturer from "./department-lecturers";
+import departmentInventories from "./department-inventories";
 import courses from "./courses";
 import fields from "./fields";
 import classes from "./classes";
@@ -27,10 +27,10 @@ import { handle } from "hono/vercel";
 const route = new Hono()
   .basePath("/api")
   // .use(authMiddleware)
-  .route("/academies", academies)
-  .route("/academy-heads", academyHeads)
-  .route("/academy-lecturers", academyLecturer)
-  .route("/academy-inventories", academyInventories)
+  .route("/departments", departments)
+  .route("/department-leaders", departmentLeaders)
+  .route("/department-lecturers", departmentLecturer)
+  .route("/department-inventories", departmentInventories)
   .route("/courses", courses)
   .route("/fields", fields)
   .route("/classes", classes)

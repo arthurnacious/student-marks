@@ -84,7 +84,7 @@ const UserInfo: FC<Props> = ({ studentId }) => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Course</TableHead>
-                  <TableHead>Academy</TableHead>
+                  <TableHead>Department</TableHead>
                   <TableHead>Lecturer</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>
@@ -107,7 +107,7 @@ const UserInfo: FC<Props> = ({ studentId }) => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {mark.class.course?.academy?.name} Academy
+                        {mark.class.course?.department?.name} Department
                       </TableCell>
                       <TableCell>{mark.class.lecturer.name}</TableCell>
                       <TableCell>

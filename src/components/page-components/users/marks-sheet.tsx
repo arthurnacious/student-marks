@@ -4,20 +4,20 @@ import {
   calculateTotal,
 } from "@/lib/marks-functions";
 import { cn } from "@/lib/utils";
-import { Academy } from "@/lib/marks-functions";
+import { Department } from "@/lib/marks-functions";
 
 interface Props {
-  academies: Academy[];
+  departments: Department[];
 }
 
-const MarksSheet: FC<Props> = ({ academies }) => {
-  return academies.map((academy, idx) => (
-    <React.Fragment key={`academy-${idx}`}>
+const MarksSheet: FC<Props> = ({ departments }) => {
+  return departments.map((department, idx) => (
+    <React.Fragment key={`department-${idx}`}>
       <h2 className="text-5xl border-b border-slate-300 pb-1 my-2 uppercase mb-10">
-        {academy.name} Academy
+        {department.name} Department
       </h2>
       <div className="space-y-3">
-        {academy.courses?.map((course, idx2) => {
+        {department.courses?.map((course, idx2) => {
           const total = calculateTotal(course.fields);
 
           return (

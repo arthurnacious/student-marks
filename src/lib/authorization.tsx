@@ -4,7 +4,7 @@ const permissions = {
   createUser: [RoleName.ADMIN],
   readUser: [
     RoleName.ADMIN,
-    RoleName.ACADEMYHEAD,
+    RoleName.DEPARTMENTLEADER,
     RoleName.LECTURER,
     RoleName.FINANCE,
     RoleName.STUDENT,
@@ -12,36 +12,36 @@ const permissions = {
   updateUser: [RoleName.ADMIN],
   deleteUser: [RoleName.ADMIN],
 
-  createAcademy: [RoleName.ADMIN, RoleName.ACADEMYHEAD],
-  readAcademy: [
+  createDepartment: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER],
+  readDepartment: [
     RoleName.ADMIN,
-    RoleName.ACADEMYHEAD,
+    RoleName.DEPARTMENTLEADER,
     RoleName.LECTURER,
     RoleName.FINANCE,
     RoleName.STUDENT,
   ],
-  updateAcademy: [RoleName.ADMIN, RoleName.ACADEMYHEAD],
-  deleteAcademy: [RoleName.ADMIN, RoleName.ACADEMYHEAD],
+  updateDepartment: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER],
+  deleteDepartment: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER],
 
-  createCourse: [RoleName.ADMIN, RoleName.ACADEMYHEAD, RoleName.LECTURER],
+  createCourse: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER, RoleName.LECTURER],
   readCourse: [
     RoleName.ADMIN,
-    RoleName.ACADEMYHEAD,
+    RoleName.DEPARTMENTLEADER,
     RoleName.LECTURER,
     RoleName.STUDENT,
   ],
-  updateCourse: [RoleName.ADMIN, RoleName.ACADEMYHEAD, RoleName.LECTURER],
-  deleteCourse: [RoleName.ADMIN, RoleName.ACADEMYHEAD],
+  updateCourse: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER, RoleName.LECTURER],
+  deleteCourse: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER],
 
-  createClass: [RoleName.ADMIN, RoleName.ACADEMYHEAD, RoleName.LECTURER],
+  createClass: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER, RoleName.LECTURER],
   readClass: [
     RoleName.ADMIN,
-    RoleName.ACADEMYHEAD,
+    RoleName.DEPARTMENTLEADER,
     RoleName.LECTURER,
     RoleName.STUDENT,
   ],
-  updateClass: [RoleName.ADMIN, RoleName.ACADEMYHEAD, RoleName.LECTURER],
-  deleteClass: [RoleName.ADMIN, RoleName.ACADEMYHEAD],
+  updateClass: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER, RoleName.LECTURER],
+  deleteClass: [RoleName.ADMIN, RoleName.DEPARTMENTLEADER],
 
   createPayment: [RoleName.ADMIN, RoleName.FINANCE],
   readPayment: [RoleName.ADMIN, RoleName.FINANCE],

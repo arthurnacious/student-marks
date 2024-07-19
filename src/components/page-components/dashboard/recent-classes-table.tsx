@@ -47,7 +47,7 @@ const RecentClassesTable: FC<Props> = ({}) => {
         <TableHeader>
           <TableRow>
             <TableHead>Course Name</TableHead>
-            <TableHead>Academy</TableHead>
+            <TableHead>Department</TableHead>
             <TableHead>Students</TableHead>
             <TableHead>lecturer</TableHead>
             <TableHead>Attendance</TableHead>
@@ -58,7 +58,7 @@ const RecentClassesTable: FC<Props> = ({}) => {
           {classes?.map((clas) => (
             <TableRow key={clas.id}>
               <TableCell>{clas.course.name}</TableCell>
-              <TableCell>{clas.course.academy?.name} Academy</TableCell>
+              <TableCell>{clas.course.department?.name} Department</TableCell>
               <TableCell>{clas.students}</TableCell>
               <TableCell>{clas.lecturer.name}</TableCell>
               <TableCell>{calculateStudentAttendance(clas)} %</TableCell>

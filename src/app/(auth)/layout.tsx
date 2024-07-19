@@ -11,7 +11,10 @@ const Layout: FC<Props> = ({ children }) => {
         <div className="bg-gradient-to-r from-teal-500/80 to-blue-500/80 backdrop-grayscale-0 h-full w-1/2 max-w-2xl rounded-2xl overflow-hidden">
           <div className="flex flex-col space-y-5 items-center justify-center pt-10 p-10 text-center">
             <h3 className="text-2xl text-white font-extrabold mt-10 font-poppins">
-              Welcome to The System
+              Welcome back to{" "}
+              <span className="font-graduate">
+                <span className="text-teal-500">M</span>arkus
+              </span>
             </h3>
             <p className="text-gray-200 text-5xl">
               Start with something beautiful.

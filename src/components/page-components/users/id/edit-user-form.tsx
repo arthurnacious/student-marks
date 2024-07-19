@@ -20,7 +20,7 @@ import { useGetUserById, useGetUsers } from "@/query/users";
 import { RoleName } from "@/types/roles";
 import { toast } from "sonner";
 import Error from "next/error";
-import type { academyWithRelations } from "@/types/fetch";
+import type { departmentWithRelations } from "@/types/fetch";
 import { notFound, useRouter } from "next/navigation";
 import { InferRequestType, InferResponseType } from "hono";
 import {
@@ -110,7 +110,7 @@ const EditUserForm: React.FC<Props> = ({ user }) => {
         form.setError("email", { message: "The selected email already exist" });
         return;
       }
-      toast.error("failed to insert academy");
+      toast.error("failed to insert department");
     },
   });
 

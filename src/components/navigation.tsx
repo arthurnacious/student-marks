@@ -92,8 +92,8 @@ function Navigation() {
     >
       <div className="flex flex-row w-full justify-between place-items-center">
         {/* logo */}
-        <div className="size-10 relative flex justify-center items-center border border-orange-500 rounded-full">
-          Markus
+        <div className="size-10 relative flex justify-center items-center border border-orange-500 rounded-full font-graduate">
+          <span className="text-teal-500">M</span>arkus
         </div>
         <button
           className="ml-1 p-1 rounded-full flex"
@@ -126,7 +126,7 @@ function Navigation() {
         <NavigationLink name="Dashboard" to="/">
           <HiChartBar className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
         </NavigationLink>
-        <NavigationLink name="Academies" to="/academies">
+        <NavigationLink name="Departments" to="/departments">
           <FaLayerGroup className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
         </NavigationLink>
         <NavigationLink name="Courses" to="/courses">

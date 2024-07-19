@@ -48,7 +48,6 @@ export interface TheClass {
   price: number;
   courseId: string;
   creatorId: string;
-  notes: string | null;
   type: string;
   createdAt: string;
   updatedAt: string | null;
@@ -56,7 +55,7 @@ export interface TheClass {
     id: string;
     name: string;
     slug: string;
-    academyId: string | null;
+    departmentId: string | null;
     description: string | null;
     status: string | null;
     price: number;

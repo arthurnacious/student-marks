@@ -22,7 +22,7 @@ export type Courses = {
   classes: number;
   fields: number;
   price: number;
-  academy: {
+  department: {
     name: string;
   } | null;
 };
@@ -83,13 +83,13 @@ export const columns: ColumnDef<Courses>[] = [
     },
   },
   {
-    accessorKey: "Academy",
+    accessorKey: "Department",
     header: ({ column }) => {
-      return "Academy Name";
+      return "Department Name";
     },
     cell: ({ row }) => {
       const course = row.original;
-      return `${course.academy?.name} Academy`;
+      return `${course.department?.name} Department`;
     },
   },
   {

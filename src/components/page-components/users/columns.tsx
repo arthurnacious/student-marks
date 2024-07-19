@@ -22,7 +22,6 @@ export type Users = {
   image: string | null;
   role: string;
   activeTill: string | null;
-  isGuardian: boolean;
   createdAt: string;
   updatedAt: string | null;
 };

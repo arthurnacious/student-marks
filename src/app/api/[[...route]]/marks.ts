@@ -31,7 +31,7 @@ const app = new Hono()
                 price: true,
               },
               with: {
-                academy: {
+                department: {
                   columns: {
                     name: true,
                   },

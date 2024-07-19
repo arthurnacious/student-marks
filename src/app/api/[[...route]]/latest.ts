@@ -24,7 +24,7 @@ const app = new Hono()
       with: {
         course: {
           with: {
-            academy: {
+            department: {
               columns: {
                 name: true,
               },

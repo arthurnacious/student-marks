@@ -35,6 +35,7 @@ interface Props {
 
 const postMethod = client.api.courses[":slug"].materials.$post;
 type RequestType = InferRequestType<typeof postMethod>["json"];
+type ResponseType = InferResponseType<typeof postMethod>;
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -59,7 +60,11 @@ const AddMaterialModal: React.FC<Props> = ({ courseName, courseSlug }) => {
     },
   });
 
-  const { mutate: addMaterial } = useMutation<unknown, Error, RequestType>({
+  const { mutate: addMaterial, isPending } = useMutation<
+    ResponseType,
+    Error,
+    RequestType
+  >({
     mutationFn: async (values) => {
       console.log({ courseSlug });
       const response = await client.api.courses[":slug"].materials.$post({

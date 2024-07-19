@@ -1,21 +1,16 @@
 // count.ts
 import { db } from "@/db";
-import { academies, classes, courses, users } from "@/db/schema";
+import { departments, classes, courses, users } from "@/db/schema";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
 
-type RawDataType = {
-  month: number;
-  count: number;
-}[];
-
 const app = new Hono()
-  .get("/academies", async (ctx) => {
+  .get("/departments", async (ctx) => {
     const [data] = await db
       .select({
         count: sql<number>`COUNT(*)`.as("count"),
       })
-      .from(academies);
+      .from(departments);
 
     return ctx.json({ data });
   })

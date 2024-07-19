@@ -3,15 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 import { useSession } from "next-auth/react";
 
-export const useGetAcademyCount = () => {
+export const useGetDepartmentCount = () => {
   const session = useSession();
   const userId = session?.data?.user?.id;
   const query = useQuery({
-    queryKey: ["count", "academies"],
+    queryKey: ["count", "departments"],
     queryFn: async () => {
-      const response = await client.api.count.academies.$get();
+      const response = await client.api.count.departments.$get();
       if (!response.ok) {
-        throw new Error("Failed to fetch academy count");
+        throw new Error("Failed to fetch department count");
       }
       const { data } = await response.json();
       return data;

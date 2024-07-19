@@ -63,7 +63,7 @@ const AddUserModal: React.FC<Props> = ({}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasActiveUntill, setHasActiveUntill] = useState(false);
   const queryClient = useQueryClient();
-  // const { mutate, isPending, isError, error, } = useCreateAcademy();
+  // const { mutate, isPending, isError, error, } = useCreateDepartment();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
