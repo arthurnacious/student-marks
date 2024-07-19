@@ -6,7 +6,7 @@ import { dbCredentials } from "./credentials";
 const poolConnection = mysql.createPool(dbCredentials);
 
 export const db = drizzle(poolConnection, {
-  logger: true,
+  logger: false,
   mode: "default",
   schema: { ...schema },
 });

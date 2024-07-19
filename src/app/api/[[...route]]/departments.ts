@@ -124,6 +124,7 @@ const app = new Hono()
     const departmentId = ctx.req.param("id");
     const data = await db.query.courses.findMany({
       where: eq(courses.departmentId, departmentId),
+      orderBy: courses.name,
     });
     return ctx.json({ data });
   })

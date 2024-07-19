@@ -45,7 +45,6 @@ type ResponseType = InferResponseType<typeof client.api.classes.$post>;
 type RequestType = InferRequestType<typeof client.api.classes.$post>["json"];
 
 const formSchema = z.object({
-  notes: z.string(),
   course: z.string().min(1, {
     message: "Department is required.",
   }),
@@ -55,7 +54,7 @@ const formSchema = z.object({
 type formValues = z.input<typeof formSchema>;
 
 const AddClassModal: React.FC<Props> = ({}) => {
-  const [selectedDepartment, setDepartment] = useState<
+  const [selectedDepartment, setSelectedDepartment] = useState<
     { name: string; id: string } | undefined
   >(undefined);
   const [isOpen, setIsOpen] = useState(false);
@@ -111,6 +110,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
 
   function onOpenChange(b: boolean) {
     form.reset();
+    setSelectedDepartment(undefined);
     setIsOpen(b);
   }
 
@@ -138,7 +138,9 @@ const AddClassModal: React.FC<Props> = ({}) => {
                 ) : (
                   <Select
                     onValueChange={(v) =>
-                      setDepartment(usersDepartments?.find((a) => a.id === v))
+                      setSelectedDepartment(
+                        usersDepartments?.find((a) => a.id === v)
+                      )
                     }
                   >
                     <FormControl>
@@ -226,13 +228,21 @@ const AddClassModal: React.FC<Props> = ({}) => {
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      The course you are presenting today..
+                      The course you are presenting today.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button isLoading={mutation.isPending}>Go</Button>
+              <Button
+                isLoading={mutation.isPending}
+                disabled={
+                  selectedDepartment === undefined ||
+                  form.watch("course") === ""
+                }
+              >
+                Run course
+              </Button>
             </form>
           </Form>
         </div>

@@ -455,6 +455,13 @@ export const classesRelations = relations(classes, ({ one, many }) => ({
   notes: many(classNotes),
 }));
 
+export const classNotesRelations = relations(classNotes, ({ one }) => ({
+  class: one(classes, {
+    fields: [classNotes.classId],
+    references: [classes.id],
+  }),
+}));
+
 export const usersDependentsRelations = relations(
   usersDependents,
   ({ one }) => ({

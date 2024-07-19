@@ -1,10 +1,26 @@
 // users.ts
 import { db } from "@/db";
-import { insertUserSchema, users } from "@/db/schema";
+import {
+  insertUserSchema,
+  users,
+  departments,
+  departmentLeadersToDepartments,
+  lecturersToDepartments,
+} from "@/db/schema";
 import { toTitleCase } from "@/lib/utils";
 import { RoleName } from "@/types/roles";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq, gt, inArray, isNotNull, isNull, like, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  eq,
+  gt,
+  inArray,
+  isNotNull,
+  isNull,
+  like,
+  or,
+} from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -132,31 +148,70 @@ const app = new Hono()
   )
   .get("/:id/departments", async (ctx) => {
     const userId = ctx.req.param("id");
-    const userWithDepartments = await db.query.users.findFirst({
+
+    // First, fetch the user to check their role
+    const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
-      with: {
-        departmentsLeading: {
-          with: {
-            department: {
-              columns: { name: true, id: true },
-            },
-          },
-        },
-      },
+      columns: { role: true },
     });
 
-    if (!userWithDepartments) {
+    if (!user) {
       return ctx.json({ error: "User not found" }, 404);
     }
 
-    const departments = userWithDepartments.departmentsLeading.map(
-      ({ department }) => department
-    );
-    departments.sort((a, b) => {
-      return a.name.localeCompare(b.name);
-    });
+    let userDepartments;
 
-    return ctx.json({ data: departments });
+    switch (user.role) {
+      case RoleName.ADMIN:
+      case RoleName.STUDENT:
+      case RoleName.FINANCE:
+        // fetch all departments from all academies
+        userDepartments = await db
+          .select({
+            id: departments.id,
+            name: departments.name,
+          })
+          .from(departments)
+          .orderBy(asc(departments.name));
+        break;
+
+      case RoleName.DEPARTMENTLEADER:
+        // fetch departments led by this department leader
+        userDepartments = await db
+          .select({
+            id: departments.id,
+            name: departments.name,
+          })
+          .from(departmentLeadersToDepartments)
+          .innerJoin(
+            departments,
+            eq(departments.id, departmentLeadersToDepartments.departmentId)
+          )
+          .where(eq(departmentLeadersToDepartments.departmentLeaderId, userId))
+          .orderBy(asc(departments.name));
+        break;
+
+      case RoleName.LECTURER:
+        // fetch departments the lecturer is associated with
+        userDepartments = await db
+          .select({
+            id: departments.id,
+            name: departments.name,
+          })
+          .from(lecturersToDepartments)
+          .innerJoin(
+            departments,
+            eq(departments.id, lecturersToDepartments.departmentId)
+          )
+          .where(eq(lecturersToDepartments.lecturerId, userId))
+          .orderBy(asc(departments.name));
+        break;
+
+      default:
+        return ctx.json({ error: "Invalid user role" }, 403);
+    }
+
+    return ctx.json({ data: userDepartments });
   })
   .get("/search/:keyword/role/:role?", async (ctx) => {
     const keyword = ctx.req.param("keyword");
