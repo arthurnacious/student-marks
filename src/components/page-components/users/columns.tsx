@@ -118,7 +118,10 @@ export const columns = ({ setUserId }: Props): ColumnDef<Users>[] => [
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setUserId(user.id)}>
+          <DropdownMenuItem
+            onClick={() => setUserId(user.id)}
+            className="cursor-pointer"
+          >
             Edit User
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
