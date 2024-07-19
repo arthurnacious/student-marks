@@ -96,7 +96,7 @@ const AddDepartmentModal: React.FC<Props> = ({}) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add an department</DialogTitle>
+          <DialogTitle>Add a department</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>

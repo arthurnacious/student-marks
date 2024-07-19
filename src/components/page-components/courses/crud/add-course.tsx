@@ -84,8 +84,9 @@ const AddCourseModal: React.FC<Props> = ({}) => {
     },
     onSuccess: () => {
       onOpenChange(false);
-      toast.success("Course added successfully");
+      queryClient.invalidateQueries({ queryKey: ["departments"] });
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Course added successfully");
     },
     onError: (error: any) => {
       if (error.props.statusCode === 422) {
@@ -137,7 +138,7 @@ const AddCourseModal: React.FC<Props> = ({}) => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select an department" />
+                            <SelectValue placeholder="Select a department" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

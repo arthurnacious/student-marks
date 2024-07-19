@@ -143,7 +143,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select an department" />
+                        <SelectValue placeholder="Select a department" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -169,7 +169,7 @@ const AddClassModal: React.FC<Props> = ({}) => {
                     <FormLabel>Course</FormLabel>
                     {!selectedDepartment ? (
                       <div className="rounded-md bg-neutral-500 h-10 w-full flex items-center justify-center text-slate-200">
-                        Select an Department
+                        Select a Department
                       </div>
                     ) : loadingCourses ? (
                       <Skeleton className="h-10 w-full flex items-center justify-center text-black">
