@@ -8,7 +8,6 @@ import React, { Dispatch, useState } from "react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,12 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGetUserById, useGetUsers } from "@/query/users";
 import { RoleName } from "@/types/roles";
 import { toast } from "sonner";
 import Error from "next/error";
-import type { departmentWithRelations } from "@/types/fetch";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { InferRequestType, InferResponseType } from "hono";
 import {
   Select,
@@ -36,6 +33,7 @@ import { cn, getEnumKeyByValue } from "@/lib/utils";
 
 const editUserUrl = client.api.users[":id"].$patch;
 type RequestType = InferRequestType<typeof editUserUrl>["json"];
+type ResponseType = InferResponseType<typeof editUserUrl>;
 
 interface Props {
   user: {
@@ -85,7 +83,7 @@ const EditUserForm: React.FC<Props> = ({ user, setUserId }) => {
     },
   });
 
-  const mutation = useMutation<unknown, Error, RequestType>({
+  const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (values) => {
       const response = await editUserUrl({
         json: values,
