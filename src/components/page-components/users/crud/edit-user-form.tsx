@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { toDate } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
+import { cn, getEnumKeyByValue } from "@/lib/utils";
 
 const editUserUrl = client.api.users[":id"].$patch;
 type RequestType = InferRequestType<typeof editUserUrl>["json"];
@@ -49,6 +49,7 @@ interface Props {
     createdAt: string;
     updatedAt: string | null;
   };
+  setUserId: Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const formSchema = z.object({
@@ -67,7 +68,7 @@ const formSchema = z.object({
 
 type formValues = z.input<typeof formSchema>;
 
-const EditUserForm: React.FC<Props> = ({ user }) => {
+const EditUserForm: React.FC<Props> = ({ user, setUserId }) => {
   const [hasActiveUntill, setHasActiveUntill] = useState(
     user.activeTill ? true : false
   );
@@ -79,7 +80,7 @@ const EditUserForm: React.FC<Props> = ({ user }) => {
     defaultValues: {
       name: user.name,
       email: user.email,
-      role: RoleName[user.role as keyof typeof RoleName] ?? RoleName.STUDENT,
+      role: getEnumKeyByValue(RoleName, user.role as RoleName),
       activeTill: user.activeTill ? new Date(user.activeTill) : new Date(),
     },
   });
@@ -103,19 +104,18 @@ const EditUserForm: React.FC<Props> = ({ user }) => {
       queryClient.invalidateQueries({
         queryKey: ["users", user.id],
       });
-      router.back();
+      setUserId(undefined);
     },
     onError: (error: any) => {
       if (error.props.statusCode === 422) {
         form.setError("email", { message: "The selected email already exist" });
         return;
       }
-      toast.error("failed to insert department");
+      toast.error("failed to update user");
     },
   });
 
   function onSubmit(values: formValues) {
-    console.log({ values });
     mutation.mutate({
       ...values,
       activeTill: hasActiveUntill ? values.activeTill : null,

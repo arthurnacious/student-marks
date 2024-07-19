@@ -1,24 +1,27 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import AddUserModal from "./crud/add-user-modal";
 import { useBulkDeleteUsers, useGetUsers } from "@/query/users";
 import TableSkeleton from "@/components/skeleton/table";
+import UpdateUserModal from "./crud/update-user-modal";
 
 interface Props {}
 
 const UsersTable: React.FC<Props> = ({}) => {
+  const [userId, setUserId] = useState<string | undefined>(undefined);
   const { data, isLoading } = useGetUsers();
   const deleteUsers = useBulkDeleteUsers();
   return (
     <div>
+      <UpdateUserModal userId={userId} setUserId={setUserId} />
       <AddUserModal />
       {isLoading ? (
         <TableSkeleton cols={4} />
       ) : data && data?.length > 0 ? (
         <DataTable
-          columns={columns}
+          columns={columns({ setUserId })}
           onDelete={(rows) => {
             const ids = rows.map((row) => row.original.id);
             deleteUsers.mutate({ ids });

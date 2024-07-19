@@ -75,7 +75,7 @@ const AddUserModal: React.FC<Props> = ({}) => {
     },
   });
 
-  const mutation = useMutation<unknown, Error, RequestType>({
+  const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (values) => {
       const response = await client.api.users.$post({ json: values });
 

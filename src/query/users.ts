@@ -79,7 +79,7 @@ export const useGetUsers = (role?: RoleName) => {
   return query;
 };
 
-export const useGetUserById = (id: string) => {
+export const useGetUserById = (id?: string) => {
   const query = useQuery({
     queryKey: ["user", id],
     queryFn: async () => {
@@ -92,6 +92,7 @@ export const useGetUserById = (id: string) => {
       const { data } = await response.json();
       return data;
     },
+    enabled: !!id,
   });
   return query;
 };

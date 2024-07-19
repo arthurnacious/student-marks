@@ -43,3 +43,14 @@ export const truncateTextByWords = (
   // Truncate to maxLength words and add ellipsis (...)
   return `${words.slice(0, maxLength).join(" ")}...`;
 };
+
+export const getEnumKeyByValue = <T extends object, K extends keyof T>(
+  enumObj: T,
+  value: T[K]
+): T[K] | undefined => {
+  const key = (Object.keys(enumObj) as Array<K>).find(
+    (k) => enumObj[k] === value
+  );
+
+  return key ? enumObj[key] : undefined;
+};

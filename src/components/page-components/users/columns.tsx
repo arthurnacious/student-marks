@@ -13,6 +13,11 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { Dispatch } from "react";
+
+interface Props {
+  setUserId: Dispatch<React.SetStateAction<string | undefined>>;
+}
 
 export type Users = {
   id: string;
@@ -26,7 +31,7 @@ export type Users = {
   updatedAt: string | null;
 };
 
-export const columns: ColumnDef<Users>[] = [
+export const columns = ({ setUserId }: Props): ColumnDef<Users>[] => [
   {
     id: "Select",
     header: ({ table }) => (
@@ -113,10 +118,8 @@ export const columns: ColumnDef<Users>[] = [
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href={`users/${user.id}/edit`} className="cursor-pointer">
-              Edit User
-            </Link>
+          <DropdownMenuItem onClick={() => setUserId(user.id)}>
+            Edit User
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
