@@ -73,17 +73,15 @@ const app = new Hono()
     "/:slug",
     zValidator("json", insertDepartmentSchema.pick({ name: true })),
     async (ctx) => {
-      const values = ctx.req.valid("json");
+      const { name } = ctx.req.valid("json");
 
       const slug = ctx.req.param("slug");
-      const newSlug = slugify(values.name.toLowerCase());
+      const newSlug = slugify(name.toLowerCase());
 
       const [existingName] = await db
         .select()
         .from(departments)
-        .where(
-          and(eq(departments.name, values.name), ne(departments.slug, slug))
-        );
+        .where(and(eq(departments.name, name), ne(departments.slug, slug)));
 
       if (existingName) {
         return ctx.json({ name: "name already taken" }, 422);
@@ -91,7 +89,7 @@ const app = new Hono()
 
       const [data] = await db
         .update(departments)
-        .set({ ...values, slug: newSlug })
+        .set({ name: toTitleCase(name), slug: newSlug })
         .where(eq(departments.slug, slug));
 
       return ctx.json({ data });

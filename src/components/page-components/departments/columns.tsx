@@ -13,6 +13,11 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { Dispatch } from "react";
+
+type Props = {
+  setDepartmentSlug: Dispatch<React.SetStateAction<string | undefined>>;
+};
 
 export type Departments = {
   id: string;
@@ -24,7 +29,9 @@ export type Departments = {
   };
 };
 
-export const columns: ColumnDef<Departments>[] = [
+export const columns = ({
+  setDepartmentSlug,
+}: Props): ColumnDef<Departments>[] => [
   {
     id: "Select",
     header: ({ table }) => (
@@ -80,9 +87,11 @@ export const columns: ColumnDef<Departments>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const department = row.original;
-
+    cell: ({
+      row: {
+        original: { slug },
+      },
+    }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -94,25 +103,20 @@ export const columns: ColumnDef<Departments>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link
-                href={`departments/${department.slug}`}
-                className="cursor-pointer"
-              >
+              <Link href={`departments/${slug}`} className="cursor-pointer">
                 View Department
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`departments/${department.slug}/edit`}
-                className="cursor-pointer"
-              >
-                Edit Department
-              </Link>
+            <DropdownMenuItem
+              onClick={() => setDepartmentSlug(slug)}
+              className="cursor-pointer"
+            >
+              Edit Department
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href={`departments/${department.slug}/leaders`}
+                href={`departments/${slug}/leaders`}
                 className="cursor-pointer"
               >
                 Manage Department Leaders
@@ -120,7 +124,7 @@ export const columns: ColumnDef<Departments>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href={`departments/${department.slug}/lecturers`}
+                href={`departments/${slug}/lecturers`}
                 className="cursor-pointer"
               >
                 Manage Lecturers
@@ -128,7 +132,7 @@ export const columns: ColumnDef<Departments>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href={`departments/${department.slug}/inventory`}
+                href={`departments/${slug}/inventory`}
                 className="cursor-pointer"
               >
                 Manage Inventory

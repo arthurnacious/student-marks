@@ -101,7 +101,7 @@ export const useGetDepartmentsCourses = (departmentId?: string) => {
   return query;
 };
 
-export const useGetDepartmentBySlug = (departmentSlug: string) => {
+export const useGetDepartmentBySlug = (departmentSlug?: string) => {
   const query = useQuery({
     queryKey: ["departments", departmentSlug],
     queryFn: async () => {
@@ -114,6 +114,7 @@ export const useGetDepartmentBySlug = (departmentSlug: string) => {
       const { data } = await response.json();
       return data;
     },
+    enabled: !!departmentSlug,
   });
   return query;
 };

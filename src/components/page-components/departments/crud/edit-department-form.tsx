@@ -1,10 +1,10 @@
 "use client";
+import React, { Dispatch } from "react";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { client } from "@/lib/hono";
 import { useForm } from "react-hook-form";
-import React from "react";
 import {
   Form,
   FormControl,
@@ -33,6 +33,7 @@ interface departmentsType extends departmentWithRelations {}
 
 interface Props {
   department: departmentsType | undefined;
+  setDepartmentSlug: Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const formSchema = z.object({
@@ -43,7 +44,10 @@ const formSchema = z.object({
 
 type formValues = z.input<typeof formSchema>;
 
-const EditDepartmentForm: React.FC<Props> = ({ department }) => {
+const EditDepartmentForm: React.FC<Props> = ({
+  department,
+  setDepartmentSlug,
+}) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -76,7 +80,7 @@ const EditDepartmentForm: React.FC<Props> = ({ department }) => {
       queryClient.invalidateQueries({
         queryKey: ["departments", "department?.slug"],
       });
-      router.back();
+      setDepartmentSlug(undefined);
     },
     onError: (error: any) => {
       if (error.props.statusCode === 422) {
