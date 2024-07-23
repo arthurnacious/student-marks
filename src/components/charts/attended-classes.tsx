@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/table";
 import {
   latestClassesUrl,
-  useGetLatestClasses,
-  useGetUsersLatestPresentedClasses,
+  useGetUsersLatestAttendedClasses,
 } from "@/query/latest";
 import { formatDistance, subDays } from "date-fns";
 import { InferResponseType } from "hono";
+import { Fingerprint } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { FC } from "react";
 
@@ -40,8 +40,7 @@ const calculateStudentAttendance = (classData: ClassData): number => {
 
 const AttendedClases: FC<Props> = ({ userId }) => {
   const limit = 10;
-  console.log(userId);
-  const { data: classes, isLoading } = useGetUsersLatestPresentedClasses(
+  const { data: classes, isLoading } = useGetUsersLatestAttendedClasses(
     userId,
     limit
   );
@@ -51,37 +50,44 @@ const AttendedClases: FC<Props> = ({ userId }) => {
   }
 
   return (
-    classes &&
-    classes.length > 0 && (
-      <div className="border-neutral-500/50 h-full w-full bg-neutral-800/20 rounded border">
-        <h2 className="text-3xl m-5">Attended Classes</h2>
-        <Table>
-          <TableCaption>{classes?.length} most recent classes.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Course Name</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>lecturer</TableHead>
-              <TableHead>Ran...</TableHead>
+    <div className="border-neutral-500/50 h-full w-full bg-neutral-800/20 rounded border">
+      <h2 className="text-3xl m-5">Attended Classes</h2>
+      <Table>
+        <TableCaption>{classes?.length} most recent classes.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Course Name</TableHead>
+            <TableHead>Department</TableHead>
+            <TableHead>lecturer</TableHead>
+            <TableHead>Ran...</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {classes?.map(({ id, className, department, lecturer, date }) => (
+            <TableRow key={id}>
+              <TableCell>{className}</TableCell>
+              <TableCell>{department} Department</TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  {lecturer.id === userId ? (
+                    <>
+                      You <Fingerprint className="size-4 ml-1" />
+                    </>
+                  ) : (
+                    lecturer.name
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                {formatDistance(subDays(new Date(date), 3), new Date(date), {
+                  addSuffix: true,
+                })}
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {classes?.map(({ id, className, department, lecturer, date }) => (
-              <TableRow key={id}>
-                <TableCell>{className}</TableCell>
-                <TableCell>{department} Department</TableCell>
-                <TableCell>{lecturer}</TableCell>
-                <TableCell>
-                  {formatDistance(subDays(new Date(date), 3), new Date(date), {
-                    addSuffix: true,
-                  })}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    )
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

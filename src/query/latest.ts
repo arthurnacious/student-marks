@@ -49,17 +49,40 @@ export const useGetLatestClasses = (limit: number) => {
   return query;
 };
 
-export const usersLatestPresentedClassesUrl =
+export const usersLatestAttendedClassesUrl =
   client.api.latest["student-classes"][":studentId"].$get;
-export const useGetUsersLatestPresentedClasses = (
+export const useGetUsersLatestAttendedClasses = (
   studentId: string,
   limit: number
 ) => {
   const query = useQuery({
-    queryKey: ["user", studentId, "latest", "presented-classes", limit],
+    queryKey: ["user", studentId, "latest", "attended-classes", limit],
+    queryFn: async () => {
+      const response = await usersLatestAttendedClassesUrl({
+        param: { studentId },
+        params: { limit },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch latest classes");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};
+
+export const usersLatestPresentedClassesUrl =
+  client.api.latest["lecturered-classes"][":lecturerId"].$get;
+export const useGetUsersLatestPresentedClasses = (
+  lecturerId: string,
+  limit: number
+) => {
+  const query = useQuery({
+    queryKey: ["user", lecturerId, "latest", "presented-classes", limit],
     queryFn: async () => {
       const response = await usersLatestPresentedClassesUrl({
-        param: { studentId },
+        param: { lecturerId },
         params: { limit },
       });
       if (!response.ok) {

@@ -75,12 +75,35 @@ const app = new Hono()
         id: classes.id,
         department: departments.name,
         className: courses.name,
-        lecturer: users.name,
+        lecturer: {
+          id: users.id,
+          name: users.name,
+        },
         date: classes.createdAt,
       })
       .from(studentsToClasses)
       .where(eq(studentsToClasses.studentId, studentId))
       .innerJoin(classes, eq(classes.id, studentsToClasses.classId))
+      .innerJoin(courses, eq(courses.id, classes.courseId))
+      .innerJoin(users, eq(users.id, classes.creatorId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .limit(limit);
+
+    return ctx.json({ data });
+  })
+  .get("/lecturered-classes/:lecturerId", async (ctx) => {
+    const lecturerId = ctx.req.param("lecturerId");
+    const limit = parseInt(ctx.req.query("limit") ?? "10", 10);
+    const data = await db
+      .select({
+        id: classes.id,
+        department: departments.name,
+        className: courses.name,
+        lecturer: users.name,
+        date: classes.createdAt,
+      })
+      .from(classes)
+      .where(eq(classes.creatorId, lecturerId))
       .innerJoin(courses, eq(courses.id, classes.courseId))
       .innerJoin(users, eq(users.id, classes.creatorId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))

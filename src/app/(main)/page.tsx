@@ -1,6 +1,5 @@
-import AttendedClases from "@/components/charts/attended-classes";
+import ClassesContainer from "@/components/charts/classes-container";
 import CoursesChart from "@/components/charts/courses";
-import PresentedClases from "@/components/charts/presented-clasess";
 import UserRelatedClasses from "@/components/charts/user-related-classes";
 import ChooseOverviewYear from "@/components/page-components/dashboard/choose-overview-year";
 import CounterUpItems from "@/components/page-components/dashboard/counter-up-items";
@@ -37,10 +36,7 @@ const Dashboard: Props = async ({}) => {
       <div className="grid grid-cols-1 gap-2 w-full mt-2">
         <UserRelatedClasses />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full mt-2">
-        <AttendedClases userId={session?.user?.id!!} />
-        <PresentedClases />
-      </div>
+      <ClassesContainer userId={session?.user?.id!!} />
     </PageContainerWrapper>
   );
 };
