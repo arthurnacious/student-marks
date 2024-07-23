@@ -49,9 +49,14 @@ const permissions = {
   deletePayment: [RoleName.ADMIN, RoleName.FINANCE],
 };
 
-const hasAbilityTo = (
-  role: RoleName,
-  action: keyof typeof permissions
-): boolean => {
-  return permissions[action].includes(role);
+export const hasAbilityTo = ({
+  role,
+  action,
+}: {
+  role?: RoleName;
+  action: keyof typeof permissions;
+}): boolean => {
+  return role ? permissions[action].includes(role) : false;
 };
+
+export const canAccess = hasAbilityTo;

@@ -7,6 +7,10 @@ import { FaLayerGroup } from "react-icons/fa";
 import { FaChalkboard } from "react-icons/fa6";
 import { GiCheckMark, GiTeacher } from "react-icons/gi";
 import { PiUserSquare } from "react-icons/pi";
+import { hasAbilityTo } from "@/lib/authorization";
+import { useSession } from "next-auth/react";
+import { RoleName } from "@/types/roles";
+import { getEnumKeyByValue } from "@/lib/utils";
 
 const containerVariants = {
   close: {
@@ -48,6 +52,10 @@ const svgVariants = {
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const session = useSession();
+  const userRole = session?.data?.user
+    ? getEnumKeyByValue(RoleName, session.data.user.role as RoleName)
+    : undefined;
   // const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -126,18 +134,38 @@ function Navigation() {
         <NavigationLink name="Dashboard" to="/">
           <HiChartBar className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
         </NavigationLink>
-        <NavigationLink name="Departments" to="/departments">
-          <FaLayerGroup className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
-        </NavigationLink>
-        <NavigationLink name="Courses" to="/courses">
-          <FaChalkboard className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
-        </NavigationLink>
-        <NavigationLink name="Classes" to="/classes">
-          <GiTeacher className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
-        </NavigationLink>
-        <NavigationLink name="Users" to="/users">
-          <PiUserSquare className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
-        </NavigationLink>
+        {hasAbilityTo({
+          role: userRole,
+          action: "readDepartment",
+        }) && (
+          <NavigationLink name="Departments" to="/departments">
+            <FaLayerGroup className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
+          </NavigationLink>
+        )}{" "}
+        {hasAbilityTo({
+          role: userRole,
+          action: "readCourse",
+        }) && (
+          <NavigationLink name="Courses" to="/courses">
+            <FaChalkboard className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
+          </NavigationLink>
+        )}{" "}
+        {hasAbilityTo({
+          role: userRole,
+          action: "readClass",
+        }) && (
+          <NavigationLink name="Classes" to="/classes">
+            <GiTeacher className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
+          </NavigationLink>
+        )}
+        {hasAbilityTo({
+          role: userRole,
+          action: "readUser",
+        }) && (
+          <NavigationLink name="Users" to="/users">
+            <PiUserSquare className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
+          </NavigationLink>
+        )}
         {/* <NavigationLink name="My Marks" to="/marks">
           <GiCheckMark className="stroke-inherit stroke-[0.75] min-w-8 w-8" />
         </NavigationLink> */}

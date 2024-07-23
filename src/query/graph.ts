@@ -4,7 +4,6 @@ import { client } from "@/lib/hono";
 import { useSession } from "next-auth/react";
 
 export const useGetUsersGraphData = (year?: number) => {
-  console.log({ year });
   const session = useSession();
   const userId = session?.data?.user?.id;
   const query = useQuery({

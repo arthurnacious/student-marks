@@ -58,7 +58,7 @@ export const useGetCourseBySlug = (slug?: string) => {
     queryKey: ["courses", slug],
     queryFn: async () => {
       const response = await client.api.courses[":slug"].$get({
-        param: { slug },
+        param: { slug: slug ?? "" },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch course");
