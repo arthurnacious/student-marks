@@ -48,3 +48,26 @@ export const useGetLatestClasses = (limit: number) => {
   });
   return query;
 };
+
+export const usersLatestPresentedClassesUrl =
+  client.api.latest["student-classes"][":studentId"].$get;
+export const useGetUsersLatestPresentedClasses = (
+  studentId: string,
+  limit: number
+) => {
+  const query = useQuery({
+    queryKey: ["user", studentId, "latest", "presented-classes", limit],
+    queryFn: async () => {
+      const response = await usersLatestPresentedClassesUrl({
+        param: { studentId },
+        params: { limit },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch latest classes");
+      }
+      const { data } = await response.json();
+      return data;
+    },
+  });
+  return query;
+};

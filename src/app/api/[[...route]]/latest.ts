@@ -4,9 +4,12 @@ import {
   attendances,
   classes,
   classSessions,
+  courses,
+  departments,
   studentsToClasses,
+  users,
 } from "@/db/schema";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 
 const app = new Hono()
@@ -61,6 +64,27 @@ const app = new Hono()
       },
       limit,
     });
+
+    return ctx.json({ data });
+  })
+  .get("/student-classes/:studentId", async (ctx) => {
+    const studentId = ctx.req.param("studentId");
+    const limit = parseInt(ctx.req.query("limit") ?? "10", 10);
+    const data = await db
+      .select({
+        id: classes.id,
+        department: departments.name,
+        className: courses.name,
+        lecturer: users.name,
+        date: classes.createdAt,
+      })
+      .from(studentsToClasses)
+      .where(eq(studentsToClasses.studentId, studentId))
+      .innerJoin(classes, eq(classes.id, studentsToClasses.classId))
+      .innerJoin(courses, eq(courses.id, classes.courseId))
+      .innerJoin(users, eq(users.id, classes.creatorId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .limit(limit);
 
     return ctx.json({ data });
   });

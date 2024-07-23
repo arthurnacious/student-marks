@@ -17,7 +17,7 @@ import { useSelectedYearStore } from "@/store/selected-year";
 
 interface Props {}
 
-const CoursesChart: FC<Props> = ({}) => {
+const UserRelatedClasses: FC<Props> = ({}) => {
   const { year } = useSelectedYearStore();
   const usersData = useGetUsersGraphData(year);
   const classesData = useGetClassesGraphData(year);
@@ -36,15 +36,15 @@ const CoursesChart: FC<Props> = ({}) => {
   }
 
   const inputData: InputData = {
-    users: { data: usersData.data },
-    classes: { data: classesData.data },
+    presented: { data: usersData.data },
+    attended: { data: classesData.data },
   };
 
   const data: TransformedData[] = transformData(inputData);
 
   return (
     <div className="w-full border border-neutral-500/50 bg-neutral-800/20 rounded py-5 md:p-5 mb-5">
-      <h2 className="text-3xl">{year} Overview</h2>
+      <h2 className="text-3xl">{year} Courses</h2>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           data={data}
@@ -60,13 +60,12 @@ const CoursesChart: FC<Props> = ({}) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          {/* <Bar dataKey="Courses" fill="#4A6FA5" /> */}
-          <Bar dataKey="Users" fill="#4A7F50" />
-          <Bar dataKey="Classes" fill="#A57F4A" />
+          <Bar dataKey="Presented" fill="#323333" />
+          <Bar dataKey="Attended" fill="#1e1f1f" />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default CoursesChart;
+export default UserRelatedClasses;

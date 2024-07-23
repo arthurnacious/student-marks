@@ -1,24 +1,48 @@
+import AttendedClases from "@/components/charts/attended-classes";
 import CoursesChart from "@/components/charts/courses";
+import PresentedClases from "@/components/charts/presented-clasess";
+import UserRelatedClasses from "@/components/charts/user-related-classes";
 import ChooseOverviewYear from "@/components/page-components/dashboard/choose-overview-year";
 import CounterUpItems from "@/components/page-components/dashboard/counter-up-items";
 import RecentClassesTable from "@/components/page-components/dashboard/recent-classes-table";
 import RecentUsersTable from "@/components/page-components/dashboard/recent-users-table";
 import Welcome from "@/components/page-components/dashboard/welcome";
 import PageContainerWrapper from "@/components/page-container-wrapper";
+import { auth } from "@/lib/auth";
 
-export default function Home() {
+type Props = {};
+
+const Dashboard: Props = async ({}) => {
+  const session = await auth();
+  const isAdmin = session?.user?.role === "Admin";
+
   return (
     <PageContainerWrapper title="Dashboard">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-2 w-full">
         <Welcome />
-        <ChooseOverviewYear />
+        {isAdmin && <ChooseOverviewYear />}
       </div>
-      <CounterUpItems />
-      <CoursesChart />
-      <div className="grid grid-cols-2 gap-2 mt-2 w-full">
-        <RecentClassesTable />
-        <RecentUsersTable />
+      {isAdmin && (
+        <>
+          <CounterUpItems />
+          <CoursesChart />
+        </>
+      )}
+      {isAdmin && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full mt-2">
+          <RecentClassesTable />
+          <RecentUsersTable />
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-2 w-full mt-2">
+        <UserRelatedClasses />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full mt-2">
+        <AttendedClases userId={session?.user?.id!!} />
+        <PresentedClases />
       </div>
     </PageContainerWrapper>
   );
-}
+};
+
+export default Dashboard;
