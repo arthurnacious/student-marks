@@ -9,7 +9,7 @@ import PageContainerWrapper from "@/components/page-container-wrapper";
 export default function Home() {
   return (
     <PageContainerWrapper title="Dashboard">
-      <div className="flex gap-2 justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-2 w-full">
         <Welcome />
         <ChooseOverviewYear />
       </div>

@@ -24,7 +24,7 @@ const years = Array.from(
 const ChooseOverviewYear: FC<Props> = ({}) => {
   const { year, setYear } = useSelectedYearStore();
   return (
-    <div className="w-fit border border-neutral-500/50 bg-neutral-800/20 rounded p-5 my-5">
+    <div className="max-w-fit border border-neutral-500/50 bg-neutral-800/20 rounded p-5 my-5 items-end">
       <div className="flex items-center justify-between gap-5">
         <div className="text-2xl text-neutral-500">Current Year: {year}</div>
         <Select
