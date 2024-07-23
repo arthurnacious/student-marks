@@ -280,7 +280,10 @@ const app = new Hono()
   )
   .patch(
     "/:slug",
-    zValidator("json", updateCourseSchema.pick({ name: true })),
+    zValidator(
+      "json",
+      updateCourseSchema.pick({ name: true, price: true, departmentId: true })
+    ),
     async (ctx) => {
       const values = ctx.req.valid("json");
       const slug = ctx.req.param("slug");
@@ -304,16 +307,16 @@ const app = new Hono()
         return ctx.json({ name: "name already taken" }, 422);
       }
 
-      try {
-        const [data] = await db
-          .update(courses)
-          .set({ ...values, slug: newSlug })
-          .where(eq(courses.id, course.id));
+      const [data] = await db
+        .update(courses)
+        .set({
+          ...values,
+          price: values.price ? values.price * 100 : undefined,
+          slug: newSlug,
+        })
+        .where(eq(courses.id, course.id));
 
-        return ctx.json({ data });
-      } catch (error: any) {
-        console.log({ error: error });
-      }
+      return ctx.json({ data });
     }
   )
   .post(

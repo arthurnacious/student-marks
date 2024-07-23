@@ -18,6 +18,7 @@ export interface courseWithRelations {
   description: string | null;
   status: string | null;
   classCount: number;
+  price: number;
   fields: {
     id: string;
     name: string;

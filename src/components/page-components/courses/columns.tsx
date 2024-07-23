@@ -14,6 +14,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { convertToZARCurrency } from "@/lib/utils";
+import { Dispatch } from "react";
+
+interface Props {
+  setCourseSlug: Dispatch<React.SetStateAction<string | undefined>>;
+}
 
 export type Courses = {
   id: string;
@@ -27,7 +32,7 @@ export type Courses = {
   } | null;
 };
 
-export const columns: ColumnDef<Courses>[] = [
+export const columns = ({ setCourseSlug }: Props): ColumnDef<Courses>[] => [
   {
     id: "Select",
     header: ({ table }) => (
@@ -130,13 +135,11 @@ export const columns: ColumnDef<Courses>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`courses/${course.slug}/edit`}
-                className="cursor-pointer"
-              >
-                Edit Course
-              </Link>
+            <DropdownMenuItem
+              onClick={() => setCourseSlug(course.slug)}
+              className="cursor-pointer"
+            >
+              Edit Course
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link

@@ -1,27 +1,27 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { DataTable } from "@/components/data-table";
-import { Courses, columns } from "./columns";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { client } from "@/lib/hono";
+import { columns } from "./columns";
 import { useBulkDeleteCourses, useGetCourses } from "@/query/courses";
-import { Loader2 } from "lucide-react";
 import TableSkeleton from "@/components/skeleton/table";
-import AddCourseModal from "./crud/add-course";
+import AddCourseModal from "./crud/add-course-modal";
+import EditCourseModal from "./crud/adit-course-modal";
 interface Props {}
 
 const CoursesTable: React.FC<Props> = ({}) => {
+  const [courseSlug, setCourseSlug] = useState<string | undefined>(undefined);
   const { data, isLoading } = useGetCourses();
   const deleteCourses = useBulkDeleteCourses();
 
   return (
     <div>
+      <EditCourseModal courseSlug={courseSlug} setCourseSlug={setCourseSlug} />
       <AddCourseModal />
       {isLoading ? (
         <TableSkeleton cols={4} />
       ) : data && data?.length > 0 ? (
         <DataTable
-          columns={columns}
+          columns={columns({ setCourseSlug: setCourseSlug })}
           onDelete={(rows) => {
             const ids = rows.map((row) => row.original.id);
             deleteCourses.mutate({ ids });
