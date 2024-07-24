@@ -11,7 +11,7 @@ import { auth } from "@/lib/auth";
 
 type Props = {};
 
-async function Dashboard({}: Props) {
+const Dashboard = async ({}: Props) => {
   const session = await auth();
   const isAdmin = session?.user?.role === "Admin";
 
@@ -39,6 +39,6 @@ async function Dashboard({}: Props) {
       <ClassesContainer userId={session?.user?.id!!} />
     </PageContainerWrapper>
   );
-}
+};
 
 export default Dashboard;
