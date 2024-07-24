@@ -77,7 +77,6 @@ const AddSessionsModal: React.FC<Props> = ({ theClass }) => {
       queryClient.invalidateQueries({ queryKey: ["classes", theClass.id] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to add session");
     },
   });

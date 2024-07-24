@@ -37,19 +37,16 @@ const app = new Hono().post(
             )
           );
       } else {
-        data = await db
-          .insert(payments)
-          .values({
-            ...values,
-            amount: values.amount * 100,
-            userId: values.userId,
-            classId: classId,
-          });
+        data = await db.insert(payments).values({
+          ...values,
+          amount: values.amount * 100,
+          userId: values.userId,
+          classId: classId,
+        });
       }
 
       return ctx.json({ data });
     } catch (error: any) {
-      console.error("Error processing request:", error);
       return ctx.json({ error: "Internal server error" }, 500);
     }
   }

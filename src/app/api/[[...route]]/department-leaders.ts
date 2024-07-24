@@ -38,7 +38,6 @@ const app = new Hono()
     async (ctx) => {
       const departmentId = ctx.req.param("id");
       const { departmentLeaderId } = ctx.req.valid("json");
-      console.log({ departmentLeaderId });
 
       const [existingName] = await db
         .select()
@@ -83,7 +82,6 @@ const app = new Hono()
 
         return ctx.json({ data: values.ids });
       } catch (error: any) {
-        console.error("Error processing request:", error);
         return ctx.json({ error: "Internal server error" }, 500);
       }
     }

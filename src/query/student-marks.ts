@@ -47,7 +47,6 @@ export const useBulkDeleteSessionsMarks = (classId: string) => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to sessions");
     },
   });

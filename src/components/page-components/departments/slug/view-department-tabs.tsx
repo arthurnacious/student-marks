@@ -27,8 +27,6 @@ const ViewDepartmentTabs: FC<Props> = ({ slug }) => {
   const departmentLecturers = useGetDepartmentsLecturers(slug);
   const departmentCourses = useGetDepartmentsCourses(departmentData?.id);
 
-  console.log({ data: departmentCourses.data });
-
   const countUpCards = [
     {
       title: "Courses",

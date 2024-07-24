@@ -20,7 +20,6 @@ export const useBulkDeleteFields = ({ courseSlug, classCount }: Props) => {
       if (classCount && classCount > 0) {
         throw new Error("Cannot delete fields for a course that has ran");
       }
-      console.log({ json: json.ids });
       const response = await client.api.fields["bulk-delete"]["$post"]({
         json,
       });
@@ -38,7 +37,6 @@ export const useBulkDeleteFields = ({ courseSlug, classCount }: Props) => {
       }
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete fields");
     },
   });

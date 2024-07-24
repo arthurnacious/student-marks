@@ -33,7 +33,6 @@ export const useBulkDeleteMaterials = ({ courseSlug }: Props) => {
       }
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete departments");
     },
   });

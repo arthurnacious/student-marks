@@ -54,7 +54,6 @@ export const useBulkDeleteUsers = () => {
       queryClient.invalidateQueries({ queryKey: ["users", null] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete users");
     },
   });
@@ -137,7 +136,6 @@ export const useBulkDeleteDependents = (guardianId: string) => {
       });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to unlist dependents");
     },
   });
@@ -155,7 +153,6 @@ export const useSearchUsers = ({
   const query = useQuery({
     queryKey: ["users", "search", keyword ?? undefined],
     queryFn: async () => {
-      console.log({ keyword });
       const response = await client.api.users.search[":keyword"].role[
         ":role?"
       ].$get({

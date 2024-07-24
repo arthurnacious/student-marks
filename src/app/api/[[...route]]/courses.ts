@@ -99,7 +99,6 @@ const app = new Hono()
 
         return ctx.json({ data });
       } catch (error: any) {
-        console.error("Error processing request:", error);
         return ctx.json({ error: "Internal server error" }, 500);
       }
     }
@@ -209,7 +208,6 @@ const app = new Hono()
         });
         return ctx.json({ data: response });
       } catch (error: any) {
-        console.error("Error processing request:", error);
         return ctx.json({ error: "Internal server error" }, 500);
       }
       return ctx.json({ data });
@@ -273,7 +271,6 @@ const app = new Hono()
         });
         return ctx.json({ data: response });
       } catch (error: any) {
-        console.error("Error processing request:", error);
         return ctx.json({ error: "Internal server error" }, 500);
       }
     }

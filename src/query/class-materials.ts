@@ -26,7 +26,6 @@ export const useCheckMaterials = (classId: string) => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to log material");
     },
   });

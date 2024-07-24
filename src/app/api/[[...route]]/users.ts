@@ -88,7 +88,6 @@ const app = new Hono()
 
         return ctx.json({ data });
       } catch (error: any) {
-        console.error("Error processing request:", error);
         return ctx.json({ error: "Internal server error" }, 500);
       }
     }
@@ -109,7 +108,6 @@ const app = new Hono()
 
         return ctx.json({ data: userIds });
       } catch (error: any) {
-        console.error("Error processing request:", error);
         return ctx.json({ error: "Internal server error" }, 500);
       }
     }
@@ -135,7 +133,6 @@ const app = new Hono()
     async (ctx) => {
       const userId = ctx.req.param("id");
       const values = ctx.req.valid("json");
-      console.log({ values });
       const user = await db
         .update(users)
         .set({

@@ -66,7 +66,6 @@ const AddMaterialModal: React.FC<Props> = ({ courseName, courseSlug }) => {
     RequestType
   >({
     mutationFn: async (values) => {
-      console.log({ courseSlug });
       const response = await client.api.courses[":slug"].materials.$post({
         json: values,
         param: { slug: courseSlug },

@@ -67,7 +67,6 @@ export const useBulkDeleteStudentsFromClass = (classId: string) => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete students from class");
     },
   });
@@ -90,7 +89,6 @@ export const useBulkDeleteClasses = () => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete departments");
     },
   });

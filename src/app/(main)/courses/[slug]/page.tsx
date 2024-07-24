@@ -19,8 +19,6 @@ const CoursesPage: FC<Props> = async ({ params: { slug } }) => {
     return notFound();
   }
 
-  console.log({ course });
-
   return (
     <PageContainerWrapper
       title={course.name}

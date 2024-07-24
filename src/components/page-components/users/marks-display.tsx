@@ -14,8 +14,6 @@ const MarksDisplay: React.FC<Props> = ({ studentId }) => {
   const { data, isLoading } = useGetStudentsMarks(studentId);
   const { data: user, isLoading: userIsLoading } = useGetUserById(studentId);
 
-  console.log(user);
-
   if (isLoading || userIsLoading) {
     return (
       <div className="flex flex-col gap-2 justify-center items-center">

@@ -75,7 +75,6 @@ export const useBulkDeleteDepartments = () => {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete departments");
     },
   });
@@ -217,7 +216,6 @@ export const useBulkDeleteDepartmentsLeaders = (departmentId: string) => {
       });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete departments");
     },
   });
@@ -248,7 +246,6 @@ export const useBulkDeleteDepartmentsLecturers = (departmentId: string) => {
       });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete departments");
     },
   });

@@ -48,7 +48,6 @@ export const useBulkDeleteSessionsFromClass = (classId: string) => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to sessions");
     },
   });
@@ -73,7 +72,6 @@ export const useHandleAttendance = (classId: string) => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to log attendance");
     },
   });

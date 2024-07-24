@@ -18,7 +18,6 @@ const CourseMaterials: React.FC<Props> = async ({
   });
 
   const { data: material } = await response.json();
-  console.log(material);
 
   if (!material) {
     return notFound();

@@ -45,7 +45,6 @@ export const useBulkDeleteCourses = () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete departments");
     },
   });

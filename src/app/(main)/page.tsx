@@ -1,6 +1,5 @@
 import ClassesContainer from "@/components/dashboard/table/classes-container";
 import CoursesChart from "@/components/dashboard/charts/overview";
-import UserRelatedClasses from "@/components/dashboard/charts/user-related-classes";
 import ChooseOverviewYear from "@/components/page-components/dashboard/choose-overview-year";
 import CounterUpItems from "@/components/page-components/dashboard/counter-up-items";
 import RecentClassesTable from "@/components/page-components/dashboard/recent-classes-table";

@@ -47,7 +47,6 @@ const ManageFields: React.FC<Props> = ({ course, disabled = false }) => {
       router.refresh();
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete field");
     },
   });

@@ -43,15 +43,3 @@ export const arrangeDataByMonthForYear = (
 
   return monthlyCounts;
 };
-
-// Example usage
-const sampleData: DataItem[] = [
-  { id: 1, createdAt: "2024-01-15", otherData: "example1" },
-  { id: 2, createdAt: "2024-03-10", otherData: "example2" },
-  { id: 3, createdAt: "2023-12-01", otherData: "example3" },
-  { id: 4, createdAt: "2024-12-01", otherData: "example4" },
-  // ... more data
-];
-
-const result = arrangeDataByMonthForYear(sampleData, 2024);
-console.log(result);

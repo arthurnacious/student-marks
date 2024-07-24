@@ -15,7 +15,6 @@ const CounterUpItems = () => {
   const classCount = useGetClassCount();
   const userCount = useGetUserCount();
 
-  console.log({ userdata: userCount.data });
   const countUpCards = [
     {
       title: "Courses",

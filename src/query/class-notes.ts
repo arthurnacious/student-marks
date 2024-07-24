@@ -39,7 +39,6 @@ export const useDeleteClassNote = (classId: string) => {
       queryClient.invalidateQueries({ queryKey: ["class-notes", classId] });
     },
     onError: (error: any) => {
-      console.log({ error });
       toast.error("failed to delete notes");
     },
   });

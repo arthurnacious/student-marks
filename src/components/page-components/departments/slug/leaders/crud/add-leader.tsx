@@ -105,8 +105,6 @@ const AddDepartmentLeadersModal: React.FC<Props> = ({
         json: values,
       });
 
-      console.log({ response });
-
       if (response.status === 422) {
         throw new Error({
           title: "user is already assigned",
