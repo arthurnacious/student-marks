@@ -11,8 +11,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Skeleton } from "../ui/skeleton";
-import { InputData, transformData, TransformedData } from "@/lib/graphs";
+import { Skeleton } from "../../ui/skeleton";
+import {
+  DataItem,
+  InputData,
+  transformData,
+  TransformedData,
+} from "@/lib/graphs";
 import { useSelectedYearStore } from "@/store/selected-year";
 
 interface Props {}
@@ -35,16 +40,16 @@ const UserRelatedClasses: FC<Props> = ({}) => {
     );
   }
 
-  const inputData: InputData = {
-    presented: { data: usersData.data },
-    attended: { data: classesData.data },
+  const inputData: InputData<DataItem> = {
+    Users: { data: usersData.data },
+    Classes: { data: classesData.data },
   };
 
   const data: TransformedData[] = transformData(inputData);
 
   return (
     <div className="w-full border border-neutral-500/50 bg-neutral-800/20 rounded py-5 md:p-5 mb-5">
-      <h2 className="text-3xl">{year} Courses</h2>
+      <h2 className="text-3xl">{year} Classes</h2>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           data={data}
@@ -60,8 +65,9 @@ const UserRelatedClasses: FC<Props> = ({}) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="Presented" fill="#323333" />
-          <Bar dataKey="Attended" fill="#1e1f1f" />
+          {/* <Bar dataKey="Courses" fill="#4A6FA5" /> */}
+          <Bar dataKey="Users" fill="#777" />
+          <Bar dataKey="Classes" fill="#f" />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -106,7 +106,7 @@ export const useGetDepartmentBySlug = (departmentSlug?: string) => {
     queryKey: ["departments", departmentSlug],
     queryFn: async () => {
       const response = await client.api.departments[":slug"].$get({
-        param: { slug: departmentSlug },
+        param: { slug: departmentSlug ?? "" },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch department");

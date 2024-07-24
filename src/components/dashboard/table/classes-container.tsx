@@ -1,8 +1,8 @@
 "use client";
 
 import React, { FC } from "react";
-import AttendedClases from "@/components/charts/attended-classes";
-import PresentedClases from "@/components/charts/presented-clasess";
+import AttendedClases from "@/components/dashboard/table/attended-classes";
+import PresentedClases from "@/components/dashboard/table/presented-clasess";
 import { useGetUsersLatestPresentedClasses } from "@/query/latest";
 
 interface Props {

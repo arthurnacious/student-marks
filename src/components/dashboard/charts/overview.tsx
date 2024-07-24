@@ -11,8 +11,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Skeleton } from "../ui/skeleton";
-import { InputData, transformData, TransformedData } from "@/lib/graphs";
+import { Skeleton } from "../../ui/skeleton";
+import {
+  DataItem,
+  InputData,
+  transformData,
+  TransformedData,
+} from "@/lib/graphs";
 import { useSelectedYearStore } from "@/store/selected-year";
 
 interface Props {}
@@ -35,9 +40,9 @@ const CoursesChart: FC<Props> = ({}) => {
     );
   }
 
-  const inputData: InputData = {
-    users: { data: usersData.data },
-    classes: { data: classesData.data },
+  const inputData: InputData<DataItem> = {
+    Users: { data: usersData.data },
+    Classes: { data: classesData.data },
   };
 
   const data: TransformedData[] = transformData(inputData);
@@ -61,8 +66,8 @@ const CoursesChart: FC<Props> = ({}) => {
           <Tooltip />
           <Legend />
           {/* <Bar dataKey="Courses" fill="#4A6FA5" /> */}
-          <Bar dataKey="Users" fill="#4A7F50" />
-          <Bar dataKey="Classes" fill="#A57F4A" />
+          <Bar dataKey="Users" fill="#777" />
+          <Bar dataKey="Classes" fill="#f" />
         </BarChart>
       </ResponsiveContainer>
     </div>

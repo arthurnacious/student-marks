@@ -84,8 +84,9 @@ export const useGetUserById = (id?: string) => {
     queryKey: ["user", id],
     queryFn: async () => {
       const response = await client.api.users[":id"].$get({
-        param: { id },
+        param: { id: id! },
       });
+
       if (!response.ok) {
         throw new Error("Failed to fetch user");
       }

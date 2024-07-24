@@ -1,6 +1,6 @@
-import ClassesContainer from "@/components/charts/classes-container";
-import CoursesChart from "@/components/charts/courses";
-import UserRelatedClasses from "@/components/charts/user-related-classes";
+import ClassesContainer from "@/components/dashboard/table/classes-container";
+import CoursesChart from "@/components/dashboard/charts/overview";
+import UserRelatedClasses from "@/components/dashboard/charts/user-related-classes";
 import ChooseOverviewYear from "@/components/page-components/dashboard/choose-overview-year";
 import CounterUpItems from "@/components/page-components/dashboard/counter-up-items";
 import RecentClassesTable from "@/components/page-components/dashboard/recent-classes-table";
@@ -11,7 +11,7 @@ import { auth } from "@/lib/auth";
 
 type Props = {};
 
-const Dashboard: Props = async ({}) => {
+const Dashboard = async ({}: Props) => {
   const session = await auth();
   const isAdmin = session?.user?.role === "Admin";
 
@@ -33,9 +33,9 @@ const Dashboard: Props = async ({}) => {
           <RecentUsersTable />
         </div>
       )}
-      <div className="grid grid-cols-1 gap-2 w-full mt-2">
+      {/* <div className="grid grid-cols-1 gap-2 w-full mt-2">
         <UserRelatedClasses />
-      </div>
+      </div> */}
       <ClassesContainer userId={session?.user?.id!!} />
     </PageContainerWrapper>
   );

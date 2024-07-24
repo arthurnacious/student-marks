@@ -60,8 +60,8 @@ export const useGetUsersLatestAttendedClasses = (
     queryFn: async () => {
       const response = await usersLatestAttendedClassesUrl({
         param: { studentId },
-        params: { limit },
       });
+
       if (!response.ok) {
         throw new Error("Failed to fetch latest classes");
       }
@@ -83,7 +83,6 @@ export const useGetUsersLatestPresentedClasses = (
     queryFn: async () => {
       const response = await usersLatestPresentedClassesUrl({
         param: { lecturerId },
-        params: { limit },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch latest classes");
